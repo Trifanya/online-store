@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Person;
 import ru.devtrifanya.online_store.repositories.PeopleRepository;
-import ru.devtrifanya.online_store.util.exceptions.PersonNotFoundException;
 
 import java.util.List;
 import java.util.Optional;

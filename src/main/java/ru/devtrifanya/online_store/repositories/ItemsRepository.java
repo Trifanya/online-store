@@ -4,6 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.devtrifanya.online_store.models.Item;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface ItemsRepository extends JpaRepository<Item, Integer> {
+    Optional<Item> findByName(String name);
+    List<Item> findByCategory(String category);
+
+
 }

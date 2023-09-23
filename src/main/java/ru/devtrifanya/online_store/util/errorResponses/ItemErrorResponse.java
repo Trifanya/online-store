@@ -1,12 +1,16 @@
 package ru.devtrifanya.online_store.util.errorResponses;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 
-public class PersonErrorResponse {
-    private String message;
-    private LocalDateTime timestamp;
+public class ItemErrorResponse {
+    public String message;
+    public LocalDateTime timestamp;
 
-    public PersonErrorResponse(String message, LocalDateTime timestamp) {
+    public ItemErrorResponse(String message, LocalDateTime timestamp) {
         this.message = message;
         this.timestamp = timestamp;
     }

@@ -12,8 +12,8 @@ import ru.devtrifanya.online_store.dto.PersonDTO;
 import ru.devtrifanya.online_store.models.Person;
 import ru.devtrifanya.online_store.services.PeopleService;
 import ru.devtrifanya.online_store.util.errorResponses.PersonErrorResponse;
-import ru.devtrifanya.online_store.util.exceptions.InvalidPersonDataException;
-import ru.devtrifanya.online_store.util.exceptions.PersonNotFoundException;
+import ru.devtrifanya.online_store.util.exceptions.person.InvalidPersonDataException;
+import ru.devtrifanya.online_store.util.exceptions.person.PersonNotFoundException;
 import ru.devtrifanya.online_store.util.validators.PersonValidator;
 
 import java.time.LocalDateTime;
@@ -64,7 +64,7 @@ public class PeopleController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @PostMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> edit(@RequestBody @Valid PersonDTO personDTO,
                                            @PathVariable("id") int id,
                                            BindingResult bindingResult) {

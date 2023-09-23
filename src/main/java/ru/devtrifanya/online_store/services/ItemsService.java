@@ -22,6 +22,18 @@ public class ItemsService {
         return itemsRepository.findById(id);
     }
 
+    public Optional<Item> findOne(String name) {
+        return itemsRepository.findByName(name);
+    }
+
+    public List<Item> findItemsByCategory(String category) {
+        return itemsRepository.findByCategory(category);
+    }
+
+    public List<String> findSubcategoriesByCategory(String parentCategory) {
+        return null;
+    }
+
     public List<Item> findAll() {
         return itemsRepository.findAll();
     }

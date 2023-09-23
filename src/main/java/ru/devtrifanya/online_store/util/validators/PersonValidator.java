@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.devtrifanya.online_store.dto.PersonDTO;
 import ru.devtrifanya.online_store.services.PeopleService;
-import ru.devtrifanya.online_store.util.exceptions.PersonAlreadyExistException;
+import ru.devtrifanya.online_store.util.exceptions.person.PersonAlreadyExistException;
 
 @Component
 public class PersonValidator implements Validator {
