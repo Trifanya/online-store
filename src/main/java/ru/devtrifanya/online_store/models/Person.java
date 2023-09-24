@@ -34,15 +34,19 @@ public class Person {
             message = "Пароль должен содержать хотя бы 1 строчную букву, 1 прописную букву, 1 цифру и 1 служебный символ. \nДлина пароля должна быть не менее 8 символов. ")
     private String password;
 
+    @Column(name = "role")
+    private String role;
+
     public Person() {
 
     }
 
-    public Person(String name, String surname, String email, String password) {
+    public Person(String name, String surname, String email, String password, String role) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public int getId() {
@@ -83,5 +87,13 @@ public class Person {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

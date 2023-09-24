@@ -32,6 +32,7 @@ public class PeopleService {
 
     @Transactional
     public void save(Person person) {
+        person.setRole("ROLE_USER");
         peopleRepository.save(person);
     }
 
