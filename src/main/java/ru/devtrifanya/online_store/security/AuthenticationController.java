@@ -1,6 +1,7 @@
 package ru.devtrifanya.online_store.security;
 
 import jakarta.validation.Valid;
+import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import ru.devtrifanya.online_store.util.validators.PersonValidator;
 import java.util.List;
 
 @RestController
+@Data
 public class AuthenticationController {
    private final AuthenticationService authenticationService;
    private final PersonValidator personValidator;
@@ -34,17 +36,6 @@ public class AuthenticationController {
    private final PersonDetailsService personDetailsService;
    private final PeopleService peopleService;
    private final ModelMapper modelMapper;
-
-    @Autowired
-    public AuthenticationController(AuthenticationService authenticationService, PersonValidator personValidator, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils, PersonDetailsService personDetailsService, PeopleService peopleService, ModelMapper modelMapper) {
-        this.authenticationService = authenticationService;
-        this.personValidator = personValidator;
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtils = jwtTokenUtils;
-        this.personDetailsService = personDetailsService;
-        this.peopleService = peopleService;
-        this.modelMapper = modelMapper;
-    }
 
     @PostMapping("/authentication")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) {

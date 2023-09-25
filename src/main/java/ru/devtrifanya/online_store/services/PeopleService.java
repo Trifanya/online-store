@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.services;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,15 +14,10 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
+@Data
 public class PeopleService {
     private final PeopleRepository peopleRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    public PeopleService(PeopleRepository peopleRepository, PasswordEncoder passwordEncoder, BCryptPasswordEncoder passwordEncoder1) {
-        this.peopleRepository = peopleRepository;
-        this.passwordEncoder = passwordEncoder1;
-    }
 
     public Optional<Person> findOne(int id) {
         return peopleRepository.findById(id);

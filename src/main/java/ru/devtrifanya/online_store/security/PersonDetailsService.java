@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.security;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,12 +14,9 @@ import ru.devtrifanya.online_store.util.exceptions.person.PersonNotFoundExceptio
 import java.util.Optional;
 
 @Service
+@Data
 public class PersonDetailsService implements UserDetailsService {
     private final PeopleRepository peopleRepository;
-    @Autowired
-    public PersonDetailsService(PeopleRepository peopleRepository) {
-        this.peopleRepository = peopleRepository;
-    }
 
     @Override
     public PersonDetails loadUserByUsername(String email) {

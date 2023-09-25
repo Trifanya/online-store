@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.security;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +17,10 @@ import ru.devtrifanya.online_store.security.jwt.JwtTokenUtils;
 import ru.devtrifanya.online_store.util.errorResponses.AuthenticationErrorResponse;
 
 @Service
+@Data
 public class AuthenticationService {
     private final PersonDetailsService personDetailsService;
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
-
-    @Autowired
-    public AuthenticationService(PersonDetailsService personDetailsService, JwtTokenUtils jwtTokenUtils, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
-        this.personDetailsService = personDetailsService;
-        this.jwtTokenUtils = jwtTokenUtils;
-        this.authenticationManager = authenticationManager;
-    }
 
 }

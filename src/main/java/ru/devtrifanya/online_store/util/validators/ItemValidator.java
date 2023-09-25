@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.util.validators;
 
+import lombok.Data;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -8,12 +9,9 @@ import ru.devtrifanya.online_store.services.ItemsService;
 import ru.devtrifanya.online_store.util.exceptions.item.ItemAlreadyExistException;
 
 @Component
+@Data
 public class ItemValidator implements Validator {
     private final ItemsService itemsService;
-
-    public ItemValidator(ItemsService itemsService) {
-        this.itemsService = itemsService;
-    }
 
     @Override
     public boolean supports(Class<?> clazz) {

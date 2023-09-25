@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.security;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,13 +12,10 @@ import java.util.List;
 
 import static java.util.Arrays.stream;
 
+@Data
 public class PersonDetails implements UserDetails {
 
     private final Person person;
-
-    public PersonDetails(Person person) {
-        this.person = person;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

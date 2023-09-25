@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.security.configuration;
 
+import lombok.Data;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -16,14 +17,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import ru.devtrifanya.online_store.security.PersonDetailsService;
 
 @Configuration
+@Data
 public class SecurityConfiguration {
     private final PersonDetailsService personDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
-
-    public SecurityConfiguration(PersonDetailsService personDetailsService, JwtRequestFilter jwtRequestFilter) {
-        this.personDetailsService = personDetailsService;
-        this.jwtRequestFilter = jwtRequestFilter;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

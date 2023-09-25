@@ -1,6 +1,7 @@
 package ru.devtrifanya.online_store.controllers;
 
 import jakarta.validation.Valid;
+import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,17 +23,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/people")
+@Data
 public class PeopleController {
     private final PeopleService peopleService;
     private final ModelMapper modelMapper;
     private final PersonValidator personValidator;
-
-    @Autowired
-    public PeopleController(PeopleService peopleService, ModelMapper modelMapper, PersonValidator personValidator) {
-        this.peopleService = peopleService;
-        this.modelMapper = modelMapper;
-        this.personValidator = personValidator;
-    }
 
     @GetMapping("/{id}")
     public PersonDTO getPerson(@PathVariable("id") int id) {

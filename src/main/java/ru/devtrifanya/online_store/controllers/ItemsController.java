@@ -1,6 +1,7 @@
 package ru.devtrifanya.online_store.controllers;
 
 import jakarta.validation.Valid;
+import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +22,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/items")
+@Data
 public class ItemsController {
     public final ItemsService itemsService;
     public final ModelMapper modelMapper;
     public final ItemValidator itemValidator;
-
-    public ItemsController(ItemsService itemsService, ModelMapper modelMapper, ItemValidator itemValidator) {
-        this.itemsService = itemsService;
-        this.modelMapper = modelMapper;
-        this.itemValidator = itemValidator;
-    }
 
     @GetMapping("/{id}")
     public ItemDTO getItem(@PathVariable("id") int id) {
