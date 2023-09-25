@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.security;
+package ru.devtrifanya.online_store.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import ru.devtrifanya.online_store.security.PersonDetails;
 
 import java.time.Duration;
 import java.util.Date;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenUtils {
-    @Value("${jwt.secret")
+    @Value("${jwt.secret}")
     private String secret;
 
     @Value("${jwt.lifetime}")
@@ -35,8 +36,6 @@ public class JwtTokenUtils {
 
         /** Настройка полей класса, входящих в JWT-токен. */
         claims.put("roles", rolesList);
-        claims.put("name", personDetails.getPerson().getName());
-        claims.put("surname", personDetails.getPerson().getSurname());
         claims.put("email", personDetails.getPerson().getEmail());
 
         /** Настройка времени действия выданного JWT-токена. */

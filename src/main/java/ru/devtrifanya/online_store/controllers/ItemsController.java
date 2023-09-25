@@ -112,19 +112,13 @@ public class ItemsController {
 
     @ExceptionHandler
     public ResponseEntity<ItemErrorResponse> handleException(InvalidItemDataException exception) {
-        ItemErrorResponse response = new ItemErrorResponse(
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
+        ItemErrorResponse response = new ItemErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<ItemErrorResponse> handleException(ItemNotFoundException exception) {
-        ItemErrorResponse response = new ItemErrorResponse(
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
+        ItemErrorResponse response = new ItemErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

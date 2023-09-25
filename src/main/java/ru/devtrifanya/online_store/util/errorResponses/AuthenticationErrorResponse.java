@@ -1,12 +1,14 @@
 package ru.devtrifanya.online_store.util.errorResponses;
 
+import org.springframework.cglib.core.Local;
+
 import java.time.LocalDateTime;
 
-public class PersonErrorResponse {
+public class AuthenticationErrorResponse {
     private String message;
     private LocalDateTime timestamp;
 
-    public PersonErrorResponse(String message) {
+    public AuthenticationErrorResponse(String message) {
         this.message = message;
         this.timestamp = LocalDateTime.now();
     }

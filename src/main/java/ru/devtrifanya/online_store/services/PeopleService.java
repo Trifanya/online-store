@@ -1,6 +1,8 @@
 package ru.devtrifanya.online_store.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Person;
@@ -13,9 +15,12 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class PeopleService {
     private final PeopleRepository peopleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
-    public PeopleService(PeopleRepository peopleRepository) {
+    public PeopleService(PeopleRepository peopleRepository, PasswordEncoder passwordEncoder, BCryptPasswordEncoder passwordEncoder1) {
         this.peopleRepository = peopleRepository;
+        this.passwordEncoder = passwordEncoder1;
     }
 
     public Optional<Person> findOne(int id) {
@@ -31,7 +36,8 @@ public class PeopleService {
     }
 
     @Transactional
-    public void save(Person person) {
+    public void signUpPerson(Person person) {
+        person.setPassword(passwordEncoder.encode(person.getPassword()));
         person.setRole("ROLE_USER");
         peopleRepository.save(person);
     }

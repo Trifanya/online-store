@@ -1,35 +1,41 @@
-package ru.devtrifanya.online_store.configuration;
+package ru.devtrifanya.online_store.security.configuration;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import ru.devtrifanya.online_store.services.PersonDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.devtrifanya.online_store.security.PersonDetailsService;
 
-@EnableWebSecurity
+@Configuration
 public class SecurityConfiguration {
     private final PersonDetailsService personDetailsService;
+    private final JwtRequestFilter jwtRequestFilter;
 
-    public SecurityConfiguration(PersonDetailsService personDetailsService) {
+    public SecurityConfiguration(PersonDetailsService personDetailsService, JwtRequestFilter jwtRequestFilter) {
         this.personDetailsService = personDetailsService;
+        this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic(Customizer.withDefaults())
+                //.httpBasic(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
-                                .requestMatchers("","").hasRole("ADMIN") // к адресам в этой строке есть доступ только у пользователей с указанными ролями
-                                .requestMatchers("", "").hasRole("USER")
+                                .requestMatchers("/registration").permitAll()
+                                .requestMatchers("/someAddressForAdmin").hasRole("ADMIN") // к адресам в этой строке есть доступ только у пользователей с указанными ролями
+                                .requestMatchers("/someAddressForUser").hasRole("USER")
                                 .anyRequest().permitAll())
                 /*.formLogin(formLogin ->
                         formLogin
@@ -45,8 +51,8 @@ public class SecurityConfiguration {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
-                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
-                // addFilterBefore()...
+                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

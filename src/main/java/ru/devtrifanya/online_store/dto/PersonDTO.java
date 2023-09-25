@@ -3,6 +3,7 @@ package ru.devtrifanya.online_store.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.annotations.Check;
 
 public class PersonDTO {
     @NotEmpty(message = "Вы не указали имя.")
@@ -18,9 +19,15 @@ public class PersonDTO {
     private String email;
 
     @NotEmpty(message = "Вы не ввели пароль.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#&()–[{}]():;',?/*~$^+=<>]).{8,40}$",
-             message = "Пароль должен содержать хотя бы 1 строчную букву, 1 прописную букву, 1 цифру и 1 служебный символ. \nМаксимальная длина пароля - 40 символов. ")
+    /*@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#&()–[{}]():;',?/*~$^+=<>]).{8,40}$",
+             message = "Пароль должен содержать хотя бы 1 строчную букву, 1 прописную букву, 1 цифру и 1 служебный символ. \nМаксимальная длина пароля - 40 символов. ")*/
     private String password;
+
+    @NotEmpty(message = "Вы не подтвердили пароль.")
+/*    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#&()–[{}]():;',?/*~$^+=<>]).{8,40}$",
+            message = "Пароль должен содержать хотя бы 1 строчную букву, 1 прописную букву, 1 цифру и 1 служебный символ. \nМаксимальная длина пароля - 40 символов. ")*/
+    private String passwordConfirmation;
+
 
     public String getName() {
         return name;
@@ -52,5 +59,13 @@ public class PersonDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordConfirmation() {
+        return passwordConfirmation;
+    }
+
+    public void setPasswordConfirmation(String passwordConfirmation) {
+        this.passwordConfirmation = passwordConfirmation;
     }
 }

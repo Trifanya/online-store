@@ -1,11 +1,16 @@
 package ru.devtrifanya.online_store.security;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import ru.devtrifanya.online_store.models.Person;
 
 import java.util.Collection;
+import java.util.List;
+
+import static java.util.Arrays.stream;
+
 public class PersonDetails implements UserDetails {
 
     private final Person person;
@@ -16,7 +21,7 @@ public class PersonDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority(person.getRole()));
     }
 
     @Override

@@ -10,9 +10,9 @@ public class ItemErrorResponse {
     public String message;
     public LocalDateTime timestamp;
 
-    public ItemErrorResponse(String message, LocalDateTime timestamp) {
+    public ItemErrorResponse(String message) {
         this.message = message;
-        this.timestamp = timestamp;
+        this.timestamp = LocalDateTime.now();
     }
 
     public String getMessage() {

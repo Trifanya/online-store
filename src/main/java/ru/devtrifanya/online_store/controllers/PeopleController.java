@@ -60,7 +60,7 @@ public class PeopleController {
             }
             throw new InvalidPersonDataException(errorMessage.toString());
         }
-        peopleService.save(convertToPerson(personDTO));
+        peopleService.signUpPerson(convertToPerson(personDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -96,19 +96,13 @@ public class PeopleController {
 
     @ExceptionHandler
     public ResponseEntity<PersonErrorResponse> handleException(PersonNotFoundException exception) {
-        PersonErrorResponse response = new PersonErrorResponse(
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
+        PersonErrorResponse response = new PersonErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     public ResponseEntity<PersonErrorResponse> handleException(InvalidPersonDataException exception) {
-        PersonErrorResponse response = new PersonErrorResponse(
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
+        PersonErrorResponse response = new PersonErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

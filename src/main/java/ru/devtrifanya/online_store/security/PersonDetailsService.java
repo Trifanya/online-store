@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +21,7 @@ public class PersonDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
+    public PersonDetails loadUserByUsername(String email) {
         Optional<Person> person = peopleRepository.findByEmail(email);
 
         if (person.isEmpty()) {
@@ -30,4 +30,6 @@ public class PersonDetailsService implements UserDetailsService {
 
         return new PersonDetails(person.get());
     }
+
+
 }
