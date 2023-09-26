@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.UserRepository;
-import ru.devtrifanya.online_store.util.exceptions.person.PersonNotFoundException;
+import ru.devtrifanya.online_store.util.exceptions.user.UserNotFoundException;
 
 import java.util.Optional;
 
@@ -27,11 +27,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public User loadUserByUsername(String email) throws PersonNotFoundException {
+    public User loadUserByUsername(String email) throws UserNotFoundException {
         Optional<User> person = userRepository.findByEmail(email);
 
         if (person.isEmpty()) {
-            throw new PersonNotFoundException("Пользователь с таким email не найден.");
+            throw new UserNotFoundException();
         }
 
         return person.get();

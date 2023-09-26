@@ -35,8 +35,10 @@ public class JWTUtils {
                 .collect(Collectors.toList());
 
         /** Настройка полей класса, входящих в JWT-токен. */
-        claims.put("roles", rolesList);
+        claims.put("name", user.getName());
+        claims.put("surname", user.getSurname());
         claims.put("email", user.getEmail());
+        claims.put("roles", rolesList);
 
         /** Настройка времени действия выданного JWT-токена. */
         Date issuedDate = new Date();

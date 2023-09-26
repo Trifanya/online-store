@@ -10,12 +10,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.UserDTO;
 import ru.devtrifanya.online_store.models.User;
-import ru.devtrifanya.online_store.services.AuthenticationService;
+import ru.devtrifanya.online_store.services.AuthService;
 import ru.devtrifanya.online_store.services.UserService;
 import ru.devtrifanya.online_store.util.errorResponses.UserErrorResponse;
-import ru.devtrifanya.online_store.util.exceptions.person.InvalidPersonDataException;
-import ru.devtrifanya.online_store.util.exceptions.person.PersonNotFoundException;
-import ru.devtrifanya.online_store.util.validators.UserValidator;
+import ru.devtrifanya.online_store.util.exceptions.user.InvalidPersonDataException;
+import ru.devtrifanya.online_store.util.exceptions.user.UserNotFoundException;
+import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
 
 import java.util.List;
 
@@ -25,8 +25,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private final UserValidator userValidator;
-    private final AuthenticationService authenticationService;
+    private final RegistrationValidator registrationValidator;
+    private final AuthService authService;
 
     /*@GetMapping("/{id}")
     public PersonDTO getPerson(@PathVariable("id") int id) {
@@ -41,7 +41,7 @@ public class UserController {
     public ResponseEntity<HttpStatus> edit(@RequestBody @Valid UserDTO userDTO,
                                            @PathVariable("id") int id,
                                            BindingResult bindingResult) {
-        userValidator.validate(userDTO, bindingResult);
+        registrationValidator.validate(userDTO, bindingResult);
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<UserErrorResponse> handleException(PersonNotFoundException exception) {
+    public ResponseEntity<UserErrorResponse> handleException(UserNotFoundException exception) {
         UserErrorResponse response = new UserErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }

@@ -24,7 +24,6 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                //.httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(authorizeHttpRequests ->
@@ -33,16 +32,6 @@ public class SecurityConfiguration {
                                 .requestMatchers("/someAddressForAdmin").hasRole("ADMIN") // к адресам в этой строке есть доступ только у пользователей с указанными ролями
                                 .requestMatchers("/someAddressForUser").hasRole("USER")
                                 .anyRequest().permitAll())
-                /*.formLogin(formLogin ->
-                        formLogin
-                                .loginPage("")
-                                .loginProcessingUrl("")
-                                .defaultSuccessUrl("")
-                                .failureUrl(""))
-                .logout(logout ->
-                        logout
-                                .logoutUrl("")
-                                .logoutSuccessUrl(""))*/
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandling ->
