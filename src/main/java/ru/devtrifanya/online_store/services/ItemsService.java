@@ -1,10 +1,11 @@
 package ru.devtrifanya.online_store.services;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.repositories.ItemRepository;
+import ru.devtrifanya.online_store.repositories.ItemsRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,19 +13,19 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @Data
-public class ItemService {
-    private final ItemRepository itemRepository;
+public class ItemsService {
+    private final ItemsRepository itemsRepository;
 
     public Optional<Item> findOne(int id) {
-        return itemRepository.findById(id);
+        return itemsRepository.findById(id);
     }
 
     public Optional<Item> findOne(String name) {
-        return itemRepository.findByName(name);
+        return itemsRepository.findByName(name);
     }
 
     public List<Item> findItemsByCategory(String category) {
-        return itemRepository.findByCategory(category);
+        return itemsRepository.findByCategory(category);
     }
 
     public List<String> findSubcategoriesByCategory(String parentCategory) {
@@ -32,22 +33,22 @@ public class ItemService {
     }
 
     public List<Item> findAll() {
-        return itemRepository.findAll();
+        return itemsRepository.findAll();
     }
 
     @Transactional
     public void save(Item item) {
-        itemRepository.save(item);
+        itemsRepository.save(item);
     }
 
     @Transactional
     public void update(int id, Item item) {
         item.setId(id);
-        itemRepository.save(item);
+        itemsRepository.save(item);
     }
 
     @Transactional
     public void delete(int id) {
-        itemRepository.deleteById(id);
+        itemsRepository.deleteById(id);
     }
 }

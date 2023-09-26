@@ -10,12 +10,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.ItemDTO;
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.services.ItemService;
+import ru.devtrifanya.online_store.services.ItemsService;
 import ru.devtrifanya.online_store.util.errorResponses.ItemErrorResponse;
 import ru.devtrifanya.online_store.util.exceptions.item.InvalidItemDataException;
 import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
 import ru.devtrifanya.online_store.util.validators.ItemValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,13 +24,13 @@ import java.util.Optional;
 @RequestMapping("/items")
 @Data
 public class ItemsController {
-    public final ItemService itemService;
+    public final ItemsService itemsService;
     public final ModelMapper modelMapper;
     public final ItemValidator itemValidator;
 
     @GetMapping("/{id}")
     public ItemDTO getItem(@PathVariable("id") int id) {
-        Optional<Item> item = itemService.findOne(id);
+        Optional<Item> item = itemsService.findOne(id);
         if (item.isEmpty()) {
             throw new ItemNotFoundException("Товар с такими данными не найден.");
         }
@@ -38,7 +39,7 @@ public class ItemsController {
 
     @GetMapping("/{category}")
     public List<ItemDTO> getCategoryItems(@PathVariable("category") String category) {
-        return itemService.findItemsByCategory(category)
+        return itemsService.findItemsByCategory(category)
                 .stream()
                 .map(this::convertToItemDTO)
                 .toList();
@@ -67,7 +68,7 @@ public class ItemsController {
             }
             throw new InvalidItemDataException(errorMessage.toString());
         }
-        itemService.save(convertToItem(itemDTO));
+        itemsService.save(convertToItem(itemDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
     @PatchMapping("/{id}")
@@ -88,13 +89,13 @@ public class ItemsController {
             }
             throw new InvalidItemDataException(errorMessage.toString());
         }
-        itemService.update(id, convertToItem(itemDTO));
+        itemsService.update(id, convertToItem(itemDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public void remove(@PathVariable("id") int id) {
-        itemService.delete(id);
+        itemsService.delete(id);
     }
 
     public Item convertToItem(ItemDTO itemDTO) {

@@ -10,29 +10,40 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.devtrifanya.online_store.services.UserService;
+import ru.devtrifanya.online_store.security.PersonDetailsService;
 
 @Configuration
 @Data
 public class SecurityConfiguration {
-    private final UserService userService;
+    private final PersonDetailsService personDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                //.httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
                                 .requestMatchers("/registration").permitAll()
-                                .requestMatchers("/authentication").permitAll()
                                 .requestMatchers("/someAddressForAdmin").hasRole("ADMIN") // к адресам в этой строке есть доступ только у пользователей с указанными ролями
                                 .requestMatchers("/someAddressForUser").hasRole("USER")
                                 .anyRequest().permitAll())
+                /*.formLogin(formLogin ->
+                        formLogin
+                                .loginPage("")
+                                .loginProcessingUrl("")
+                                .defaultSuccessUrl("")
+                                .failureUrl(""))
+                .logout(logout ->
+                        logout
+                                .logoutUrl("")
+                                .logoutSuccessUrl(""))*/
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandling ->
@@ -47,7 +58,7 @@ public class SecurityConfiguration {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userService);
+        daoAuthenticationProvider.setUserDetailsService(personDetailsService);
         return daoAuthenticationProvider;
     }
 

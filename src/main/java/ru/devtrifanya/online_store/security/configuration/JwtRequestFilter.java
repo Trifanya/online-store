@@ -11,15 +11,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.devtrifanya.online_store.security.jwt.JWTUtils;
+import ru.devtrifanya.online_store.security.jwt.JwtTokenUtils;
 
 import java.io.IOException;
+import java.security.SignatureException;
 import java.util.stream.Collectors;
 
 @Component
 @Data
 public class JwtRequestFilter extends OncePerRequestFilter {
-    private final JWTUtils jwtTokenUtils;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

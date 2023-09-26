@@ -4,9 +4,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import org.hibernate.annotations.Check;
 
 @Data
-public class UserDTO {
+public class PersonDTO {
     @NotEmpty(message = "Вы не указали имя.")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Имя должно состоять только из букв")
     private String name;

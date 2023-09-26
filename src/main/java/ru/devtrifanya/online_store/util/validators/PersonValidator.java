@@ -1,28 +1,29 @@
 package ru.devtrifanya.online_store.util.validators;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ru.devtrifanya.online_store.dto.UserDTO;
-import ru.devtrifanya.online_store.services.UserService;
+import ru.devtrifanya.online_store.dto.PersonDTO;
+import ru.devtrifanya.online_store.services.PeopleService;
 import ru.devtrifanya.online_store.util.exceptions.person.PersonAlreadyExistException;
 
 @Component
 @Data
-public class UserValidator implements Validator {
-    private final UserService userService;
+public class PersonValidator implements Validator {
+    private final PeopleService peopleService;
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return UserDTO.class.equals(clazz);
+        return PersonDTO.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        UserDTO userDTO = (UserDTO) target;
+        PersonDTO personDTO = (PersonDTO) target;
 
-        if (userService.findOne(userDTO.getEmail()).isPresent()) {
+        if (peopleService.findOne(personDTO.getEmail()).isPresent()) {
             throw new PersonAlreadyExistException("Пользователь с таким email уже существует.");
         }
     }
