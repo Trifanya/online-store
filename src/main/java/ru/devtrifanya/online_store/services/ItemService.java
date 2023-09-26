@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
+import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +16,20 @@ import java.util.Optional;
 public class ItemService {
     private final ItemRepository itemRepository;
 
-    public Optional<Item> findOne(int id) {
-        return itemRepository.findById(id);
+    public Item findOne(int id) {
+        Optional<Item> item = itemRepository.findById(id);
+
+        if (item.isEmpty()) throw new ItemNotFoundException();
+
+        return item.get();
     }
 
-    public Optional<Item> findOne(String name) {
-        return itemRepository.findByName(name);
+    public Item findOne(String name) throws ItemNotFoundException {
+        Optional<Item> item = itemRepository.findByName(name);
+
+        if (item.isEmpty()) throw new ItemNotFoundException();
+
+        return item.get();
     }
 
     public List<Item> findItemsByCategory(String category) {

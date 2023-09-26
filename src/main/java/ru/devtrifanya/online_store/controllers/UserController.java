@@ -12,7 +12,7 @@ import ru.devtrifanya.online_store.dto.UserDTO;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.services.AuthService;
 import ru.devtrifanya.online_store.services.UserService;
-import ru.devtrifanya.online_store.util.errorResponses.UserErrorResponse;
+import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
 import ru.devtrifanya.online_store.util.exceptions.user.InvalidPersonDataException;
 import ru.devtrifanya.online_store.util.exceptions.user.UserNotFoundException;
 import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
@@ -28,17 +28,8 @@ public class UserController {
     private final RegistrationValidator registrationValidator;
     private final AuthService authService;
 
-    /*@GetMapping("/{id}")
-    public PersonDTO getPerson(@PathVariable("id") int id) {
-        Optional<Person> person = peopleService.findOne(id);
-        if (person.isEmpty()) {
-            throw new PersonNotFoundException("Пользователь с такими данными не найден.");
-        }
-        return convertToPersonDTO(person.get());
-    }*/
-
     @PatchMapping("/{id}")
-    public ResponseEntity<HttpStatus> edit(@RequestBody @Valid UserDTO userDTO,
+    public ResponseEntity<String> edit(@RequestBody @Valid UserDTO userDTO,
                                            @PathVariable("id") int id,
                                            BindingResult bindingResult) {
         registrationValidator.validate(userDTO, bindingResult);
@@ -47,35 +38,27 @@ public class UserController {
             List<FieldError> errors = bindingResult.getFieldErrors();
             StringBuilder errorMessage = new StringBuilder();
             for (FieldError error : errors) {
-                errorMessage
-                        .append(error.getField())
-                        .append(" - ")
-                        .append(error.getDefaultMessage())
-                        .append(";");
+                errorMessage.append(error.getDefaultMessage() + "\n");
             }
             throw new InvalidPersonDataException(errorMessage.toString());
         }
         userService.update(id, convertToPerson(userDTO));
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok("Данные пользователя изменены успешно.");
     }
 
     public User convertToPerson(UserDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
     }
 
-    public UserDTO convertToPersonDTO(User user) {
-        return modelMapper.map(user, UserDTO.class);
-    }
-
     @ExceptionHandler
-    public ResponseEntity<UserErrorResponse> handleException(UserNotFoundException exception) {
-        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
+    public ResponseEntity<ErrorResponse> handleException(UserNotFoundException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    public ResponseEntity<UserErrorResponse> handleException(InvalidPersonDataException exception) {
-        UserErrorResponse response = new UserErrorResponse(exception.getMessage());
+    public ResponseEntity<ErrorResponse> handleException(InvalidPersonDataException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

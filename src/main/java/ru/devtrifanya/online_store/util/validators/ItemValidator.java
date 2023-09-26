@@ -5,13 +5,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.devtrifanya.online_store.dto.ItemDTO;
+import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.util.exceptions.item.ItemAlreadyExistException;
 
 @Component
 @Data
 public class ItemValidator implements Validator {
-    private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -22,8 +23,8 @@ public class ItemValidator implements Validator {
     public void validate(Object target, Errors errors) {
         ItemDTO itemDTO = (ItemDTO) target;
 
-        if (itemService.findOne(itemDTO.getName()).isPresent()) {
-            throw new ItemAlreadyExistException("Товар с таким названием уже существует.");
+        if (itemRepository.findByName(itemDTO.getName()).isPresent()) {
+            throw new ItemAlreadyExistException();
         }
     }
 }

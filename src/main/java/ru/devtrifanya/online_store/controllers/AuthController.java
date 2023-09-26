@@ -19,8 +19,9 @@ import ru.devtrifanya.online_store.services.AuthService;
 import ru.devtrifanya.online_store.security.jwt.JwtRequest;
 import ru.devtrifanya.online_store.security.jwt.JwtResponse;
 import ru.devtrifanya.online_store.security.jwt.JWTUtils;
-import ru.devtrifanya.online_store.util.errorResponses.AuthenticationErrorResponse;
+import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
 import ru.devtrifanya.online_store.util.exceptions.user.InvalidPersonDataException;
+import ru.devtrifanya.online_store.util.exceptions.user.UserAlreadyExistException;
 import ru.devtrifanya.online_store.util.exceptions.user.UserNotFoundException;
 import ru.devtrifanya.online_store.util.validators.AuthenticationValidator;
 import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
@@ -38,7 +39,7 @@ public class AuthController {
     private final AuthenticationValidator authenticationValidator;
 
     @PostMapping("/registration")
-    public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid UserDTO userDTO,
+    public ResponseEntity<String> signUp(@RequestBody @Valid UserDTO userDTO,
                                              BindingResult bindingResult) {
         registrationValidator.validate(userDTO, bindingResult);
 
@@ -46,19 +47,15 @@ public class AuthController {
             List<FieldError> errors = bindingResult.getFieldErrors();
             StringBuilder errorMessage = new StringBuilder();
             for (FieldError error : errors) {
-                errorMessage
-                        .append(error.getField())
-                        .append(" - ")
-                        .append(error.getDefaultMessage())
-                        .append(";");
+                errorMessage.append(error.getDefaultMessage() + "\n");
             }
             throw new InvalidPersonDataException(errorMessage.toString());
         }
         authService.signUpPerson(convertToPerson(userDTO));
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok("Регистрация прошла успешно.");
     }
 
-    @PostMapping("/authentication")
+    @PostMapping("/auth")
     public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest,
                                              BindingResult bindingResult) {
         authenticationValidator.validate(authRequest, bindingResult);
@@ -71,15 +68,24 @@ public class AuthController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<AuthenticationErrorResponse> handleException(Exception exception) {
-        exception.printStackTrace();
+    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        //exception.printStackTrace();
         String errorMessage = null;
-        if (exception instanceof BadCredentialsException)
+        HttpStatus status = null;
+        if (exception instanceof BadCredentialsException) {
             errorMessage = "Вы ввели неверный пароль.";
-        else if (exception instanceof UserNotFoundException)
+            status = HttpStatus.UNAUTHORIZED;
+        } else if (exception instanceof UserNotFoundException) {
             errorMessage = exception.getMessage();
-
-        AuthenticationErrorResponse response = new AuthenticationErrorResponse(errorMessage);
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+            status = HttpStatus.NOT_FOUND;
+        } else if (exception instanceof InvalidPersonDataException) {
+            errorMessage = exception.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+        } else if (exception instanceof UserAlreadyExistException) {
+            errorMessage = exception.getMessage();
+            status = HttpStatus.ALREADY_REPORTED;
+        }
+        ErrorResponse response = new ErrorResponse(errorMessage);
+        return new ResponseEntity<>(response, status);
     }
 }

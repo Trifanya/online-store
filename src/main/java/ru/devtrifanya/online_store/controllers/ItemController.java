@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.ItemDTO;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.util.errorResponses.ItemErrorResponse;
+import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
 import ru.devtrifanya.online_store.util.exceptions.item.InvalidItemDataException;
 import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
 import ru.devtrifanya.online_store.util.validators.ItemValidator;
@@ -28,21 +28,17 @@ public class ItemController {
     public final ItemValidator itemValidator;
 
     @GetMapping("/{id}")
-    public ItemDTO getItem(@PathVariable("id") int id) {
-        Optional<Item> item = itemService.findOne(id);
-        if (item.isEmpty()) {
-            throw new ItemNotFoundException("Товар с такими данными не найден.");
-        }
-        return convertToItemDTO(item.get());
+    public ItemDTO getItem(@PathVariable("id") int id) throws ItemNotFoundException {
+        return convertToItemDTO(itemService.findOne(id));
     }
 
-    @GetMapping("/{category}")
+    /*@GetMapping("/{category}")
     public List<ItemDTO> getCategoryItems(@PathVariable("category") String category) {
         return itemService.findItemsByCategory(category)
                 .stream()
                 .map(this::convertToItemDTO)
                 .toList();
-    }
+    }*/
 
     @GetMapping("/{category}/subcategories")
     public List<String> getSubcategories(@PathVariable("category") String category) {
@@ -51,45 +47,38 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> save(@RequestBody @Valid ItemDTO itemDTO,
-                                           BindingResult bindingResult) {
+    public ResponseEntity<String> save(@RequestBody @Valid ItemDTO itemDTO,
+                                       BindingResult bindingResult) {
         itemValidator.validate(itemDTO, bindingResult);
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
             StringBuilder errorMessage = new StringBuilder();
             for (FieldError error : errors) {
-                errorMessage
-                        .append(error.getField())
-                        .append(" - ")
-                        .append(error.getDefaultMessage())
-                        .append(";");
+                errorMessage.append(error.getDefaultMessage() + "\n");
             }
             throw new InvalidItemDataException(errorMessage.toString());
         }
         itemService.save(convertToItem(itemDTO));
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok("Товар успешно добавлен.");
     }
+
     @PatchMapping("/{id}")
-    public ResponseEntity<HttpStatus> edit(@RequestBody @Valid ItemDTO itemDTO,
-                     @PathVariable("id") int id,
-                     BindingResult bindingResult) {
+    public ResponseEntity<String> edit(@RequestBody @Valid ItemDTO itemDTO,
+                                       @PathVariable("id") int id,
+                                       BindingResult bindingResult) {
         itemValidator.validate(itemDTO, bindingResult);
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
             StringBuilder errorMessage = new StringBuilder();
             for (FieldError error : errors) {
-                errorMessage
-                        .append(error.getField())
-                        .append(" - ")
-                        .append(error.getDefaultMessage())
-                        .append(";");
+                errorMessage.append(error.getDefaultMessage() + "\n");
             }
             throw new InvalidItemDataException(errorMessage.toString());
         }
         itemService.update(id, convertToItem(itemDTO));
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok("Информация о товаре успешно изменена.");
     }
 
     @DeleteMapping("/{id}")
@@ -106,14 +95,31 @@ public class ItemController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ItemErrorResponse> handleException(InvalidItemDataException exception) {
-        ItemErrorResponse response = new ItemErrorResponse(exception.getMessage());
+    public ResponseEntity<ErrorResponse> handleException(InvalidItemDataException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ItemErrorResponse> handleException(ItemNotFoundException exception) {
-        ItemErrorResponse response = new ItemErrorResponse(exception.getMessage());
+    public ResponseEntity<ErrorResponse> handleException(ItemNotFoundException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        //String errorMessage = null;
+        HttpStatus status = null;
+
+        if (exception instanceof InvalidItemDataException) {
+            //errorMessage = exception.getMessage();
+            status = HttpStatus.UNAUTHORIZED;
+        } else if (exception instanceof ItemNotFoundException) {
+            //errorMessage = exception.getMessage();
+            status = HttpStatus.NOT_FOUND;
+        }
+
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+        return new ResponseEntity<>(response, status);
+    }
 }
+
