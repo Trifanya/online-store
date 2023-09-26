@@ -6,7 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.security.PersonDetails;
+import ru.devtrifanya.online_store.models.User;
 
 import java.time.Duration;
 import java.util.Date;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtTokenUtils {
+public class JWTUtils {
     @Value("${jwt.secret}")
     private String secret;
 
@@ -26,17 +26,19 @@ public class JwtTokenUtils {
     /**
      * В данном методе происходит генерация JWT-токена по данным пользователя.
      */
-    public String generateToken(PersonDetails personDetails) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>(); // компоненты payload в jwt-токене
 
-        List<String> rolesList = personDetails.getAuthorities()
+        List<String> rolesList = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        /** Настройка полей класса, входящих в JWT-токен. */
+        /** Настройка полей класса, входящих в payload JWT-токена. */
+        claims.put("name", user.getName());
+        claims.put("surname", user.getSurname());
+        claims.put("email", user.getEmail());
         claims.put("roles", rolesList);
-        claims.put("email", personDetails.getPerson().getEmail());
 
         /** Настройка времени действия выданного JWT-токена. */
         Date issuedDate = new Date();
@@ -44,7 +46,7 @@ public class JwtTokenUtils {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(personDetails.getUsername())
+                .setSubject(user.getUsername())
                 .setIssuedAt(issuedDate)
                 .setExpiration(expiredDate)
                 .signWith(SignatureAlgorithm.HS256, secret)
