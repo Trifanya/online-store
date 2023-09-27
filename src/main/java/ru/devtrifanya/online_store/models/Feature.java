@@ -2,13 +2,12 @@ package ru.devtrifanya.online_store.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "characteristic")
+@Table(name = "feature")
 @Data
 //@NoArgsConstructor
-public class Characteristic {
+public class Feature {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

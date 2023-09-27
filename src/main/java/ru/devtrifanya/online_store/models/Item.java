@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "item")
 @Data
@@ -44,4 +46,6 @@ public class Item implements Searchable {
     @NotEmpty(message = "Вы не указали родительскую категорию товара.")
     private String parent_category;
 
+    @OneToMany(mappedBy = "item")
+    private List<ItemFeature> characteristics;
 }

@@ -3,8 +3,9 @@ package ru.devtrifanya.online_store.services;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.models.ItemFeature;
+import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
 
@@ -16,20 +17,13 @@ import java.util.Optional;
 @Data
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final ItemFeatureRepository itemFeatureRepository;
 
     public Item findOne(int id) {
         Optional<Item> item = itemRepository.findById(id);
-
-        if (item.isEmpty()) throw new ItemNotFoundException();
-
-        return item.get();
-    }
-
-    public Item findOne(String name) throws ItemNotFoundException {
-        Optional<Item> item = itemRepository.findByName(name);
-
-        if (item.isEmpty()) throw new ItemNotFoundException();
-
+        if (item.isEmpty()) {
+            throw new ItemNotFoundException();
+        }
         return item.get();
     }
 
@@ -37,21 +31,17 @@ public class ItemService {
         return itemRepository.findByCategoryId(categoryId);
     }
 
-    public List<String> findSubcategoriesByCategory(String parentCategory) {
-        return null;
-    }
-
-    public List<Item> findAll() {
-        return itemRepository.findAll();
-    }
-
     @Transactional
-    public void save(Item item) {
+    public void save(Item item, List<ItemFeature> features) {
+        for (ItemFeature feature : features) {
+            item.getCharacteristics().add(feature);
+            itemFeatureRepository.save(feature);
+        }
         itemRepository.save(item);
     }
 
     @Transactional
-    public void update(int id, Item item) {
+    public void update(int id, Item item, List<ItemFeature> features) {
         item.setId(id);
         itemRepository.save(item);
     }

@@ -20,7 +20,7 @@ public class Category implements Searchable {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private List<Characteristic> characteristics;
+    private List<Feature> features;
 
     public Category(String name) {
         this.name = name;

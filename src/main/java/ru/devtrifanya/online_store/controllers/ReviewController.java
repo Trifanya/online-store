@@ -21,27 +21,31 @@ import ru.devtrifanya.online_store.util.validators.ReviewValidator;
 import java.util.List;
 
 @RestController
-@RequestMapping("/{userId}/reviews")
+@RequestMapping("/{userId}/{itemId}")
 @Data
 public class ReviewController {
     private final ReviewService reviewService;
     private final ModelMapper modelMapper;
     private final ReviewValidator reviewValidator;
 
-    /** .../{userId}/reviews/{itemId} - просмотр отзывов о конкретном товаре, для пользователей и администратора;
-     * Можно отсортировать отзывы по оценке: sortByRating = -1 - по возрастанию, ... = 1 - по убыванию, ... = 0 - сортировки нет. */
-    @GetMapping("/{itemId}")
-    public List<Review> showItemReviews(@PathVariable(name = "itemId") int itemId,
-                                        @RequestParam(value = "sortByStars", defaultValue = "0") short sortByStars) {
+    /**
+     * .../{userId}/reviews/{itemId} - просмотр отзывов о конкретном товаре, для пользователей и администратора;
+     * Можно отсортировать отзывы по оценке: sortByRating = -1 - по возрастанию, ... = 1 - по убыванию, ... = 0 - сортировки нет.
+     */
+    @GetMapping("/reviews")
+    public List<Review> show(@PathVariable(name = "itemId") int itemId,
+                             @RequestParam(value = "sortByStars", defaultValue = "0") short sortByStars) {
         return reviewService.getItemReviews(itemId, sortByStars);
     }
 
-    /** .../{userId}/reviews/{itemId}/new - добавление нового отзыва о конкретном товаре, только для пользователей; */
-    @PostMapping("/{itemId}/new")
-    public ResponseEntity<String> createReview(@RequestBody @Valid ReviewDTO reviewDTO,
-                                               @PathVariable("itemId") int itemId,
-                                               @PathVariable("userId") int userId,
-                                               BindingResult bindingResult) {
+    /**
+     * .../{userId}/reviews/{itemId}/new - добавление нового отзыва о конкретном товаре, только для пользователей;
+     */
+    @PostMapping("/reviews/new/{userId}")
+    public ResponseEntity<String> add(@RequestBody @Valid ReviewDTO reviewDTO,
+                                      @PathVariable("itemId") int itemId,
+                                      @PathVariable("userId") int userId,
+                                      BindingResult bindingResult) {
         reviewValidator.validate(itemId, userId);
 
         if (bindingResult.hasErrors()) {
@@ -56,9 +60,11 @@ public class ReviewController {
         return new ResponseEntity<>("Ваш отзыв успешно записан.", HttpStatus.CREATED);
     }
 
-    /** .../{userId}/reviews/{reviewId} - удаление отзыва, только для администратора; */
-    @DeleteMapping("/{reviewId}")
-    public ResponseEntity<String> deleteReview(@PathVariable("reviewId") int reviewId) {
+    /**
+     * .../{userId}/reviews/{reviewId} - удаление отзыва, только для администратора;
+     */
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<String> remove(@PathVariable("reviewId") int reviewId) {
         reviewService.delete(reviewId);
         return new ResponseEntity<>("Отзыв успешно удален.", HttpStatus.OK);
     }

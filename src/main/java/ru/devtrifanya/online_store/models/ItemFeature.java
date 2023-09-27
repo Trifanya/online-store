@@ -2,13 +2,12 @@ package ru.devtrifanya.online_store.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "item_characteristic")
+@Table(name = "itemFeature")
 @Data
 //@NoArgsConstructor
-public class ItemCharacteristic {
+public class ItemFeature {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +19,7 @@ public class ItemCharacteristic {
 
     @ManyToOne
     @JoinColumn(name = "characteristic_id", referencedColumnName = "id")
-    private Characteristic characteristic;
+    private Feature feature;
 
     @Column(name = "value")
     private String value;

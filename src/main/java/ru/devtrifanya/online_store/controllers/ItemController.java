@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import ru.devtrifanya.online_store.dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.dto.ItemDTO;
 import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
 import ru.devtrifanya.online_store.util.exceptions.item.InvalidItemDataException;
@@ -17,32 +19,41 @@ import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
 import ru.devtrifanya.online_store.util.validators.ItemValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping("/{categoryId}")
 @Data
 public class ItemController {
     public final ItemService itemService;
     public final ModelMapper modelMapper;
     public final ItemValidator itemValidator;
 
-    @GetMapping("/{id}")
-    public ItemDTO getItem(@PathVariable("id") int id) throws ItemNotFoundException {
-        return convertToItemDTO(itemService.findOne(id));
-    }
-
-    @GetMapping("/{categoryId}")
+    /*@GetMapping()
     public List<ItemDTO> showItemsOfCategory(@PathVariable("categoryId") int categoryId) {
         return itemService.getItemsOfCategory(categoryId)
                 .stream()
                 .map(this::convertToItemDTO)
                 .toList();
+    }*/
+
+
+    @GetMapping("/{itemId}")
+    public ItemDTO show(@PathVariable("itemId") int id) throws ItemNotFoundException {
+        // TODO - возможно, вместе с товаром нужно возвращать и его характеристики
+        return convertToItemDTO(itemService.findOne(id));
     }
 
-    @PostMapping
-    public ResponseEntity<String> addItem(@RequestBody @Valid ItemDTO itemDTO,
-                                       BindingResult bindingResult) {
+    /**
+     * Адрес: .../{categoryId}/new
+     * Добавление нового товара, только для администратора.
+     * При добавлении нового товара кроме данных о самом товаре, которые хранятся в таблице Item,
+     * нужно указать еще и значения характеристик, присущих товару (всем товарам в данной категории).
+     * Значения характеристик будут храниться отдельно в таблице ItemCharacteristics.
+     */
+    @PostMapping("/newItem")
+    public ResponseEntity<String> add(@RequestBody @Valid ItemDTO itemDTO,
+                                      @RequestBody @Valid List<ItemFeatureDTO> itemFeatures,
+                                      BindingResult bindingResult) {
         itemValidator.validate(itemDTO, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -53,13 +64,17 @@ public class ItemController {
             }
             throw new InvalidItemDataException(errorMessage.toString());
         }
-        itemService.save(convertToItem(itemDTO));
+        itemService.save(convertToItem(itemDTO), itemFeatures
+                .stream()
+                .map(this::convertToItemFeature)
+                .toList());
         return ResponseEntity.ok("Товар успешно добавлен.");
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<String> editItem(@RequestBody @Valid ItemDTO itemDTO,
-                                       @PathVariable("id") int id,
+    @PatchMapping("/{itemId}/edit")
+    public ResponseEntity<String> edit(@RequestBody @Valid ItemDTO itemDTO,
+                                       @RequestBody @Valid List<ItemFeatureDTO> itemFeatures,
+                                       @PathVariable("itemId") int itemId,
                                        BindingResult bindingResult) {
         itemValidator.validate(itemDTO, bindingResult);
 
@@ -71,13 +86,17 @@ public class ItemController {
             }
             throw new InvalidItemDataException(errorMessage.toString());
         }
-        itemService.update(id, convertToItem(itemDTO));
+        itemService.update(itemId, convertToItem(itemDTO), itemFeatures
+                .stream()
+                .map(this::convertToItemFeature)
+                .toList());
         return ResponseEntity.ok("Информация о товаре успешно изменена.");
     }
 
-    @DeleteMapping("/{id}")
-    public void removeItem(@PathVariable("id") int id) {
-        itemService.delete(id);
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<String> remove(@PathVariable("itemId") int itemId) {
+        itemService.delete(itemId);
+        return ResponseEntity.ok("Товар успешно удален.");
     }
 
     public Item convertToItem(ItemDTO itemDTO) {
@@ -88,18 +107,11 @@ public class ItemController {
         return modelMapper.map(item, ItemDTO.class);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(InvalidItemDataException exception) {
-        ErrorResponse response = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    public ItemFeature convertToItemFeature(ItemFeatureDTO itemFeatureDTO) {
+        return modelMapper.map(itemFeatureDTO, ItemFeature.class);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(ItemNotFoundException exception) {
-        ErrorResponse response = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
         //String errorMessage = null;
         HttpStatus status = null;
@@ -111,7 +123,6 @@ public class ItemController {
             //errorMessage = exception.getMessage();
             status = HttpStatus.NOT_FOUND;
         }
-
         ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, status);
     }

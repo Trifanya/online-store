@@ -20,7 +20,6 @@ import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
 import java.util.List;
 
 @RestController
-@RequestMapping("/people")
 @Data
 public class UserController {
     private final UserService userService;
@@ -28,7 +27,7 @@ public class UserController {
     private final RegistrationValidator registrationValidator;
     private final AuthService authService;
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/edit/{userId}")
     public ResponseEntity<String> edit(@RequestBody @Valid UserDTO userDTO,
                                            @PathVariable("id") int id,
                                            BindingResult bindingResult) {
