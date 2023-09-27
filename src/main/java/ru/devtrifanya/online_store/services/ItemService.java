@@ -3,6 +3,7 @@ package ru.devtrifanya.online_store.services;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
@@ -32,8 +33,8 @@ public class ItemService {
         return item.get();
     }
 
-    public List<Item> findItemsByCategory(String category) {
-        return itemRepository.findByCategory(category);
+    public List<Item> getItemsOfCategory(int categoryId) {
+        return itemRepository.findByCategoryId(categoryId);
     }
 
     public List<String> findSubcategoriesByCategory(String parentCategory) {

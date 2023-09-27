@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "item")
 @Data
 @NoArgsConstructor
-public class Item {
+public class Item implements Searchable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

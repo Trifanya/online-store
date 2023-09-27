@@ -21,4 +21,9 @@ public class CategoryRelation {
     @ManyToOne
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Category parent;
+
+    public CategoryRelation(Category child, Category parent) {
+        this.child = child;
+        this.parent = parent;
+    }
 }

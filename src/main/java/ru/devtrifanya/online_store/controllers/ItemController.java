@@ -32,22 +32,16 @@ public class ItemController {
         return convertToItemDTO(itemService.findOne(id));
     }
 
-    /*@GetMapping("/{category}")
-    public List<ItemDTO> getCategoryItems(@PathVariable("category") String category) {
-        return itemService.findItemsByCategory(category)
+    @GetMapping("/{categoryId}")
+    public List<ItemDTO> showItemsOfCategory(@PathVariable("categoryId") int categoryId) {
+        return itemService.getItemsOfCategory(categoryId)
                 .stream()
                 .map(this::convertToItemDTO)
                 .toList();
-    }*/
-
-    @GetMapping("/{category}/subcategories")
-    public List<String> getSubcategories(@PathVariable("category") String category) {
-        // TODO
-        return null;
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody @Valid ItemDTO itemDTO,
+    public ResponseEntity<String> addItem(@RequestBody @Valid ItemDTO itemDTO,
                                        BindingResult bindingResult) {
         itemValidator.validate(itemDTO, bindingResult);
 
@@ -64,7 +58,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> edit(@RequestBody @Valid ItemDTO itemDTO,
+    public ResponseEntity<String> editItem(@RequestBody @Valid ItemDTO itemDTO,
                                        @PathVariable("id") int id,
                                        BindingResult bindingResult) {
         itemValidator.validate(itemDTO, bindingResult);
@@ -82,7 +76,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public void remove(@PathVariable("id") int id) {
+    public void removeItem(@PathVariable("id") int id) {
         itemService.delete(id);
     }
 

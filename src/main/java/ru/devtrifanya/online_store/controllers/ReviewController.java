@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.ReviewDTO;
 import ru.devtrifanya.online_store.models.Review;
@@ -69,11 +70,16 @@ public class ReviewController {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        exception.printStackTrace();
         HttpStatus status = null;
         if (exception instanceof NoReviewsException) {
             status = HttpStatus.NOT_FOUND;
         } else if (exception instanceof ReviewAlreadyPostedException) {
             status = HttpStatus.ALREADY_REPORTED;
+        } else if (exception instanceof InvalidReviewDataException) {
+            status = HttpStatus.BAD_REQUEST;
+        } else if (exception instanceof MethodArgumentNotValidException) {
+            status = HttpStatus.BAD_REQUEST;
         }
         ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, status);

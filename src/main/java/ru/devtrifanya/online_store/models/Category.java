@@ -9,8 +9,8 @@ import java.util.List;
 @Entity
 @Table(name = "category")
 @Data
-//@NoArgsConstructor
-public class Category {
+@NoArgsConstructor
+public class Category implements Searchable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +21,8 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Characteristic> characteristics;
+
+    public Category(String name) {
+        this.name = name;
+    }
 }

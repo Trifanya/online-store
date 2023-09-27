@@ -1,0 +1,9 @@
+package ru.devtrifanya.online_store.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ru.devtrifanya.online_store.models.Characteristic;
+
+@Repository
+public interface CharacteristicRepository extends JpaRepository<Characteristic, Integer> {
+}
