@@ -7,7 +7,7 @@ import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
+import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,35 +19,35 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ItemFeatureRepository itemFeatureRepository;
 
-    public Item findOne(int id) {
-        Optional<Item> item = itemRepository.findById(id);
+    public Item get(int itemId) {
+        Optional<Item> item = itemRepository.findById(itemId);
         if (item.isEmpty()) {
-            throw new ItemNotFoundException();
+            throw new NotFoundException("Товар с таким названием не найден.");
         }
         return item.get();
     }
 
-    public List<Item> getItemsOfCategory(int categoryId) {
+    public List<Item> getAll(int categoryId) {
         return itemRepository.findByCategoryId(categoryId);
     }
 
     @Transactional
-    public void save(Item item, List<ItemFeature> features) {
+    public void create(Item item, List<ItemFeature> features) {
         for (ItemFeature feature : features) {
-            item.getCharacteristics().add(feature);
+            item.getFeatures().add(feature);
             itemFeatureRepository.save(feature);
         }
         itemRepository.save(item);
     }
 
     @Transactional
-    public void update(int id, Item item, List<ItemFeature> features) {
-        item.setId(id);
+    public void update(int itemId, Item item, List<ItemFeature> features) {
+        item.setId(itemId);
         itemRepository.save(item);
     }
 
     @Transactional
-    public void delete(int id) {
-        itemRepository.deleteById(id);
+    public void delete(int itemId) {
+        itemRepository.deleteById(itemId);
     }
 }

@@ -1,16 +1,14 @@
 package ru.devtrifanya.online_store.services;
 
 import lombok.Data;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Review;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.repositories.ReviewRepository;
 import ru.devtrifanya.online_store.repositories.UserRepository;
-import ru.devtrifanya.online_store.util.exceptions.review.NoReviewsException;
+import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
-import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,7 +20,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
-    public List<Review> getItemReviews(int itemId, short sortByStars) {
+    public List<Review> getAll(int itemId, short sortByStars) {
         List<Review> reviews = null;
         if (sortByStars == 1) {
             reviews = reviewRepository.findByItemIdOrderByStarsDesc(itemId);
@@ -32,13 +30,13 @@ public class ReviewService {
             reviews = reviewRepository.findByItemId(itemId);
         }
         if (reviews.size() == 0 || reviews == null) {
-            throw new NoReviewsException();
+            throw new NotFoundException("О данном товаре пока что нет ни одного отзыва.");
         }
         return reviews;
     }
 
     @Transactional
-    public void save(Review review, int itemId, int userId) {
+    public void create(Review review, int itemId, int userId) {
         review.setItem(itemRepository.findById(itemId).get());
         review.setUser(userRepository.findById(userId).get());
         review.setTimestamp(LocalDateTime.now());

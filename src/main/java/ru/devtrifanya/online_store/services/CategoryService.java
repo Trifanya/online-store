@@ -17,12 +17,12 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryRelationRepository categoryRelationRepository;
 
-    public List<Category> getSubcategories(int categoryId) {
+    public List<Category> getAll(int categoryId) {
         return categoryRelationRepository.findByParentId(categoryId);
     }
 
     @Transactional
-    public void createCategory(Category category, int parentId) {
+    public void create(Category category, int parentId) {
         Category parent = categoryRepository.findById(parentId).orElse(null);
         CategoryRelation relation = new CategoryRelation(category, parent);
         categoryRelationRepository.save(relation);

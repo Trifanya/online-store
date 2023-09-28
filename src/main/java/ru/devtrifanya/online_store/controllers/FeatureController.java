@@ -3,7 +3,6 @@ package ru.devtrifanya.online_store.controllers;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.FeatureDTO;
 import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.services.FeatureService;
-import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
-import ru.devtrifanya.online_store.util.exceptions.feature.FeatureAlreadyExistException;
-import ru.devtrifanya.online_store.util.exceptions.feature.InvalidFeatureDataException;
+import ru.devtrifanya.online_store.util.ErrorResponse;
+import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.FeatureValidator;
 
 import java.util.List;
@@ -25,6 +24,7 @@ public class FeatureController {
     private final FeatureService featureService;
     private final FeatureValidator featureValidator;
     private final ModelMapper modelMapper;
+    private final MainExceptionHandler mainExceptionHandler;
 
     /**
      * Адрес: .../{categoryId}/characteristics/new
@@ -41,10 +41,10 @@ public class FeatureController {
             for (FieldError error : errors) {
                 errorMessage.append(error.getDefaultMessage() + "\n");
             }
-            throw new InvalidFeatureDataException(errorMessage.toString());
+            throw new InvalidDataException(errorMessage.toString());
         }
-        featureService.createCharacteristic(convertToCharacteristic(featureDTO), categoryId);
-        return new ResponseEntity<>("Характеритика успешно добавлена.", HttpStatus.CREATED);
+        featureService.create(convertToCharacteristic(featureDTO), categoryId);
+        return ResponseEntity.ok("Характеритика успешно добавлена.");
     }
 
     @PatchMapping("/features/edit/{featureId}")
@@ -58,16 +58,16 @@ public class FeatureController {
             for (FieldError error : errors) {
                 errorMessage.append(error.getDefaultMessage() + "\n");
             }
-            throw new InvalidFeatureDataException(errorMessage.toString());
+            throw new InvalidDataException(errorMessage.toString());
         }
-        featureService.updateCharacteristic(id, convertToCharacteristic(featureDTO));
-        return new ResponseEntity<>("Характеритика успешно изменена.", HttpStatus.CREATED);
+        featureService.update(id, convertToCharacteristic(featureDTO));
+        return ResponseEntity.ok("Характеритика успешно изменена.");
     }
 
     @DeleteMapping("/features/delete/{featureId}")
-    public ResponseEntity<String> delete(@PathVariable("id") int id) {
-        featureService.deleteCharacteristic(id);
-        return new ResponseEntity<>("Характеристика успешно удалена.", HttpStatus.OK);
+    public ResponseEntity<String> delete(@PathVariable("featureId") int id) {
+        featureService.delete(id);
+        return ResponseEntity.ok("Характеритика успешно удалена.");
     }
 
 
@@ -77,15 +77,6 @@ public class FeatureController {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        //String errorMessage = null;
-        HttpStatus status = null;
-        if (exception instanceof InvalidFeatureDataException) {
-            status = HttpStatus.BAD_REQUEST;
-        } else if (exception instanceof FeatureAlreadyExistException) {
-            status = HttpStatus.ALREADY_REPORTED;
-        }
-        ErrorResponse response = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(response, status);
+        return mainExceptionHandler.handleException(exception);
     }
-
 }

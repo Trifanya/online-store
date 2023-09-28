@@ -12,9 +12,10 @@ import ru.devtrifanya.online_store.dto.UserDTO;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.services.AuthService;
 import ru.devtrifanya.online_store.services.UserService;
-import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
-import ru.devtrifanya.online_store.util.exceptions.user.InvalidPersonDataException;
-import ru.devtrifanya.online_store.util.exceptions.user.UserNotFoundException;
+import ru.devtrifanya.online_store.util.ErrorResponse;
+import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
+import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class UserController {
     private final ModelMapper modelMapper;
     private final RegistrationValidator registrationValidator;
     private final AuthService authService;
+    private final MainExceptionHandler mainExceptionHandler;
 
     @PatchMapping("/edit/{userId}")
     public ResponseEntity<String> edit(@RequestBody @Valid UserDTO userDTO,
@@ -39,10 +41,10 @@ public class UserController {
             for (FieldError error : errors) {
                 errorMessage.append(error.getDefaultMessage() + "\n");
             }
-            throw new InvalidPersonDataException(errorMessage.toString());
+            throw new InvalidDataException(errorMessage.toString());
         }
         userService.update(id, convertToPerson(userDTO));
-        return ResponseEntity.ok("Данные пользователя изменены успешно.");
+        return ResponseEntity.ok("Ваши данные успешно изменены.");
     }
 
     public User convertToPerson(UserDTO userDTO) {
@@ -50,14 +52,19 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(UserNotFoundException exception) {
+    public ResponseEntity<ErrorResponse> handleException(NotFoundException exception) {
         ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(InvalidPersonDataException exception) {
+    public ResponseEntity<ErrorResponse> handleException(InvalidDataException exception) {
         ErrorResponse response = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        return mainExceptionHandler.handleException(exception);
     }
 }

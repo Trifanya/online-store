@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.devtrifanya.online_store.dto.UserDTO;
 import ru.devtrifanya.online_store.repositories.UserRepository;
-import ru.devtrifanya.online_store.util.exceptions.user.UserAlreadyExistException;
+import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
 
 @Component
 @Data
@@ -23,7 +23,7 @@ public class RegistrationValidator implements Validator {
         UserDTO userDTO = (UserDTO) target;
 
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new UserAlreadyExistException();
+            throw new AlreadyExistException("Пользователь с указанным email уже зарегистрирован.");
         }
     }
 }

@@ -38,14 +38,11 @@ public class Item implements Searchable {
     @NotEmpty(message = "Вы не указали количество товара.")
     private int quantity;
 
-    @Column(name = "category")
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
     @NotEmpty(message = "Вы не указали категорию товара.")
-    private String category;
-
-    @Column(name = "parent_category")
-    @NotEmpty(message = "Вы не указали родительскую категорию товара.")
-    private String parent_category;
+    private Category category;
 
     @OneToMany(mappedBy = "item")
-    private List<ItemFeature> characteristics;
+    private List<ItemFeature> features;
 }

@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.devtrifanya.online_store.repositories.UserRepository;
 import ru.devtrifanya.online_store.security.jwt.JwtRequest;
-import ru.devtrifanya.online_store.util.exceptions.user.UserNotFoundException;
+import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 @Component
 @Data
@@ -23,7 +23,7 @@ public class AuthenticationValidator implements Validator {
     public void validate(Object target, Errors errors) {
         JwtRequest request = (JwtRequest) target;
         if (userRepository.findByEmail(request.getEmail()).isEmpty()) {
-            throw new UserNotFoundException();
+            throw new NotFoundException("Пользователь с указанным email не найден.");
         }
     }
 }

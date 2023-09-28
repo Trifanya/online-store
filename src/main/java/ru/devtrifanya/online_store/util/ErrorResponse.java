@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.util.errorResponses;
+package ru.devtrifanya.online_store.util;
 
 import lombok.Data;
 

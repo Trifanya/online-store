@@ -3,7 +3,6 @@ package ru.devtrifanya.online_store.controllers;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -13,8 +12,9 @@ import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Searchable;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
-import ru.devtrifanya.online_store.util.exceptions.category.InvalidCategoryDataException;
+import ru.devtrifanya.online_store.util.ErrorResponse;
+import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.CategoryValidator;
 
 import java.util.List;
@@ -27,19 +27,20 @@ public class CategoryController {
     private final ItemService itemService;
     private final CategoryValidator categoryValidator;
     private final ModelMapper modelMapper;
+    private final MainExceptionHandler mainExceptionHandler;
 
     /**
-     * Адрес: .../categories/{categoryId}
+     * Адрес: .../{categoryId}
      * Получение товаров или подкатегорий какой-то категории, для пользователей и администратора.
      * Данное действие происходит при нажатии на любую категорию товаров. При этом id выбранной категории
      * будет передан в параметрах запроса. Если выбранная категория содержит подкатегории товаров, то будет
      * возвращен список подкатегорий, если не содержит, то будет возвращен список всех товаров данной категории.
      */
     @GetMapping
-    public List<? extends Searchable> showSubcategoriesOrItems(@PathVariable("categoryId") int id) {
-        List<? extends Searchable> catalogElements = categoryService.getSubcategories(id);
+    public List<? extends Searchable> showSubcategoriesOrItems(@PathVariable("categoryId") int categoryId) {
+        List<? extends Searchable> catalogElements = categoryService.getAll(categoryId);
         if (catalogElements.size() == 0) {
-            catalogElements = itemService.getItemsOfCategory(id);
+            catalogElements = itemService.getAll(categoryId);
         }
         return catalogElements;
     }
@@ -61,10 +62,10 @@ public class CategoryController {
             for (FieldError error : errors) {
                 errorMessage.append(error.getDefaultMessage() + "\n");
             }
-            throw new InvalidCategoryDataException(errorMessage.toString());
+            throw new InvalidDataException(errorMessage.toString());
         }
-        categoryService.createCategory(convertToCategory(categoryDTO), parentId);
-        return new ResponseEntity<>("Категория успешно добавлена.", HttpStatus.CREATED);
+        categoryService.create(convertToCategory(categoryDTO), parentId);
+        return ResponseEntity.ok("Категория успешно добавлена.");
     }
 
     @PatchMapping("/editCategory")
@@ -78,16 +79,18 @@ public class CategoryController {
             for (FieldError error : errors) {
                 errorMessage.append(error.getDefaultMessage() + "\n");
             }
-            throw new InvalidCategoryDataException(errorMessage.toString());
+            throw new InvalidDataException(errorMessage.toString());
         }
-        categoryService.createCategory(convertToCategory(categoryDTO), parentId);
-        return new ResponseEntity<>("Категория успешно изменена.", HttpStatus.OK);
+        categoryService.create(convertToCategory(categoryDTO), parentId);
+        return ResponseEntity.ok("Категория успешно изменена.");
+
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> delete(@PathVariable("categoryId") int categoryId) {
         // TODO
-        return new ResponseEntity<>("Категория успешно удалена.", HttpStatus.OK);
+        return ResponseEntity.ok("Категория успешно удалена.");
+
     }
 
     public Category convertToCategory(CategoryDTO categoryDTO) {
@@ -96,12 +99,6 @@ public class CategoryController {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        String errorMessage = null;
-        HttpStatus status = null;
-        if (exception instanceof InvalidCategoryDataException) {
-            status = HttpStatus.BAD_REQUEST;
-        }
-        ErrorResponse response = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(response, status);
+        return mainExceptionHandler.handleException(exception);
     }
 }

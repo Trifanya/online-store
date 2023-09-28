@@ -3,7 +3,6 @@ package ru.devtrifanya.online_store.controllers;
 import jakarta.validation.Valid;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -13,9 +12,9 @@ import ru.devtrifanya.online_store.dto.ItemDTO;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.util.errorResponses.ErrorResponse;
-import ru.devtrifanya.online_store.util.exceptions.item.InvalidItemDataException;
-import ru.devtrifanya.online_store.util.exceptions.item.ItemNotFoundException;
+import ru.devtrifanya.online_store.util.ErrorResponse;
+import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.ItemValidator;
 
 import java.util.List;
@@ -24,23 +23,16 @@ import java.util.List;
 @RequestMapping("/{categoryId}")
 @Data
 public class ItemController {
-    public final ItemService itemService;
-    public final ModelMapper modelMapper;
-    public final ItemValidator itemValidator;
-
-    /*@GetMapping()
-    public List<ItemDTO> showItemsOfCategory(@PathVariable("categoryId") int categoryId) {
-        return itemService.getItemsOfCategory(categoryId)
-                .stream()
-                .map(this::convertToItemDTO)
-                .toList();
-    }*/
+    private final ItemService itemService;
+    private final ModelMapper modelMapper;
+    private final ItemValidator itemValidator;
+    private final MainExceptionHandler mainExceptionHandler;
 
 
     @GetMapping("/{itemId}")
-    public ItemDTO show(@PathVariable("itemId") int id) throws ItemNotFoundException {
+    public ItemDTO show(@PathVariable("itemId") int itemId) {
         // TODO - возможно, вместе с товаром нужно возвращать и его характеристики
-        return convertToItemDTO(itemService.findOne(id));
+        return convertToItemDTO(itemService.get(itemId));
     }
 
     /**
@@ -62,9 +54,9 @@ public class ItemController {
             for (FieldError error : errors) {
                 errorMessage.append(error.getDefaultMessage() + "\n");
             }
-            throw new InvalidItemDataException(errorMessage.toString());
+            throw new InvalidDataException(errorMessage.toString());
         }
-        itemService.save(convertToItem(itemDTO), itemFeatures
+        itemService.create(convertToItem(itemDTO), itemFeatures
                 .stream()
                 .map(this::convertToItemFeature)
                 .toList());
@@ -84,7 +76,7 @@ public class ItemController {
             for (FieldError error : errors) {
                 errorMessage.append(error.getDefaultMessage() + "\n");
             }
-            throw new InvalidItemDataException(errorMessage.toString());
+            throw new InvalidDataException(errorMessage.toString());
         }
         itemService.update(itemId, convertToItem(itemDTO), itemFeatures
                 .stream()
@@ -94,7 +86,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<String> remove(@PathVariable("itemId") int itemId) {
+    public ResponseEntity<String> delete(@PathVariable("itemId") int itemId) {
         itemService.delete(itemId);
         return ResponseEntity.ok("Товар успешно удален.");
     }
@@ -113,18 +105,7 @@ public class ItemController {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        //String errorMessage = null;
-        HttpStatus status = null;
-
-        if (exception instanceof InvalidItemDataException) {
-            //errorMessage = exception.getMessage();
-            status = HttpStatus.UNAUTHORIZED;
-        } else if (exception instanceof ItemNotFoundException) {
-            //errorMessage = exception.getMessage();
-            status = HttpStatus.NOT_FOUND;
-        }
-        ErrorResponse response = new ErrorResponse(exception.getMessage());
-        return new ResponseEntity<>(response, status);
+        return mainExceptionHandler.handleException(exception);
     }
 }
 

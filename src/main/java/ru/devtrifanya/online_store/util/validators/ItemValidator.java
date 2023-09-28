@@ -6,8 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.devtrifanya.online_store.dto.ItemDTO;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.util.exceptions.item.ItemAlreadyExistException;
+import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
 
 @Component
 @Data
@@ -24,7 +23,7 @@ public class ItemValidator implements Validator {
         ItemDTO itemDTO = (ItemDTO) target;
 
         if (itemRepository.findByName(itemDTO.getName()).isPresent()) {
-            throw new ItemAlreadyExistException();
+            throw new AlreadyExistException("Товар с таким названием уже есть на сайте.");
         }
     }
 }

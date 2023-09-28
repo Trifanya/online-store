@@ -12,9 +12,9 @@ import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.UserRepository;
 import ru.devtrifanya.online_store.security.jwt.JwtRequest;
 import ru.devtrifanya.online_store.security.jwt.JWTUtils;
-import ru.devtrifanya.online_store.util.exceptions.user.UserNotFoundException;
 
 @Service
+@Transactional(readOnly = true)
 @Data
 public class AuthService {
     private final AuthenticationManager authenticationManager;
@@ -23,13 +23,13 @@ public class AuthService {
     private final JWTUtils JWTUtils;
 
     @Transactional
-    public void signUpPerson(User user) {
+    public void create(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
         userRepository.save(user);
     }
 
-    public String createAuthToken(JwtRequest authRequest) throws AuthenticationException, UserNotFoundException {
+    public String createAuthToken(JwtRequest authRequest) throws AuthenticationException {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
         );
