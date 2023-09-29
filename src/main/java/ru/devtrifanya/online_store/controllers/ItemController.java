@@ -20,7 +20,7 @@ import ru.devtrifanya.online_store.util.validators.ItemValidator;
 import java.util.List;
 
 @RestController
-@RequestMapping("/{categoryId}")
+@RequestMapping("/categories/{categoryId}")
 @Data
 public class ItemController {
     private final ItemService itemService;
@@ -45,8 +45,9 @@ public class ItemController {
     @PostMapping("/newItem")
     public ResponseEntity<String> add(@RequestBody @Valid ItemDTO itemDTO,
                                       @RequestBody @Valid List<ItemFeatureDTO> itemFeatures,
+                                      @PathVariable("categoryId") int categoryId,
                                       BindingResult bindingResult) {
-        itemValidator.validate(itemDTO, bindingResult);
+        itemValidator.validate(itemDTO);
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
@@ -56,7 +57,8 @@ public class ItemController {
             }
             throw new InvalidDataException(errorMessage.toString());
         }
-        itemService.create(convertToItem(itemDTO), itemFeatures
+        itemService.create(convertToItem(itemDTO), categoryId,
+                itemFeatures
                 .stream()
                 .map(this::convertToItemFeature)
                 .toList());
@@ -68,7 +70,7 @@ public class ItemController {
                                        @RequestBody @Valid List<ItemFeatureDTO> itemFeatures,
                                        @PathVariable("itemId") int itemId,
                                        BindingResult bindingResult) {
-        itemValidator.validate(itemDTO, bindingResult);
+        itemValidator.validate(itemDTO);
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
@@ -85,7 +87,7 @@ public class ItemController {
         return ResponseEntity.ok("Информация о товаре успешно изменена.");
     }
 
-    @DeleteMapping("/{itemId}")
+    @DeleteMapping("/{itemId}/delete")
     public ResponseEntity<String> delete(@PathVariable("itemId") int itemId) {
         itemService.delete(itemId);
         return ResponseEntity.ok("Товар успешно удален.");

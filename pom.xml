@@ -94,6 +94,19 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!--
+		База данных H2 для тестирования.
+		База данных H2 - это база данных в памяти. Использование этой базы данных устраняет
+		необходимость настройки и запуска фактической базы данных для целей тестирования.
+		-->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>2.2.224</version>
+			<scope>test</scope>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

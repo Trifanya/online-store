@@ -39,7 +39,7 @@ public class AuthController {
     @PostMapping("/registration")
     public ResponseEntity<String> signUp(@RequestBody @Valid UserDTO userDTO,
                                              BindingResult bindingResult) {
-        registrationValidator.validate(userDTO, bindingResult);
+        registrationValidator.validate(userDTO);
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
@@ -53,10 +53,10 @@ public class AuthController {
         return ResponseEntity.ok("Регистрация прошла успешно.");
     }
 
-    @PostMapping("/auth")
+    @PostMapping("/authentication")
     public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest,
                                              BindingResult bindingResult) {
-        authenticationValidator.validate(authRequest, bindingResult);
+        authenticationValidator.validate(authRequest);
         String jwt = authService.createAuthToken(authRequest);
         return ResponseEntity.ok(new JwtResponse(jwt));
     }

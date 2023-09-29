@@ -22,6 +22,9 @@ public class Category implements Searchable {
     @OneToMany(mappedBy = "category")
     private List<Feature> features;
 
+    @OneToMany(mappedBy = "category")
+    private List<Item> items;
+
     public Category(String name) {
         this.name = name;
     }

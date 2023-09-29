@@ -11,9 +11,13 @@ import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
 public class FeatureValidator {
     public final FeatureRepository featureRepository;
 
-    public void validate(FeatureDTO featureDTO, int categoryid) {
+    /**
+     * Проверка на наличие у текущей категории характеристики с таким же названием
+     * как у добавляемой в эту категорию характеристики.
+     */
+    public void validate(FeatureDTO featureDTO, int categoryId) {
         // TODO - сделать проверку, что у данной категории еще нет характеристики с таким названием
-        if (false) {
+        if (featureRepository.findByNameAndCategoryId(featureDTO.getName(), categoryId).isPresent()) {
             throw new AlreadyExistException("У текущей категории уже есть характеристика с указанным названием.");
         }
     }

@@ -18,7 +18,7 @@ import ru.devtrifanya.online_store.util.validators.ReviewValidator;
 import java.util.List;
 
 @RestController
-@RequestMapping("/{itemId}")
+@RequestMapping("/reviews/{itemId}")
 @Data
 public class ReviewController {
     private final ReviewService reviewService;
@@ -31,7 +31,7 @@ public class ReviewController {
      * Просмотр отзывов о конкретном товаре, для пользователей и администратора;
      * Можно отсортировать отзывы по оценке: sortByRating = -1 - по возрастанию, ... = 1 - по убыванию, ... = 0 - сортировки нет.
      */
-    @GetMapping("/reviews")
+    @GetMapping()
     public List<Review> show(@PathVariable(name = "itemId") int itemId,
                              @RequestParam(value = "sortByStars", defaultValue = "0") short sortByStars) {
         return reviewService.getAll(itemId, sortByStars);
@@ -41,7 +41,7 @@ public class ReviewController {
      * Адрес: .../{itemId}/reviews/new/{userId}
      * Добавление нового отзыва о конкретном товаре, только для пользователей;
      */
-    @PostMapping("/reviews/new/{userId}")
+    @PostMapping("/new/{userId}")
     public ResponseEntity<String> add(@RequestBody @Valid ReviewDTO reviewDTO,
                                       @PathVariable("itemId") int itemId,
                                       @PathVariable("userId") int userId,
@@ -61,10 +61,10 @@ public class ReviewController {
     }
 
     /**
-     * Адрес: /{itemId}/reviews/{reviewId}
+     * Адрес: /{itemId}/reviews/delete/{reviewId}
      * Удаление отзыва, только для администратора;
      */
-    @DeleteMapping("/reviews/{reviewId}")
+    @DeleteMapping("/delete/{reviewId}")
     public ResponseEntity<String> delete(@PathVariable("reviewId") int reviewId) {
         reviewService.delete(reviewId);
         return ResponseEntity.ok("Отзыв успешно удален.");

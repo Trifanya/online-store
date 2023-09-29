@@ -26,12 +26,12 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
-                .authorizeHttpRequests(authorizeHttpRequests ->
-                        authorizeHttpRequests
-                                .requestMatchers("/registration").permitAll()
-                                .requestMatchers("/someAddressForAdmin").hasRole("ADMIN") // к адресам в этой строке есть доступ только у пользователей с указанными ролями
-                                .requestMatchers("/someAddressForUser").hasRole("USER")
-                                .anyRequest().permitAll())
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/categories/{categoryId}/{itemId}", "/categories/{categoryId}", "/{userId}/cart", "/{userId}/cart/{itemId}", "/{userId}/cart/{cartElementId}/edit/{itemId}", "/{userId}/cart/delete/{cartElementId}", "/reviews/{itemId}", "/reviews/{itemId}/delete/{reviewId}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/profile/edit/{userId}", "/reviews/{itemId}/new/{userId}").hasRole("USER")
+                        .requestMatchers("/categories/{categoryId}/newItem", "/categories/{categoryId}/{itemId}/edit", "/categories/{categoryId}/{itemId}/delete", "/{categoryId}/features/newFeature", "/{categoryId}/features/edit/{featureId}", "/{categoryId}/features/delete/{featureId}", "/categories/{categoryId}/newCategory", "/categories/{categoryId}/edit", "/categories/{categoryId}/delete").hasRole("ADMIN")
+                        .requestMatchers("/registration", "/authentication").permitAll()
+                        .anyRequest().permitAll())
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandling ->
