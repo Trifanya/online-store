@@ -6,4 +6,5 @@ import ru.devtrifanya.online_store.models.ItemFeature;
 
 @Repository
 public interface ItemFeatureRepository extends JpaRepository<ItemFeature, Integer> {
+    void deleteByFeatureId(int featureId);
 }

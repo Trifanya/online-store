@@ -29,7 +29,7 @@ public class ReviewService {
         } else {
             reviews = reviewRepository.findByItemId(itemId);
         }
-        if (reviews.size() == 0 || reviews == null) {
+        if (reviews.size() == 0) {
             throw new NotFoundException("О данном товаре пока что нет ни одного отзыва.");
         }
         return reviews;

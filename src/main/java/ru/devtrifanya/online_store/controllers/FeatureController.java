@@ -18,7 +18,7 @@ import ru.devtrifanya.online_store.util.validators.FeatureValidator;
 import java.util.List;
 
 @RestController
-@RequestMapping("/{categoryId}")
+@RequestMapping("/{categoryId}/features")
 @Data
 public class FeatureController {
     private final FeatureService featureService;
@@ -47,7 +47,7 @@ public class FeatureController {
         return ResponseEntity.ok("Характеритика успешно добавлена.");
     }
 
-    @PatchMapping("/features/edit/{featureId}")
+    @PatchMapping("/edit/{featureId}")
     public ResponseEntity<String> edit(@RequestBody @Valid FeatureDTO featureDTO,
                                                      @PathVariable("featureId") int id,
                                                      BindingResult bindingResult) {
@@ -64,7 +64,7 @@ public class FeatureController {
         return ResponseEntity.ok("Характеритика успешно изменена.");
     }
 
-    @DeleteMapping("/features/delete/{featureId}")
+    @DeleteMapping("/delete/{featureId}")
     public ResponseEntity<String> delete(@PathVariable("featureId") int id) {
         featureService.delete(id);
         return ResponseEntity.ok("Характеритика успешно удалена.");

@@ -10,18 +10,10 @@ import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
 
 @Component
 @Data
-public class ItemValidator implements Validator {
+public class ItemValidator {
     private final ItemRepository itemRepository;
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return ItemDTO.class.equals(clazz);
-    }
-
-    @Override
-    public void validate(Object target, Errors errors) {
-        ItemDTO itemDTO = (ItemDTO) target;
-
+    public void validate(ItemDTO itemDTO) {
         if (itemRepository.findByName(itemDTO.getName()).isPresent()) {
             throw new AlreadyExistException("Товар с таким названием уже есть на сайте.");
         }

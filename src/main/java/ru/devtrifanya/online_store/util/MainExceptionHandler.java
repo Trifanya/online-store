@@ -29,6 +29,7 @@ public class MainExceptionHandler {
             status = HttpStatus.UNAUTHORIZED;
         }  else {
             errorMessage = "Произошла какая-то ошибка.";
+            exception.printStackTrace();
             status = HttpStatus.BAD_REQUEST;
         }
         ErrorResponse response = new ErrorResponse(errorMessage);

@@ -21,6 +21,7 @@ import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
 import java.util.List;
 
 @RestController
+@RequestMapping("/profile")
 @Data
 public class UserController {
     private final UserService userService;
@@ -33,7 +34,7 @@ public class UserController {
     public ResponseEntity<String> edit(@RequestBody @Valid UserDTO userDTO,
                                            @PathVariable("id") int id,
                                            BindingResult bindingResult) {
-        registrationValidator.validate(userDTO, bindingResult);
+        registrationValidator.validate(userDTO);
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
