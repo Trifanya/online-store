@@ -48,7 +48,7 @@ public class CartController {
 
     @DeleteMapping("/delete/{cartElementId}")
     public ResponseEntity<String> delete(@PathVariable("cartElementId") int cartElementId) {
-        cartElementService.remove(cartElementId);
+        cartElementService.delete(cartElementId);
         return ResponseEntity.ok("Товар успешно удален из корзины.");
     }
 

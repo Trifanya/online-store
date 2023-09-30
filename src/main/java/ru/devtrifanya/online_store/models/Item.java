@@ -3,6 +3,7 @@ package ru.devtrifanya.online_store.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Table(name = "item")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Item implements Searchable {
     @Id
     @Column(name = "id")

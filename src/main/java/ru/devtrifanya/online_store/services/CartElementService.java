@@ -63,7 +63,7 @@ public class CartElementService {
         cartElementRepository.save(element);
     }
 
-    public void remove(int cartElementId) {
+    public void delete(int cartElementId) {
         cartElementRepository.deleteById(cartElementId);
     }
 

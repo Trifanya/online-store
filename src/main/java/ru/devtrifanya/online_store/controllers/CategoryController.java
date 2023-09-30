@@ -47,7 +47,7 @@ public class CategoryController {
                                                   @RequestParam(value = "pageNum", defaultValue = "0") int pageNum,
                                                   @RequestParam(value = "itemsPerPage", defaultValue = "10") int itemsPerPage,
                                                   @RequestParam(value = "sortBy", defaultValue = "id") String sortBy) {
-        List<? extends Searchable> catalogElements = categoryService.getAll(categoryId);
+        List<? extends Searchable> catalogElements = categoryService.getSubcategories(categoryId);
         if (catalogElements.size() == 0) {
             catalogElements = itemService.getAll(categoryId, pageNum, itemsPerPage, sortBy);
             List<Feature> categoryFeatures = featureService.getAll(categoryId);
@@ -91,7 +91,7 @@ public class CategoryController {
             }
             throw new InvalidDataException(errorMessage.toString());
         }
-        categoryService.create(convertToCategory(categoryDTO), parentId);
+        categoryService.update(convertToCategory(categoryDTO), parentId);
         return ResponseEntity.ok("Категория успешно изменена.");
 
     }

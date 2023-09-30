@@ -29,6 +29,7 @@ public class FeatureService {
         return feature.get();
     }
 
+    /** Может быть вызван только для конечных категорий. */
     public List<Feature> getAll(int categoryId) {
         return featureRepository.findAllByCategoryId(categoryId);
     }

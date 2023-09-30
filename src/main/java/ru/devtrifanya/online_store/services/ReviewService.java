@@ -44,12 +44,6 @@ public class ReviewService {
     }
 
     @Transactional
-    public void update(int id, Review review) {
-        review.setId(id);
-        reviewRepository.save(review);
-    }
-
-    @Transactional
     public void delete(int id) {
         reviewRepository.deleteById(id);
     }

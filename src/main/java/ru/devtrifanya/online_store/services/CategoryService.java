@@ -22,7 +22,7 @@ public class CategoryService {
     private final ItemRepository itemRepository;
 
     /** Получение всех подкатегорий категории с указанным id. */
-    public List<Category> getAll(int categoryId) {
+    public List<Category> getSubcategories(int categoryId) {
         return categoryRelationRepository.findByParentId(categoryId);
     }
 
@@ -34,6 +34,12 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    @Transactional
+    public void update(Category category, int categoryId) {
+        category.setId(categoryId);
+        categoryRepository.save(category);
+    }
+
     /**
      * Если удаляемая категория содержит в себе только подкатегории, то нужно
      * связать эти подкатегории с родительской категорией удаляемой категории.
@@ -41,7 +47,7 @@ public class CategoryService {
      * только товары, то нужно удалить все товары удаляемой категории.
      */
     @Transactional
-    public void remove(int categoryId) {
+    public void delete(int categoryId) {
         // TODO
     }
 
