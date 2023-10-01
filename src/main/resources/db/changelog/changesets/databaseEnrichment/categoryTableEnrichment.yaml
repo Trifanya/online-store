@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: categoryTableEnrichment
+      author: Nikita Trifonov
+      changes:
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфоны и аксессуары"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Все смартфоны"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Аксессуары для смартфонов"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Зарядные устройства"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Защита и поддержка"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Внешние аккумуляторы"
+

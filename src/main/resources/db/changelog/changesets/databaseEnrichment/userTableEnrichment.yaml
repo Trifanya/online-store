@@ -1,0 +1,95 @@
+databaseChangeLog:
+  - changeSet:
+      id: userTableEnrichment
+      author: Nikita Trifonov
+      changes:
+        - insert:
+            tableName: os_user
+            columns:
+              - column:
+                  name: name
+                  value: "firstTestName"
+              - column:
+                  name: surname
+                  value: "firstTestSurname"
+              - column:
+                  name: email
+                  value: "test1@mail.ru"
+              - column:
+                  name: password # "testPassword1"
+                  value: "$2a$12$Gneh0x1w5IJN8ThDUnJJduPCzGeguNgVozcvu8VxifVMpZ5xfqsna"
+              - column:
+                  name: role
+                  value: "ROLE_ADMIN"
+        - insert:
+            tableName: os_user
+            columns:
+              - column:
+                  name: name
+                  value: "secondTestName"
+              - column:
+                  name: surname
+                  value: "secondTestSurname"
+              - column:
+                  name: email
+                  value: "test2@mail.ru"
+              - column:
+                  name: password # "testPassword_2"
+                  value: "$2a$12$u.9rugy8cQrGcYlJX4iBLeyTIIJPtAY/p9Nryh7fWXXHCHmecNQ9y"
+              - column:
+                  name: role
+                  value: "ROLE_USER"
+        - insert:
+            tableName: os_user
+            columns:
+              - column:
+                  name: name
+                  value: "thirdTestName"
+              - column:
+                  name: surname
+                  value: "thirdTestSurname"
+              - column:
+                  name: email
+                  value: "test3@mail.ru"
+              - column:
+                  name: password # "testPassword_3"
+                  value: "$2a$12$8rjGg5XB6eCZp8DtOv9dveENSgK7wi5XgF21iV9v.xDuLwxdWnmOK"
+              - column:
+                  name: role
+                  value: "ROLE_USER"
+        - insert:
+            tableName: os_user
+            columns:
+              - column:
+                  name: name
+                  value: "fourthTestName"
+              - column:
+                  name: surname
+                  value: "fourthTestSurname"
+              - column:
+                  name: email
+                  value: "test4@mail.ru"
+              - column:
+                  name: password # "testPassword_4"
+                  value: "$2a$12$KHzlq978UaSkkfzgQnTWz.wc9aMTDiyZKWCI0BM.3J.gBCFRVfRL6"
+              - column:
+                  name: role
+                  value: "ROLE_USER"
+        - insert:
+            tableName: os_user
+            columns:
+              - column:
+                  name: name
+                  value: "fifthTestName"
+              - column:
+                  name: surname
+                  value: "fifthTestSurname"
+              - column:
+                  name: email
+                  value: "test5@mail.ru"
+              - column:
+                  name: password # "testPassword_5"
+                  value: "$2a$12$EJ0G1AG2vtxvL6fpWt6dneLMz7fTedv/E21TURIoy8MhHFL8alNHq"
+              - column:
+                  name: role
+                  value: "ROLE_USER"
