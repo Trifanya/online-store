@@ -1,6 +1,7 @@
 package ru.devtrifanya.online_store.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Table(name = "category")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Category implements Searchable {
     @Id
     @Column(name = "id")
@@ -19,13 +21,9 @@ public class Category implements Searchable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<Feature> features;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<Item> items;
-
-    public Category(String name) {
-        this.name = name;
-    }
 }

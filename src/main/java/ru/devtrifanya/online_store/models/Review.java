@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "review")
 @Data
-//@NoArgsConstructor
-//@AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review {
     @Id
     @Column(name = "id")

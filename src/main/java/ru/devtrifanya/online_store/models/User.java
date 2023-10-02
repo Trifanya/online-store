@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +18,7 @@ import java.util.List;
 @Table(name = "os_user")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
     @Id
     @Column(name = "id")
@@ -46,6 +48,13 @@ public class User implements UserDetails {
 
     @Column(name = "role")
     private String role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user")
+    private List<CartElement> cartElements;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

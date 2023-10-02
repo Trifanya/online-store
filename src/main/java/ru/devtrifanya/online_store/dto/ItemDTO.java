@@ -8,13 +8,16 @@ import ru.devtrifanya.online_store.models.ItemFeature;
 import java.util.List;
 
 @Data
-public class ItemDTO {
+public class ItemDTO implements CatalogableDTO {
     @NotEmpty(message = "Вы не указали название товара.")
     private String name;
 
     @NotEmpty(message = "Вы не указали цену товара.")
     @Min(value = 0, message = "Цена не может быть ниже 0 руб.")
     private double price;
+
+    @NotEmpty(message = "Вы не указали производителя товара.")
+    private String manufacturer;
 
     @NotEmpty(message = "Вы не указали количество товара.")
     private int quantity;

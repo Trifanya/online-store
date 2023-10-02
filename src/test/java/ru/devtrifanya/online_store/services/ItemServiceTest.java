@@ -44,7 +44,7 @@ public class ItemServiceTest {
 
         Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
-        Item result = itemService.get(1);
+        Item result = itemService.getItem(1);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(item, result);

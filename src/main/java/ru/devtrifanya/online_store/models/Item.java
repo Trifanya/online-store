@@ -24,6 +24,10 @@ public class Item implements Searchable {
     @NotEmpty(message = "Вы не указали название товара.")
     private String name;
 
+    @Column(name = "manufacturer")
+    @NotEmpty(message = "Вы не указали производителя товара.")
+    private String manufacturer;
+
     @Column(name = "price")
     @NotEmpty(message = "Вы не указали цену товара.")
     @Min(value = 0, message = "Цена не может быть ниже 0 руб.")
@@ -45,6 +49,6 @@ public class Item implements Searchable {
     @NotEmpty(message = "Вы не указали категорию товара.")
     private Category category;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
     private List<ItemFeature> features;
 }

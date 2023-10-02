@@ -13,7 +13,6 @@ import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,9 +23,8 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
 
     public Item getItem(int itemId) {
-        Item item = itemRepository.findById(itemId)
+        return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Товар с таким названием не найден."));
-        return item;
     }
 
     public List<Item> getItemsByCategory(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
@@ -48,6 +46,7 @@ public class ItemService {
         for (ItemFeature feature : item.getFeatures()) {
             itemFeatureRepository.save(feature);
         }
+
         itemRepository.save(item);
     }
 
@@ -66,11 +65,12 @@ public class ItemService {
         itemRepository.save(item);
     }
 
+    /**
+     * Удаление товара из таблицы item. При удалении товара удаляются
+     * все связанные с ним характеристики из таблицы item_feature.
+     */
     @Transactional
     public void deleteItem(int itemId) {
-        // TODO - убедиться в том, что при удалении товара удаляются его характеристики
-        List<ItemFeature> featuresBeforeDelete = itemFeatureRepository.findAllByItemId(itemId);
         itemRepository.deleteById(itemId);
-        List<ItemFeature> featuresAfterDelete = itemFeatureRepository.findAllByItemId(itemId);
     }
 }

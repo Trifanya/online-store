@@ -2,22 +2,21 @@ package ru.devtrifanya.online_store.controllers;
 
 import jakarta.validation.Valid;
 import lombok.Data;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import ru.devtrifanya.online_store.dto.CatalogableDTO;
 import ru.devtrifanya.online_store.dto.CategoryDTO;
 import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.models.Searchable;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
+import ru.devtrifanya.online_store.util.MainClassConverter;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
-import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.CategoryValidator;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/{categoryId}")
@@ -26,8 +25,8 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final ItemService itemService;
     private final CategoryValidator categoryValidator;
-    private final ModelMapper modelMapper;
-    private final MainExceptionHandler mainExceptionHandler;
+    private final MainExceptionHandler exceptionHandler;
+    private final MainClassConverter converter;
 
     /**
      * Адрес: .../{categoryId}
@@ -37,12 +36,19 @@ public class CategoryController {
      * возвращен список подкатегорий, если не содержит, то будет возвращен список всех товаров данной категории.
      */
     @GetMapping
-    public List<? extends Searchable> showSubcategoriesOrItems(@PathVariable("categoryId") int categoryId) {
-        List<? extends Searchable> catalogElements = categoryService.getAll(categoryId);
-        if (catalogElements.size() == 0) {
-            catalogElements = itemService.getAll(categoryId);
+    public List<? extends CatalogableDTO> showCategoryContent(@PathVariable("categoryId") int categoryId) {
+        List<Category> subcategories = categoryService.getSubcategories(categoryId);
+
+        if (subcategories.isEmpty()) {
+            return itemService.getItemsByCategory(categoryId, 0, 10, "id")
+                    .stream()
+                    .map(item -> converter.convertToItemDTO(item))
+                    .collect(Collectors.toList());
         }
-        return catalogElements;
+        return subcategories
+                .stream()
+                .map(category -> converter.convertToCategoryDTO(category))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -52,53 +58,41 @@ public class CategoryController {
      * создания связи parent-child в таблице CategoryRelation.
      */
     @PostMapping("/newCategory")
-    public ResponseEntity<String> add(@RequestBody @Valid CategoryDTO categoryDTO,
+    public ResponseEntity<String> addNewCategory(@RequestBody @Valid CategoryDTO categoryDTO,
                                       @PathVariable("categoryId") int parentId,
                                       BindingResult bindingResult) {
-        //categoryValidator.validate(categoryDTO);
+        categoryValidator.validate(categoryDTO, parentId);
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessage = new StringBuilder();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage() + "\n");
-            }
-            throw new InvalidDataException(errorMessage.toString());
+            exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        categoryService.create(convertToCategory(categoryDTO), parentId);
+        categoryService.createNewCategory(converter.convertToCategory(categoryDTO), parentId);
+
         return ResponseEntity.ok("Категория успешно добавлена.");
     }
 
     @PatchMapping("/editCategory")
-    public ResponseEntity<String> edit(@RequestBody @Valid CategoryDTO categoryDTO,
+    public ResponseEntity<String> editCategoryInfo(@RequestBody @Valid CategoryDTO categoryDTO,
                                        @PathVariable("categoryId") int parentId,
                                        BindingResult bindingResult) {
-        //categoryValidator.validate(categoryDTO);
+        categoryValidator.validate(categoryDTO, parentId);
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessage = new StringBuilder();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage() + "\n");
-            }
-            throw new InvalidDataException(errorMessage.toString());
+            exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        categoryService.create(convertToCategory(categoryDTO), parentId);
-        return ResponseEntity.ok("Категория успешно изменена.");
 
+        categoryService.createNewCategory(converter.convertToCategory(categoryDTO), parentId);
+
+        return ResponseEntity.ok("Категория успешно изменена.");
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@PathVariable("categoryId") int categoryId) {
-        // TODO
+    public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") int categoryId) {
+        categoryService.deleteCategory(categoryId);
         return ResponseEntity.ok("Категория успешно удалена.");
 
     }
 
-    public Category convertToCategory(CategoryDTO categoryDTO) {
-        return modelMapper.map(categoryDTO, Category.class);
-    }
-
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        return mainExceptionHandler.handleException(exception);
+        return exceptionHandler.handleException(exception);
     }
 }
