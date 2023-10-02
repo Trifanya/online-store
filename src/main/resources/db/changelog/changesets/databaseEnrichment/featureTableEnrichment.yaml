@@ -1,0 +1,95 @@
+databaseChangeLog:
+  - changeSet:
+      id: featureTableEnrichment
+      author: Nikita Trifonov
+      changes:
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Диагональ экрана"
+              - column:
+                  name: category_id
+                  value: 2
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Емкость аккумулятора"
+              - column:
+                  name: category_id
+                  value: 2
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Операционная система"
+              - column:
+                  name: category_id
+                  value: 2
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Емкость аккумулятора"
+              - column:
+                  name: category_id
+                  value: 6
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Быстрая зарядка"
+              - column:
+                  name: category_id
+                  value: 6
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Длина кабеля"
+              - column:
+                  name: category_id
+                  value: 7
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Разъем 1 (разъем заряжаемого устройства)"
+              - column:
+                  name: category_id
+                  value: 7
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Разъем 2 (разъем источника заряда)"
+              - column:
+                  name: category_id
+                  value: 7
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Разъем"
+              - column:
+                  name: category_id
+                  value: 8
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Выходная мощность"
+              - column:
+                  name: category_id
+                  value: 8

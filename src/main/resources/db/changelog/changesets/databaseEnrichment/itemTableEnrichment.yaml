@@ -1,0 +1,275 @@
+databaseChangeLog:
+  - changeSet:
+      id: itemTableEnrichment
+      author: Nikita Trifonov
+      changes:
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфон Apple iPhone 14 128GB"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 64000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфон Apple iPhone 14 Pro Max 256GB"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 109000
+              - column:
+                  name: quantity
+                  value: 2
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфон Samsung Galaxy S22 256GB"
+              - column:
+                  name: manufacturer
+                  value: Samsung
+              - column:
+                  name: price
+                  value: 87000
+              - column:
+                  name: quantity
+                  value: 1
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфон Xiomi 13 128GB"
+              - column:
+                  name: manufacturer
+                  value: Xiomi
+              - column:
+                  name: price
+                  value: 63000
+              - column:
+                  name: quantity
+                  value: 4
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Кабель Apple Type-C"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 500
+              - column:
+                  name: quantity
+                  value: 8
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 7
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Кабель Apple Lightning"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 800
+              - column:
+                  name: quantity
+                  value: 7
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 7
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Сетевое зарядное устройство Apple USB"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 500
+              - column:
+                  name: quantity
+                  value: 9
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 8
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Сетевое зарядное устройство Samsung USB-C"
+              - column:
+                  name: manufacturer
+                  value: Samsung
+              - column:
+                  name: price
+                  value: 480
+              - column:
+                  name: quantity
+                  value: 7
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 8
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Стекло защитное Apple для iPhone 14 Pro Max"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 6500
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 5
+              - column:
+                  name: rating
+                  value: 0
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Внешний аккумулятор Xiomi Mi Powerbank 3 Pro (BHR5121GL)"
+              - column:
+                  name: manufacturer
+                  value: Xiomi
+              - column:
+                  name: price
+                  value: 400
+              - column:
+                  name: quantity
+                  value: 6
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: image
+                  value: Фото товара отсутствует
+              - column:
+                  name: category_id
+                  value: 6
+              - column:
+                  name: rating
+                  value: 0

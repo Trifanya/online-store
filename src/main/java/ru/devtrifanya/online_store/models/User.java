@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "person")
+@Table(name = "os_user")
 @Data
 @NoArgsConstructor
 public class User implements UserDetails {

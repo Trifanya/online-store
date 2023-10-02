@@ -1,0 +1,263 @@
+databaseChangeLog:
+  - changeSet:
+      id: initialTableCreation
+      author: Nikita Trifonov
+      changes:
+        # Создание таблицы os_user
+        - createTable:
+            tableName: os_user
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(50)
+                  defaultValue: ROLE_USER
+                  constraints:
+                    nullable: false
+        # Создание таблицы category
+        - createTable:
+            tableName: category
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+        # Создание таблицы category_relation
+        - createTable:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: child_id
+                  type: integer
+                  constraints:
+                    references: category(id)
+                    foreignKeyName: fk_child_id
+                    nullable: true
+              - column:
+                  name: parent_id
+                  type: integer
+                  constraints:
+                    references: category(id)
+                    foreignKeyName: fk_parent_id
+                    nullable: true
+        # Создание таблицы item
+        - createTable:
+            tableName: item
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: manufacturer
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: integer
+                  constraints:
+                    checkConstraint: quantity > -1
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: integer
+                  constraints:
+                    references: category(id)
+                    foreignKeyName: fk_category_id
+                    nullable: false
+              - column:
+                  name: rating
+                  type: decimal
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+        # Создание таблицы feature
+        - createTable:
+            tableName: feature
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: integer
+                  constraints:
+                    references: category(id)
+                    foreignKeyName: fk_category_id
+                    nullable: false
+        # Создание таблицы item_feature
+        - createTable:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: value
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feature_id
+                  type: integer
+                  constraints:
+                    references: feature(id)
+                    foreignKeyName: fk_feature_id
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: integer
+                  constraints:
+                    references: item(id)
+                    foreignKeyName: fk_item_id
+                    nullable: false
+        # Создание таблицы cart_element
+        - createTable:
+            tableName: cart_element
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: integer
+                  constraints:
+                    references: os_user(id)
+                    foreignKeyName: fk_user_id
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: integer
+                  constraints:
+                    references: item(id)
+                    foreignKeyName: fk_item_id
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: integer
+                  constraints:
+                    checkConstraint: quantity > 0
+                    nullable: false
+        # Создание таблицы review
+        - createTable:
+            tableName: review
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: integer
+                  constraints:
+                    references: os_user(id)
+                    foreignKeyName: fk_user_id
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: integer
+                  constraints:
+                    references: item(id)
+                    foreignKeyName: fk_item_id
+                    nullable: false
+              - column:
+                  name: comment
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image
+                  type: varchar(255)
+              - column:
+                  name: stars
+                  type: integer
+                  constraints:
+                    checkConstraint: stars > 0 and stars < 6
+                    nullable: false
+

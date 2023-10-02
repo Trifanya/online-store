@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: categoryRelationTableEnrichment
+      author: Nikita Trifonov
+      changes:
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 1
+              - column:
+                  name: parent_id
+                  value: null
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 2
+              - column:
+                  name: parent_id
+                  value: 1
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 3
+              - column:
+                  name: parent_id
+                  value: 1
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 4
+              - column:
+                  name: parent_id
+                  value: 3
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 5
+              - column:
+                  name: parent_id
+                  value: 3
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 6
+              - column:
+                  name: parent_id
+                  value: 3
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 7
+              - column:
+                  name: parent_id
+                  value: 4
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 8
+              - column:
+                  name: parent_id
+                  value: 4

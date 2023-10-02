@@ -1,0 +1,295 @@
+databaseChangeLog:
+  - changeSet:
+      id: itemFeatureTableEnrichment
+      author: Nikita Trifonov
+      changes:
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 1
+              - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: value
+                  value: "18 см"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 1
+              - column:
+                  name: feature_id
+                  value: 2
+              - column:
+                  name: value
+                  value: "4000 мАч"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 1
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: value
+                  value: "IOS"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 2
+              - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: value
+                  value: "20 см"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 2
+              - column:
+                  name: feature_id
+                  value: 2
+              - column:
+                  name: value
+                  value: "5000 мАч"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 2
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: value
+                  value: "IOS"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 3
+              - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: value
+                  value: "22 см"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 3
+              - column:
+                  name: feature_id
+                  value: 2
+              - column:
+                  name: value
+                  value: "4600 мАч"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 3
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: value
+                  value: "Android"
+        - insert: # 10
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 4
+              - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: value
+                  value: "19 см"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 4
+              - column:
+                  name: feature_id
+                  value: 2
+              - column:
+                  name: value
+                  value: "4500 мАч"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 4
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: value
+                  value: "Android"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 5
+              - column:
+                  name: feature_id
+                  value: 6
+              - column:
+                  name: value
+                  value: "200 см"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 5
+              - column:
+                  name: feature_id
+                  value: 7
+              - column:
+                  name: value
+                  value: "Type-C"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 5
+              - column:
+                  name: feature_id
+                  value: 8
+              - column:
+                  name: value
+                  value: "USB"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 6
+              - column:
+                  name: feature_id
+                  value: 6
+              - column:
+                  name: value
+                  value: "120 см"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 6
+              - column:
+                  name: feature_id
+                  value: 7
+              - column:
+                  name: value
+                  value: "Lightning"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 6
+              - column:
+                  name: feature_id
+                  value: 8
+              - column:
+                  name: value
+                  value: "USB"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 8
+              - column:
+                  name: feature_id
+                  value: 9
+              - column:
+                  name: value
+                  value: "USB"
+        - insert: # 20
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 8
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: value
+                  value: "12 Вт"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 9
+              - column:
+                  name: feature_id
+                  value: 9
+              - column:
+                  name: value
+                  value: "USB-C"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 9
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: value
+                  value: "18 Вт"
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 4
+              - column:
+                  name: value
+                  value: "20000 мАч"
+        - insert: # 24
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 5
+              - column:
+                  name: value
+                  value: "Есть"
+
+

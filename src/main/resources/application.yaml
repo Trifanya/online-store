@@ -1,14 +1,19 @@
 spring:
+  liquibase:
+    enabled: true
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/online_store_db
     username: postgres
     password: Goalie_climber62
+
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
+
 jwt:
-  secret: qazwsxedcrfvtgbyhnujmikolp1234567890987654321
+  secret: 1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik9ol0p
   lifetime: 30m
