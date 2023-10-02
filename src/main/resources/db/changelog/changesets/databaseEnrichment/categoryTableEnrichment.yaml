@@ -39,4 +39,16 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "Внешние аккумуляторы"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Кабели"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Сетевые зарядные устройства"
 

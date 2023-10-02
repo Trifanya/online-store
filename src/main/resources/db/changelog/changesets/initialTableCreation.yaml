@@ -99,6 +99,11 @@ databaseChangeLog:
                     unique: true
                     nullable: false
               - column:
+                  name: manufacturer
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: price
                   type: decimal
                   constraints:

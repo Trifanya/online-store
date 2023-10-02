@@ -9,4 +9,8 @@ databaseChangeLog:
       file: db/changelog/changesets/databaseEnrichment/categoryRelationTableEnrichment.yaml
   - include: #5
       file: db/changelog/changesets/databaseEnrichment/itemTableEnrichment.yaml
+  - include: #6
+      file: db/changelog/changesets/databaseEnrichment/featureTableEnrichment.yaml
+  - include: #7
+      file: db/changelog/changesets/databaseEnrichment/itemFeatureTableEnrichment.yaml
 
