@@ -5,34 +5,36 @@ import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.dto.ItemDTO;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
+import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
-import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.ItemValidator;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/categories/{categoryId}")
 @Data
 public class ItemController {
     private final ItemService itemService;
+    private final FeatureService featureService;
     private final ModelMapper modelMapper;
     private final ItemValidator itemValidator;
     private final MainExceptionHandler mainExceptionHandler;
 
 
     @GetMapping("/{itemId}")
-    public ItemDTO show(@PathVariable("itemId") int itemId) {
-        // TODO - возможно, вместе с товаром нужно возвращать и его характеристики
-        return convertToItemDTO(itemService.get(itemId));
+    public ItemDTO showItemInfo(@PathVariable("itemId") int itemId) {
+        Item item = itemService.getItem(itemId);
+
+        ItemDTO itemDTO = convertToItemDTO(item);
+
+        return itemDTO;
     }
 
     /**
@@ -43,66 +45,69 @@ public class ItemController {
      * Значения характеристик будут храниться отдельно в таблице ItemCharacteristics.
      */
     @PostMapping("/newItem")
-    public ResponseEntity<String> add(@RequestBody @Valid ItemDTO itemDTO,
-                                      @RequestBody @Valid List<ItemFeatureDTO> itemFeatures,
-                                      @PathVariable("categoryId") int categoryId,
-                                      BindingResult bindingResult) {
+    public ResponseEntity<String> addNewItem(@RequestBody @Valid ItemDTO itemDTO,
+                                             @PathVariable("categoryId") int categoryId,
+                                             BindingResult bindingResult) {
         itemValidator.validate(itemDTO);
-
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessage = new StringBuilder();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage() + "\n");
-            }
-            throw new InvalidDataException(errorMessage.toString());
+            mainExceptionHandler.throwInvalidDataException(bindingResult);
         }
-        itemService.create(convertToItem(itemDTO), categoryId,
-                itemFeatures
-                .stream()
-                .map(this::convertToItemFeature)
-                .toList());
+
+        Item item = convertToItem(itemDTO);
+
+        itemService.createNewItem(item, categoryId);
         return ResponseEntity.ok("Товар успешно добавлен.");
     }
 
     @PatchMapping("/{itemId}/edit")
-    public ResponseEntity<String> edit(@RequestBody @Valid ItemDTO itemDTO,
-                                       @RequestBody @Valid List<ItemFeatureDTO> itemFeatures,
-                                       @PathVariable("itemId") int itemId,
-                                       BindingResult bindingResult) {
+    public ResponseEntity<String> editItemInfo(@RequestBody @Valid ItemDTO itemDTO,
+                                               @PathVariable("itemId") int itemId,
+                                               BindingResult bindingResult) {
         itemValidator.validate(itemDTO);
-
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessage = new StringBuilder();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage() + "\n");
-            }
-            throw new InvalidDataException(errorMessage.toString());
+            mainExceptionHandler.throwInvalidDataException(bindingResult);
         }
-        itemService.update(itemId, convertToItem(itemDTO), itemFeatures
-                .stream()
-                .map(this::convertToItemFeature)
-                .toList());
+
+        Item item = convertToItem(itemDTO);
+
+        itemService.updateItemInfo(itemId, item);
         return ResponseEntity.ok("Информация о товаре успешно изменена.");
     }
 
     @DeleteMapping("/{itemId}/delete")
-    public ResponseEntity<String> delete(@PathVariable("itemId") int itemId) {
-        itemService.delete(itemId);
+    public ResponseEntity<String> deleteItem(@PathVariable("itemId") int itemId) {
+        itemService.deleteItem(itemId);
         return ResponseEntity.ok("Товар успешно удален.");
     }
 
     public Item convertToItem(ItemDTO itemDTO) {
-        return modelMapper.map(itemDTO, Item.class);
+        Item item = modelMapper.map(itemDTO, Item.class);
+
+        item.setFeatures(itemDTO.getFeatures()
+                .stream()
+                .map(this::convertToItemFeature)
+                .toList());
+
+        return item;
     }
 
     public ItemDTO convertToItemDTO(Item item) {
-        return modelMapper.map(item, ItemDTO.class);
+        ItemDTO itemDTO = modelMapper.map(item, ItemDTO.class);
+
+        itemDTO.setFeatures(item.getFeatures()
+                .stream()
+                .map(this::convertToItemFeatureDTO)
+                .toList());
+
+        return itemDTO;
     }
 
     public ItemFeature convertToItemFeature(ItemFeatureDTO itemFeatureDTO) {
         return modelMapper.map(itemFeatureDTO, ItemFeature.class);
+    }
+
+    public ItemFeatureDTO convertToItemFeatureDTO(ItemFeature itemFeature) {
+        return modelMapper.map(itemFeature, ItemFeatureDTO.class);
     }
 
     @ExceptionHandler

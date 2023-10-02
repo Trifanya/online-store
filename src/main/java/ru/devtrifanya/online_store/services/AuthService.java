@@ -23,7 +23,7 @@ public class AuthService {
     private final JWTUtils JWTUtils;
 
     @Transactional
-    public void create(User user) {
+    public void createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
         userRepository.save(user);

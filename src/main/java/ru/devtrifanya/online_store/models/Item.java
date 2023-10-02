@@ -29,16 +29,16 @@ public class Item implements Searchable {
     @Min(value = 0, message = "Цена не может быть ниже 0 руб.")
     private double price;
 
+    @Column(name = "quantity")
+    @NotEmpty(message = "Вы не указали количество товара.")
+    private int quantity;
+
     @Column(name = "description")
     @NotEmpty(message = "Вы не добавили описание товара.")
     private String description;
 
     @Column(name = "image")
     private String imageURL;
-
-    @Column(name = "quantity")
-    @NotEmpty(message = "Вы не указали количество товара.")
-    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")

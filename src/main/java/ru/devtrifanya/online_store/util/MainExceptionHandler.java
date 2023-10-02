@@ -4,12 +4,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
+import java.util.List;
+
 @Component
 public class MainExceptionHandler {
+
+    public void throwInvalidDataException(BindingResult bindingResult) {
+        List<FieldError> errors = bindingResult.getFieldErrors();
+        StringBuilder errorMessage = new StringBuilder();
+        for (FieldError error : errors) {
+            errorMessage.append(error.getDefaultMessage() + "\n");
+        }
+        throw new InvalidDataException(errorMessage.toString());
+    }
 
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
         String errorMessage = null;

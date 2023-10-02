@@ -23,15 +23,13 @@ public class ItemService {
     private final ItemFeatureRepository itemFeatureRepository;
     private final CategoryRepository categoryRepository;
 
-    public Item get(int itemId) {
-        Optional<Item> item = itemRepository.findById(itemId);
-        if (item.isEmpty()) {
-            throw new NotFoundException("Товар с таким названием не найден.");
-        }
-        return item.get();
+    public Item getItem(int itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Товар с таким названием не найден."));
+        return item;
     }
 
-    public List<Item> getAll(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
+    public List<Item> getItemsByCategory(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
         return itemRepository.findAllByCategoryId(
                 categoryId,
                 PageRequest.of(pageNum, itemsPerPage, Sort.by(sortBy))
@@ -45,24 +43,34 @@ public class ItemService {
      * все характеристики нового товара.
      */
     @Transactional
-    public void create(Item item, int categoryId, List<ItemFeature> features) {
+    public void createNewItem(Item item, int categoryId) {
         item.setCategory(categoryRepository.findById(categoryId).orElse(null));
-        for (ItemFeature feature : features) {
-            item.getFeatures().add(feature);
+        for (ItemFeature feature : item.getFeatures()) {
             itemFeatureRepository.save(feature);
         }
         itemRepository.save(item);
     }
 
+    /**
+     * Обновление информации о товаре и его характеристиках.
+     */
     @Transactional
-    public void update(int itemId, Item item, List<ItemFeature> features) {
+    public void updateItemInfo(int itemId, Item item) {
         item.setId(itemId);
+        List<ItemFeature> oldFeatures = itemFeatureRepository.findAllByItemId(itemId);
+        List<ItemFeature> updatedFeatures = item.getFeatures();
+        for (int i = 0; i < oldFeatures.size(); i++) {
+            updatedFeatures.get(i).setId(oldFeatures.get(i).getId());
+            itemFeatureRepository.save(updatedFeatures.get(i));
+        }
         itemRepository.save(item);
     }
 
     @Transactional
-    public void delete(int itemId) {
-        /** Возможно, нужно настроить каскадирование.*/
+    public void deleteItem(int itemId) {
+        // TODO - убедиться в том, что при удалении товара удаляются его характеристики
+        List<ItemFeature> featuresBeforeDelete = itemFeatureRepository.findAllByItemId(itemId);
         itemRepository.deleteById(itemId);
+        List<ItemFeature> featuresAfterDelete = itemFeatureRepository.findAllByItemId(itemId);
     }
 }

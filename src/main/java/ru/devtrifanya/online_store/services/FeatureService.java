@@ -5,6 +5,7 @@ import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Feature;
+import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
@@ -32,6 +33,11 @@ public class FeatureService {
     /** Может быть вызван только для конечных категорий. */
     public List<Feature> getAll(int categoryId) {
         return featureRepository.findAllByCategoryId(categoryId);
+    }
+
+    public List<ItemFeature> getItemFeatures(int itemId) {
+        List<ItemFeature> itemFeatures = itemFeatureRepository.findAllByItemId(itemId);
+        return itemFeatures;
     }
 
     public void create(Feature feature, int categoryId) {

@@ -49,7 +49,7 @@ public class AuthController {
             }
             throw new InvalidDataException(errorMessage.toString());
         }
-        authService.create(convertToUser(userDTO));
+        authService.createUser(convertToUser(userDTO));
         return ResponseEntity.ok("Регистрация прошла успешно.");
     }
 
