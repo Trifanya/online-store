@@ -1,6 +1,7 @@
 package ru.devtrifanya.online_store.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,6 @@ public class ItemFeature {
     private Feature feature;
 
     @Column(name = "value")
+    @NotEmpty
     private String value;
 }

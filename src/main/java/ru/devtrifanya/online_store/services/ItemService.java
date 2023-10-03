@@ -5,9 +5,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.devtrifanya.online_store.models.Category;
+import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
+import ru.devtrifanya.online_store.repositories.FeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
@@ -18,9 +21,13 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Data
 public class ItemService {
-    private final ItemRepository itemRepository;
-    private final ItemFeatureRepository itemFeatureRepository;
+    private final FeatureService featureService;
+
     private final CategoryRepository categoryRepository;
+    private final ItemRepository itemRepository;
+    private final FeatureRepository featureRepository;
+    private final ItemFeatureRepository itemFeatureRepository;
+
 
     public Item getItem(int itemId) {
         return itemRepository.findById(itemId)
@@ -35,34 +42,59 @@ public class ItemService {
     }
 
     /**
-     * Добавление нового товара.
-     * При этом товару назначается категория, в которой он был добавлен.
-     * При добавлении товара в таблицу ItemFeatures добавляются
-     * все характеристики нового товара.
+     * Добавление нового товара. При этом товару назначается категория, в которой он был добавлен.
+     * При добавлении товара в таблицу ItemFeatures сохраняются все характеристики нового товара.
+     * Характеристики товара обязательно должны сохраняться после самого товара, т.к. у товара до
+     * сохранения id = 0, а после сохранения id становится равным какому-то значению,
+     * сгенерированному автоматически. Если же попытаться сохранить характеристику товара, передав
+     * в метод сохранения характеристики товар с id = 0, то будет ошибка, т.к. поле item_id
+     * в таблице item_feature не должно быть нулевым.
      */
     @Transactional
     public void createNewItem(Item item, int categoryId) {
-        item.setCategory(categoryRepository.findById(categoryId).orElse(null));
-        for (ItemFeature feature : item.getFeatures()) {
-            itemFeatureRepository.save(feature);
-        }
+        Category itemCategory = categoryRepository.findById(categoryId).orElse(null);
+        item.setCategory(itemCategory);
 
         itemRepository.save(item);
+
+        /** Получение списка характеристик, которые есть у категории сохраняемого товара. */
+        List<Feature> categoryFeatures = featureRepository.findAllByCategoryId(categoryId);
+
+        /** Каждая из характеристик сохраняемого товара сохраняется в таблицу ItemFeatures */
+        for (int i = 0; i < categoryFeatures.size(); i++) {
+            featureService.createNewItemFeature(
+                    item.getFeatures().get(i),
+                    item,
+                    categoryFeatures.get(i)
+            );
+        }
     }
 
     /**
      * Обновление информации о товаре и его характеристиках.
      */
     @Transactional
-    public void updateItemInfo(int itemId, Item item) {
+    public void updateItemInfo(int itemId, Item item, int categoryId) {
         item.setId(itemId);
+        item.setCategory(categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория товара не найдена.")));
+        itemRepository.save(item);
+
+        /** Получение списка характеристик, которые есть у категории сохраняемого товара. */
+        List<Feature> categoryFeatures = featureRepository.findAllByCategoryId(categoryId);
+
         List<ItemFeature> oldFeatures = itemFeatureRepository.findAllByItemId(itemId);
         List<ItemFeature> updatedFeatures = item.getFeatures();
-        for (int i = 0; i < oldFeatures.size(); i++) {
-            updatedFeatures.get(i).setId(oldFeatures.get(i).getId());
-            itemFeatureRepository.save(updatedFeatures.get(i));
+
+        /** Апдейт каждой из характеристик сохраняемого товара */
+        for (int i = 0; i < updatedFeatures.size(); i++) {
+            featureService.updateItemFeatureInfo(
+                    oldFeatures.get(i).getId(),
+                    updatedFeatures.get(i),
+                    item,
+                    categoryFeatures.get(i)
+            );
         }
-        itemRepository.save(item);
     }
 
     /**

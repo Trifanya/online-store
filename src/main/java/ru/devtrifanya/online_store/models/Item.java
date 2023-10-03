@@ -3,6 +3,7 @@ package ru.devtrifanya.online_store.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,12 +30,10 @@ public class Item implements Searchable {
     private String manufacturer;
 
     @Column(name = "price")
-    @NotEmpty(message = "Вы не указали цену товара.")
     @Min(value = 0, message = "Цена не может быть ниже 0 руб.")
     private double price;
 
     @Column(name = "quantity")
-    @NotEmpty(message = "Вы не указали количество товара.")
     private int quantity;
 
     @Column(name = "description")
@@ -46,9 +45,10 @@ public class Item implements Searchable {
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
-    @NotEmpty(message = "Вы не указали категорию товара.")
+    //@NotEmpty(message = "Вы не указали категорию товара.")
     private Category category;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    @NotEmpty
     private List<ItemFeature> features;
 }

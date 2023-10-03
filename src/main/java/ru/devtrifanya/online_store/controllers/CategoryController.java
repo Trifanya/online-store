@@ -36,11 +36,14 @@ public class CategoryController {
      * возвращен список подкатегорий, если не содержит, то будет возвращен список всех товаров данной категории.
      */
     @GetMapping
-    public List<? extends CatalogableDTO> showCategoryContent(@PathVariable("categoryId") int categoryId) {
+    public List<? extends CatalogableDTO> showCategoryContent(@PathVariable("categoryId") int categoryId,
+                                                              @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+                                                              @RequestParam(name = "itemsPerPage", defaultValue = "10") int itemsPerPage,
+                                                              @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
         List<Category> subcategories = categoryService.getSubcategories(categoryId);
 
         if (subcategories.isEmpty()) {
-            return itemService.getItemsByCategory(categoryId, 0, 10, "id")
+            return itemService.getItemsByCategory(categoryId, pageNumber, itemsPerPage, "sortby")
                     .stream()
                     .map(item -> converter.convertToItemDTO(item))
                     .collect(Collectors.toList());
