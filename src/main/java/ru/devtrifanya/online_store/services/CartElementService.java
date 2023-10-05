@@ -28,7 +28,7 @@ public class CartElementService {
      * Получение корзины (всех элементов корзины) пользователя по id пользователя.
      * и выброс исключения в случае, если корзина пользователя пустая.
      */
-    public List<CartElement> getAll(int userId) {
+    public List<CartElement> getAllCartElements(int userId) {
         List<CartElement> elements = cartElementRepository.findAllByUserId(userId);
         if (elements.isEmpty()) {
             throw new NotFoundException("У Вас в корзине пока что нет ни одного товара.");
@@ -41,7 +41,7 @@ public class CartElementService {
      * При добавлении необходимо проверить, есть ли данный товар в наличии. (проверка в валидаторе)
      * Изначально при добавлении товара в корзину он добавляется в единичном экземпляре.
      */
-    public void create(CartElement element, int userId, int itemId) {
+    public void createCartElement(CartElement element, int userId, int itemId) {
         User user = userRepository.findById(userId).orElse(null);
         Item item = itemRepository.findById(itemId).orElse(null);
         element.setUser(user);
@@ -54,7 +54,7 @@ public class CartElementService {
      * При изменении количества необходимо проверить, есть ли данный товар в наличии в
      * указанном количестве. (проверка в валидаторе)
      */
-    public void update(CartElement element, int userId, int itemId, int cartElementId) {
+    public void updateCartElement(CartElement element, int userId, int itemId, int cartElementId) {
         User user = userRepository.findById(userId).orElse(null);
         Item item = itemRepository.findById(itemId).orElse(null);
         element.setUser(user);
@@ -63,7 +63,7 @@ public class CartElementService {
         cartElementRepository.save(element);
     }
 
-    public void delete(int cartElementId) {
+    public void deleteCartElement(int cartElementId) {
         cartElementRepository.deleteById(cartElementId);
     }
 

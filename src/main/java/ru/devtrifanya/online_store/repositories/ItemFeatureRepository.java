@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ItemFeatureRepository extends JpaRepository<ItemFeature, Integer> {
-    void deleteByFeatureId(int featureId);
+    void deleteAllByFeatureId(int featureId);
     List<ItemFeature> findAllByItemId(int itemId);
 }

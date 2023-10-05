@@ -18,6 +18,7 @@ import ru.devtrifanya.online_store.security.jwt.JwtRequest;
 import ru.devtrifanya.online_store.security.jwt.JwtResponse;
 import ru.devtrifanya.online_store.security.jwt.JWTUtils;
 import ru.devtrifanya.online_store.util.ErrorResponse;
+import ru.devtrifanya.online_store.util.MainClassConverter;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
 import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.AuthenticationValidator;
@@ -34,22 +35,18 @@ public class AuthController {
     private final ModelMapper modelMapper;
     private final RegistrationValidator registrationValidator;
     private final AuthenticationValidator authenticationValidator;
-    private final MainExceptionHandler mainExceptionHandler;
+    private final MainExceptionHandler exceptionHandler;
+    private final MainClassConverter converter;
 
     @PostMapping("/registration")
     public ResponseEntity<String> signUp(@RequestBody @Valid UserDTO userDTO,
                                              BindingResult bindingResult) {
         registrationValidator.validate(userDTO);
-
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessage = new StringBuilder();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage() + "\n");
-            }
-            throw new InvalidDataException(errorMessage.toString());
+            exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        authService.createUser(convertToUser(userDTO));
+        authService.createUser(converter.convertToUser(userDTO));
+
         return ResponseEntity.ok("Регистрация прошла успешно.");
     }
 
@@ -61,12 +58,8 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
-    public User convertToUser(UserDTO userDTO) {
-        return modelMapper.map(userDTO, User.class);
-    }
-
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        return mainExceptionHandler.handleException(exception);
+        return exceptionHandler.handleException(exception);
     }
 }

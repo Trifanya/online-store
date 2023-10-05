@@ -16,7 +16,6 @@ public class FeatureValidator {
      * как у добавляемой в эту категорию характеристики.
      */
     public void validate(FeatureDTO featureDTO, int categoryId) {
-        // TODO - сделать проверку, что у данной категории еще нет характеристики с таким названием
         if (featureRepository.findByNameAndCategoryId(featureDTO.getName(), categoryId).isPresent()) {
             throw new AlreadyExistException("У текущей категории уже есть характеристика с указанным названием.");
         }

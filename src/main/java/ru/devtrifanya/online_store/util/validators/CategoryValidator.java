@@ -22,6 +22,7 @@ public class CategoryValidator {
      */
     public void validate(CategoryDTO categoryDTO, int parentId) {
         Optional<Category> child = categoryRepository.findByName(categoryDTO.getName());
+
         if (categoryRelationRepository.findByChildIdAndParentId(child.get().getId(), parentId).isPresent()) {
             throw new AlreadyExistException("В текущей категории уже есть подкатегория с указанным названием.");
         }

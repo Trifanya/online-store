@@ -27,7 +27,7 @@ public class CategoryServiceTest {
 
 
     @Test
-    public void getAll_shouldReturnAllSubcategoriesBySupercategoryId() {
+    public void getSubcategories_shouldReturnAllSubcategoriesBySupercategoryId() {
         // given
 
         // when

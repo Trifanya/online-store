@@ -2,15 +2,15 @@ package ru.devtrifanya.online_store.controllers;
 
 import jakarta.validation.Valid;
 import lombok.Data;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.FeatureDTO;
-import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
+import ru.devtrifanya.online_store.util.MainClassConverter;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
 import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.FeatureValidator;
@@ -23,60 +23,48 @@ import java.util.List;
 public class FeatureController {
     private final FeatureService featureService;
     private final FeatureValidator featureValidator;
-    private final ModelMapper modelMapper;
-    private final MainExceptionHandler mainExceptionHandler;
+    private final MainExceptionHandler exceptionHandler;
+    private final MainClassConverter converter;
 
     /**
-     * Адрес: .../{categoryId}/characteristics/new
+     * Адрес: .../{categoryId}/features/new
      * Добавление новой характеристики для текущей категории.
      */
     @PostMapping("/newFeature")
-    public ResponseEntity<String> add(@RequestBody @Valid FeatureDTO featureDTO,
+    public ResponseEntity<String> addNewFeature(@RequestBody @Valid FeatureDTO featureDTO,
                                                     @PathVariable("categoryId") int categoryId,
                                                     BindingResult bindingResult) {
-        //characteristicValidator.validate(characteristicDTO);
+        featureValidator.validate(featureDTO, categoryId);
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessage = new StringBuilder();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage() + "\n");
-            }
-            throw new InvalidDataException(errorMessage.toString());
+            exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        featureService.create(convertToCharacteristic(featureDTO), categoryId);
+        featureService.createNewFeature(converter.convertToFeature(featureDTO), categoryId);
+
         return ResponseEntity.ok("Характеритика успешно добавлена.");
     }
 
     @PatchMapping("/edit/{featureId}")
-    public ResponseEntity<String> edit(@RequestBody @Valid FeatureDTO featureDTO,
-                                                     @PathVariable("featureId") int id,
+    public ResponseEntity<String> editFeatureInfo(@RequestBody @Valid FeatureDTO featureDTO,
+                                                     @PathVariable("categoryId") int categoryId,
+                                                     @PathVariable("featureId") int featureId,
                                                      BindingResult bindingResult) {
-        //characteristicValidator.validate(characteristicDTO);
+        featureValidator.validate(featureDTO, categoryId);
         if (bindingResult.hasErrors()) {
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            StringBuilder errorMessage = new StringBuilder();
-            for (FieldError error : errors) {
-                errorMessage.append(error.getDefaultMessage() + "\n");
-            }
-            throw new InvalidDataException(errorMessage.toString());
+            exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        featureService.update(id, convertToCharacteristic(featureDTO));
+        featureService.updateFeatureInfo(featureId, converter.convertToFeature(featureDTO));
+
         return ResponseEntity.ok("Характеритика успешно изменена.");
     }
 
     @DeleteMapping("/delete/{featureId}")
-    public ResponseEntity<String> delete(@PathVariable("featureId") int id) {
-        featureService.delete(id);
+    public ResponseEntity<String> deleteFeature(@PathVariable("featureId") int id) {
+        featureService.deleteFeature(id);
         return ResponseEntity.ok("Характеритика успешно удалена.");
-    }
-
-
-    public Feature convertToCharacteristic(FeatureDTO featureDTO) {
-        return modelMapper.map(featureDTO, Feature.class);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        return mainExceptionHandler.handleException(exception);
+        return exceptionHandler.handleException(exception);
     }
 }

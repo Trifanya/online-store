@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.util;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,8 +10,10 @@ import org.springframework.validation.FieldError;
 import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.util.exceptions.UnavailableActionException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MainExceptionHandler {
@@ -37,10 +40,17 @@ public class MainExceptionHandler {
         } else if (exception instanceof AlreadyExistException) {
             errorMessage = exception.getMessage();
             status = HttpStatus.ALREADY_REPORTED;
+        } else if (exception instanceof UnavailableActionException) {
+            errorMessage = exception.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+        } else if (exception instanceof ConstraintViolationException) {
+            errorMessage = exception.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+
         } else if (exception instanceof BadCredentialsException) {
             errorMessage = "Вы ввели неверный пароль.";
             status = HttpStatus.UNAUTHORIZED;
-        }  else {
+        } else {
             errorMessage = "Произошла какая-то ошибка.";
             exception.printStackTrace();
             status = HttpStatus.BAD_REQUEST;

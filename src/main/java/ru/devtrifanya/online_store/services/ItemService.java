@@ -51,50 +51,40 @@ public class ItemService {
      * в таблице item_feature не должно быть нулевым.
      */
     @Transactional
-    public void createNewItem(Item item, int categoryId) {
-        Category itemCategory = categoryRepository.findById(categoryId).orElse(null);
-        item.setCategory(itemCategory);
-
-        itemRepository.save(item);
+    public Item createNewItem(Item itemToSave, int categoryId) {
+        itemToSave.setCategory(categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория товара не найдена.")));
+        itemRepository.save(itemToSave);
 
         /** Получение списка характеристик, которые есть у категории сохраняемого товара. */
         List<Feature> categoryFeatures = featureRepository.findAllByCategoryId(categoryId);
 
         /** Каждая из характеристик сохраняемого товара сохраняется в таблицу ItemFeatures */
-        for (int i = 0; i < categoryFeatures.size(); i++) {
-            featureService.createNewItemFeature(
-                    item.getFeatures().get(i),
-                    item,
-                    categoryFeatures.get(i)
-            );
-        }
+        featureService.createSeveralNewItemFeatures(itemToSave, categoryFeatures);
+
+        return itemToSave;
     }
 
     /**
      * Обновление информации о товаре и его характеристиках.
      */
     @Transactional
-    public void updateItemInfo(int itemId, Item item, int categoryId) {
-        item.setId(itemId);
-        item.setCategory(categoryRepository.findById(categoryId)
+    public Item updateItemInfo(int itemId, Item updatedItem, int categoryId) {
+        updatedItem.setId(itemId);
+        updatedItem.setCategory(categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория товара не найдена.")));
-        itemRepository.save(item);
+        itemRepository.save(updatedItem);
 
         /** Получение списка характеристик, которые есть у категории сохраняемого товара. */
         List<Feature> categoryFeatures = featureRepository.findAllByCategoryId(categoryId);
 
-        List<ItemFeature> oldFeatures = itemFeatureRepository.findAllByItemId(itemId);
-        List<ItemFeature> updatedFeatures = item.getFeatures();
+        /** Получение списка характеристик, которые есть у сохраняемого товара. */
+        List<ItemFeature> updatedItemFeatures = updatedItem.getFeatures();
 
         /** Апдейт каждой из характеристик сохраняемого товара */
-        for (int i = 0; i < updatedFeatures.size(); i++) {
-            featureService.updateItemFeatureInfo(
-                    oldFeatures.get(i).getId(),
-                    updatedFeatures.get(i),
-                    item,
-                    categoryFeatures.get(i)
-            );
-        }
+        featureService.updateSeveralItemFeaturesInfo(updatedItem, categoryFeatures);
+
+        return updatedItem;
     }
 
     /**

@@ -1,6 +1,5 @@
 package ru.devtrifanya.online_store.services;
 
-<<<<<<< HEAD
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +68,4 @@ public class CartElementServiceTest {
 
         // then
     }
-=======
-public class CartElementServiceTest {
->>>>>>> LiquibaseInjectionBranch
 }

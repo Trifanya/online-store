@@ -20,7 +20,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
-    public List<Review> getAll(int itemId, short sortByStars) {
+    public List<Review> getAllItemReviews(int itemId, short sortByStars) {
         List<Review> reviews = null;
         if (sortByStars == 1) {
             reviews = reviewRepository.findByItemIdOrderByStarsDesc(itemId);
@@ -36,7 +36,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void create(Review review, int itemId, int userId) {
+    public void createNewReview(Review review, int itemId, int userId) {
         review.setItem(itemRepository.findById(itemId).get());
         review.setUser(userRepository.findById(userId).get());
         review.setTimestamp(LocalDateTime.now());
@@ -44,7 +44,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void delete(int id) {
+    public void deleteReview(int id) {
         reviewRepository.deleteById(id);
     }
 }
