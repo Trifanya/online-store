@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.devtrifanya.online_store.dto.*;
 import ru.devtrifanya.online_store.models.*;
 
+import java.util.stream.Collectors;
+
 @Component
 @Data
 public class MainClassConverter {
@@ -17,7 +19,15 @@ public class MainClassConverter {
         category.setFeatures(dto.getFeatures()
                 .stream()
                 .map(featureDTO -> convertToFeature(featureDTO))
-                .toList());
+                .collect(Collectors.toList()));
+        category.setItems(dto.getItems()
+                .stream()
+                .map(itemDTO -> convertToItem(itemDTO))
+                .collect(Collectors.toList()));
+        category.setRelationsWithChildren(dto.getRelationsWithChildren()
+                .stream()
+                .map(relationDTO -> convertToCategoryRelation(relationDTO))
+                .collect(Collectors.toList()));
 
         return category;
     }
@@ -28,7 +38,15 @@ public class MainClassConverter {
         categoryDTO.setFeatures(category.getFeatures()
                 .stream()
                 .map(feature -> convertToFeatureDTO(feature))
-                .toList());
+                .collect(Collectors.toList()));
+        categoryDTO.setItems(category.getItems()
+                .stream()
+                .map(item -> convertToItemDTO(item))
+                .collect(Collectors.toList()));
+        categoryDTO.setRelationsWithChildren(category.getRelationsWithChildren()
+                .stream()
+                .map(relation -> convertToCategoryRelationDTO(relation))
+                .collect(Collectors.toList()));
 
         return categoryDTO;
     }
@@ -39,7 +57,7 @@ public class MainClassConverter {
         item.setFeatures(dto.getFeatures()
                 .stream()
                 .map(itemFeatureDTO -> convertToItemFeature(itemFeatureDTO))
-                .toList());
+                .collect(Collectors.toList()));
 
         return item;
     }
@@ -50,9 +68,17 @@ public class MainClassConverter {
         itemDTO.setFeatures(item.getFeatures()
                 .stream()
                 .map(this::convertToItemFeatureDTO)
-                .toList());
+                .collect(Collectors.toList()));
 
         return itemDTO;
+    }
+
+    public CategoryRelation convertToCategoryRelation(CategoryRelationDTO dto) {
+        return modelMapper.map(dto, CategoryRelation.class);
+    }
+
+    public CategoryRelationDTO convertToCategoryRelationDTO(CategoryRelation relation) {
+        return modelMapper.map(relation, CategoryRelationDTO.class);
     }
 
     public Feature convertToFeature(FeatureDTO dto) {
@@ -82,6 +108,7 @@ public class MainClassConverter {
     public CartElement convertToCartElement(CartElementDTO dto) {
         return modelMapper.map(dto, CartElement.class);
     }
+
     public CartElementDTO convertToCartElementDTO(CartElement cartElement) {
         return modelMapper.map(cartElement, CartElementDTO.class);
     }

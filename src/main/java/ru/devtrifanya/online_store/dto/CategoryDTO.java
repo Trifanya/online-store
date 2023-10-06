@@ -13,5 +13,7 @@ public class CategoryDTO implements CatalogableDTO {
 
     private List<FeatureDTO> features;
 
-    //private List<ItemDTO> items;
+    private List<ItemDTO> items;
+
+    private List<CategoryRelationDTO> relationsWithChildren;
 }

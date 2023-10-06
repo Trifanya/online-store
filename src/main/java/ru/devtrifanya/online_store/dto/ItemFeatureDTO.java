@@ -10,5 +10,4 @@ public class ItemFeatureDTO {
     //@NotEmpty(message = "Значение характеристики товара не должно быть пустым.")
     private String value;
 
-    //private FeatureDTO featureDTO;
 }

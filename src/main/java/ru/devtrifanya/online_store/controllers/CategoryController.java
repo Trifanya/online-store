@@ -29,54 +29,55 @@ public class CategoryController {
     private final MainClassConverter converter;
 
     /**
-     * Адрес: .../{categoryId}
-     * Получение товаров или подкатегорий какой-то категории, для пользователей и администратора.
-     * Данное действие происходит при нажатии на любую категорию товаров. При этом id выбранной категории
-     * будет передан в параметрах запроса. Если выбранная категория содержит подкатегории товаров, то будет
-     * возвращен список подкатегорий, если не содержит, то будет возвращен список всех товаров данной категории.
+     * Адрес: .../categories/{categoryId}
+     * Для простого пользователя и администратора.
+     * Получение по id dto-объекта категории со списком товаров, заданным параметрами
+     * запроса, если у категории есть товары, и с пустым списком товаров, если категория
+     * является промежуточной.
      */
     @GetMapping
-    public List<? extends CatalogableDTO> showCategoryContent(@PathVariable("categoryId") int categoryId,
-                                                              @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
-                                                              @RequestParam(name = "itemsPerPage", defaultValue = "10") int itemsPerPage,
-                                                              @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
-        List<Category> subcategories = categoryService.getSubcategories(categoryId);
-
-        if (subcategories.isEmpty()) {
-            return itemService.getItemsByCategory(categoryId, pageNumber, itemsPerPage, "sortby")
-                    .stream()
-                    .map(item -> converter.convertToItemDTO(item))
-                    .collect(Collectors.toList());
-        }
-        return subcategories
-                .stream()
-                .map(category -> converter.convertToCategoryDTO(category))
-                .collect(Collectors.toList());
+    public CategoryDTO getCategory(@PathVariable("categoryId") int categoryId,
+                                   @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+                                   @RequestParam(name = "itemsPerPage", defaultValue = "10") int itemsPerPage,
+                                   @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
+        return converter.convertToCategoryDTO(
+                categoryService.getCategory(
+                        categoryId,
+                        pageNumber,
+                        itemsPerPage,
+                        sortBy)
+        );
     }
 
     /**
-     * .../categories/{categoryId}/new - добавление новой категории товаров, только для администратора;
+     * Адрес: .../categories/{categoryId}/new
+     * Только для администратора.
+     * Добавление новой категории товаров,
      * Для добавления новой категории товаров нужно перейти в родительскую категорию, в которой будет создана
      * новая категория. ID этой родительской категориии будет передан в параметрах запроса "categoryId" для
      * создания связи parent-child в таблице CategoryRelation.
      */
     @PostMapping("/newCategory")
-    public ResponseEntity<String> addNewCategory(@RequestBody @Valid CategoryDTO categoryDTO,
-                                      @PathVariable("categoryId") int parentId,
-                                      BindingResult bindingResult) {
+    public ResponseEntity<CategoryDTO> createNewCategory(@RequestBody @Valid CategoryDTO categoryDTO,
+                                                         @PathVariable("categoryId") int parentId,
+                                                         BindingResult bindingResult) {
         categoryValidator.validate(categoryDTO, parentId);
         if (bindingResult.hasErrors()) {
             exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        categoryService.createNewCategory(converter.convertToCategory(categoryDTO), parentId);
 
-        return ResponseEntity.ok("Категория успешно добавлена.");
+        Category savedCategory = categoryService.createNewCategory(
+                converter.convertToCategory(categoryDTO),
+                parentId
+        );
+
+        return ResponseEntity.ok(converter.convertToCategoryDTO(savedCategory));
     }
 
     @PatchMapping("/editCategory")
-    public ResponseEntity<String> editCategoryInfo(@RequestBody @Valid CategoryDTO categoryDTO,
-                                       @PathVariable("categoryId") int parentId,
-                                       BindingResult bindingResult) {
+    public ResponseEntity<String> updateCategoryInfo(@RequestBody @Valid CategoryDTO categoryDTO,
+                                                     @PathVariable("categoryId") int parentId,
+                                                     BindingResult bindingResult) {
         categoryValidator.validate(categoryDTO, parentId);
         if (bindingResult.hasErrors()) {
             exceptionHandler.throwInvalidDataException(bindingResult);

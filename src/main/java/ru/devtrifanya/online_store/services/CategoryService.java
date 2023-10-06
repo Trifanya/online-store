@@ -20,34 +20,53 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Data
 public class CategoryService {
+    private final ItemService itemService;
     private final CategoryRepository categoryRepository;
-    private final CategoryRelationRepository categoryRelationRepository;
     private final ItemRepository itemRepository;
 
+    public Category getCategory(int categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
+    }
+
     /**
-     * Получение всех подкатегорий категории с указанным id.
-     * Если какая-то из подкатегорий не найдена по id, то выбрасывается исключение.
+     * Данный метод находит в БД категорию по указанному id, затем находит в БД товары, принадлежащие
+     * этой категории, которые нужно отобразить согласно указанным номеру страницы, количеству
+     * товаров на странице и критерию сортировки товаров, далее присваивает найденной категории
+     * найденный набор товаров и возвращает объект категории.
+     * Если категория с указанным id не найдена, то будет выброшено исключение NotFoundException.
+     * Если у категории нет товаров, то ей будет присвоен пустой список товаров.
      */
-    public List<Category> getSubcategories(int categoryId) {
-        return categoryRelationRepository.findAllByParentId(categoryId)
-                .stream()
-                .map(relation -> categoryRepository.findById(relation.getChild().getId()))
-                .map(optional -> optional
-                        .orElseThrow(() -> new NotFoundException("Подкатегория не найдена.")))
-                .collect(Collectors.toList());
+    public Category getCategory(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
+
+        category.setItems(
+                itemService.getItemsByCategory(
+                        categoryId,
+                        pageNum,
+                        itemsPerPage,
+                        sortBy)
+        );
+
+        return category;
     }
 
     @Transactional
-    public void createNewCategory(Category category, int parentId) {
+    public Category createNewCategory(Category categoryToSave, int parentId) {
+        //categoryToSave.setFeatures();
+
+
         Category parent = categoryRepository.findById(parentId)
                 .orElseThrow(() -> new NotFoundException("Категория с таким id не найдена."));
 
         CategoryRelation relation = new CategoryRelation();
         relation.setParent(parent);
-        relation.setChild(category);
+        relation.setChild(categoryToSave);
         categoryRelationRepository.save(relation);
 
-        categoryRepository.save(category);
+        categoryRepository.save(categoryToSave);
+        return null;
     }
 
     /**

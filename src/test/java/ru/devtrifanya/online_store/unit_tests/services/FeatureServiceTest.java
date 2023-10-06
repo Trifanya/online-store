@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.unit_tests.services;
 
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +15,7 @@ import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
+import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 import java.util.ArrayList;

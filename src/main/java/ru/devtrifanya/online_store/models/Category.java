@@ -26,4 +26,10 @@ public class Category implements Searchable {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<Item> items;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
+    private List<CategoryRelation> relationsWithChildren;
+
+    @OneToMany(mappedBy = "child", cascade = CascadeType.REMOVE)
+    private List<CategoryRelation> relationsWithParents;
 }
