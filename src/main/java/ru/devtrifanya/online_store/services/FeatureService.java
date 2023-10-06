@@ -23,34 +23,11 @@ public class FeatureService {
     private final ItemFeatureRepository itemFeatureRepository;
     private final CategoryRepository categoryRepository;
 
-    /*public Feature getFeature(int featureId) {
-        Optional<Feature> feature = featureRepository.findById(featureId);
-        if (feature.isEmpty()) {
-            throw new NotFoundException("Характеристика с таким id не найдена.");
-        }
-        return feature.get();
-    }*/
-
-    /**
-     * Получение всех характеристик категории.
-     * Может быть вызван только для конечных категорий.
-     */
-    /*public List<Feature> getAllFeatures(int categoryId) {
-        return featureRepository.findAllByCategoryId(categoryId);
-    }*/
-
-    /**
-     * Получение всех характеристик конкретного товара.
-     */
-    /*public List<ItemFeature> getItemFeatures(int itemId) {
-        List<ItemFeature> itemFeatures = itemFeatureRepository.findAllByItemId(itemId);
-        return itemFeatures;
-    }*/
-
     @Transactional
-    public void createNewFeature(Feature feature, int categoryId) {
-        feature.setCategory(categoryRepository.findById(categoryId).orElse(null));
-        featureRepository.save(feature);
+    public Feature createNewFeature(Feature feature, int categoryId) {
+        feature.setCategory(categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена.")));
+        return featureRepository.save(feature);
     }
 
     /**
@@ -58,30 +35,16 @@ public class FeatureService {
      * Все характеристики товаров сохраняются только при сохранении самого товара.
      */
     @Transactional
-    public void createNewItemFeature(ItemFeature itemFeature, Item item, Feature feature) {
+    public ItemFeature createNewItemFeature(ItemFeature itemFeature, Item item, Feature feature) {
         itemFeature.setItem(item);
         itemFeature.setFeature(feature);
-        itemFeatureRepository.save(itemFeature);
-    }
-
-    /**
-     * Сохранение в таблицу item_feature всех характеристик товара из списка itemFeatures.
-     */
-    @Transactional
-    public void createSeveralNewItemFeatures(Item item, List<Feature> features) {
-        List<ItemFeature> itemFeaturesToSave = item.getFeatures();
-        for (int i = 0; i < itemFeaturesToSave.size(); i++) {
-            this.createNewItemFeature(
-                    itemFeaturesToSave.get(i),
-                    item,
-                    features.get(i));
-        }
+        return itemFeatureRepository.save(itemFeature);
     }
 
     @Transactional
-    public void updateFeatureInfo(int featureId, Feature feature) {
+    public Feature updateFeatureInfo(int featureId, Feature feature) {
         feature.setId(featureId);
-        featureRepository.save(feature);
+        return featureRepository.save(feature);
     }
 
     /**
@@ -112,8 +75,10 @@ public class FeatureService {
         }
     }
 
-    /** Удаление характеристики категории и всех соответствующих
-     * характеристик товаров. */
+    /**
+     * Удаление характеристики категории и всех соответствующих
+     * характеристик товаров.
+     */
     @Transactional
     public void deleteFeature(int featureId) {
         itemFeatureRepository.deleteAllByFeatureId(featureId);

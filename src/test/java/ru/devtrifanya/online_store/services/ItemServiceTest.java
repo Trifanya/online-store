@@ -24,6 +24,8 @@ import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 import java.util.*;
 
+import static org.mockito.ArgumentMatchers.eq;
+
 @ExtendWith(MockitoExtension.class)
 @Data
 public class ItemServiceTest {
@@ -42,8 +44,8 @@ public class ItemServiceTest {
     @InjectMocks
     private ItemService itemService;
 
-    private final int ITEM_ID = 1;
-    private final int CATEGORY_ID = 1;
+    private final int ITEM_ID_1 = 1;
+    private final int CATEGORY_ID_1 = 1;
     private final int PAGE_NUMBER_0 = 0;
     private final int PAGE_NUMBER_1 = 1;
     private final int ITEMS_PER_PAGE_3 = 3;
@@ -60,180 +62,278 @@ public class ItemServiceTest {
     private final List<ItemFeature> LIST_OF_ITEM_FEATURES_3 = getListOfItemFeatures(3);
 
     @Test
-    public void getItem_itemIsExist_shouldReturnItemById() {
-        Item item = new Item();
-        item.setId(ITEM_ID);
+    public void getItem_itemIsExist_shouldReturnItem() {
+        Item expectedItem = new Item();
+        expectedItem.setId(ITEM_ID_1);
 
-        Mockito.when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.of(item));
-        Item result = itemService.getItem(ITEM_ID);
+        Mockito.when(itemRepository.findById(ITEM_ID_1))
+                .thenReturn(Optional.of(expectedItem));
+        Item resultItem = itemService.getItem(ITEM_ID_1);
 
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(item, result);
-        Mockito.verify(itemRepository).findById(ITEM_ID);
+        /** У itemRepository должен вызываться метод findById. */
+        Mockito.verify(itemRepository).findById(ITEM_ID_1);
+        Assertions.assertNotNull(resultItem);
+        Assertions.assertEquals(expectedItem, resultItem);
+
     }
 
     @Test
     public void getItem_itemIsNotExist_shouldThrowNotFoundException() {
-        Mockito.when(itemRepository.findById(ITEM_ID)).thenReturn(Optional.empty());
+        Mockito.when(itemRepository.findById(ITEM_ID_1)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(NotFoundException.class, () -> itemService.getItem(ITEM_ID));
-        Mockito.verify(itemRepository).findById(ITEM_ID);
+        Assertions.assertThrows(
+                NotFoundException.class,
+                () -> itemService.getItem(ITEM_ID_1)
+        );
+        /** У itemRepository должен вызываться метод findById. */
+        Mockito.verify(itemRepository).findById(ITEM_ID_1);
     }
 
     @Test
-    public void getItemsByCategory_shouldReturnAllItemsByCategory() {
-        // given
-        List<Item> expectedResult = LIST_OF_ITEMS_5;
-        Page<Item> itemPage = new PageImpl<>(expectedResult);
+    public void getItemsByCategory_shouldReturnListOfItems() {
+        List<Item> expectedListOfItems = LIST_OF_ITEMS_5;
+        Page<Item> itemPage = new PageImpl<>(expectedListOfItems);
 
-        // when
-        Mockito.when(itemRepository.findAllByCategoryId(CATEGORY_ID, PageRequest.of(
+        Mockito.when(itemRepository.findAllByCategoryId(
+                        CATEGORY_ID_1, PageRequest.of(
+                                PAGE_NUMBER_0,
+                                ITEMS_PER_PAGE_10,
+                                Sort.by(SORT_CRITERION_ID)
+                        )))
+                .thenReturn(itemPage);
+        List<Item> resultListOfItems = itemService.getItemsByCategory(CATEGORY_ID_1, PAGE_NUMBER_0, ITEMS_PER_PAGE_10, SORT_CRITERION_ID);
+
+        /** У itemRepository должен вызываться метод findAllByCategoryId. */
+        Mockito.verify(itemRepository).findAllByCategoryId(
+                CATEGORY_ID_1, PageRequest.of(
                         PAGE_NUMBER_0,
                         ITEMS_PER_PAGE_10,
                         Sort.by(SORT_CRITERION_ID)
-                )))
-                .thenReturn(itemPage);
-        List<Item> realResult = itemService.getItemsByCategory(CATEGORY_ID, PAGE_NUMBER_0, ITEMS_PER_PAGE_10, SORT_CRITERION_ID);
-
-        // then
-        Assertions.assertEquals(expectedResult, realResult);
-        Mockito.verify(itemRepository).findAllByCategoryId(CATEGORY_ID, PageRequest.of(
-                PAGE_NUMBER_0,
-                ITEMS_PER_PAGE_10,
-                Sort.by(SORT_CRITERION_ID)
-        ));
+                ));
+        Assertions.assertEquals(expectedListOfItems, resultListOfItems);
     }
 
     @Test
-    public void getItemsByCategory_shouldReturnCorrectPageWithCorrectItems() {
+    public void getItemsByCategory_shouldReturnListOfItemsAsPage() {
         List<Item> items = LIST_OF_ITEMS_5;
         Page<Item> itemPage = new PageImpl<>(items.subList(3, 5));
-        List<Item> expectedResult = itemPage.getContent();
+        List<Item> expectedListOfItems = itemPage.getContent();
 
-        Mockito.when(itemRepository.findAllByCategoryId(CATEGORY_ID, PageRequest.of(
-                PAGE_NUMBER_1,
-                ITEMS_PER_PAGE_3,
-                Sort.by(SORT_CRITERION_ID)))
-        ).thenReturn(itemPage);
-        List<Item> realResult = itemService.getItemsByCategory(CATEGORY_ID, PAGE_NUMBER_1, ITEMS_PER_PAGE_3, SORT_CRITERION_ID);
+        Mockito.when(itemRepository.findAllByCategoryId(
+                        CATEGORY_ID_1, PageRequest.of(
+                                PAGE_NUMBER_1,
+                                ITEMS_PER_PAGE_3,
+                                Sort.by(SORT_CRITERION_ID)
+                        )))
+                .thenReturn(itemPage);
+        List<Item> resultListOfItems = itemService.getItemsByCategory(CATEGORY_ID_1, PAGE_NUMBER_1, ITEMS_PER_PAGE_3, SORT_CRITERION_ID);
 
-        Assertions.assertEquals(expectedResult, realResult);
-        Mockito.verify(itemRepository).findAllByCategoryId(CATEGORY_ID, PageRequest.of(
-                PAGE_NUMBER_1,
-                ITEMS_PER_PAGE_3,
-                Sort.by(SORT_CRITERION_ID)
-        ));
+        /** У itemRepository должен вызваться метод findAllByCategoryId. */
+        Mockito.verify(itemRepository).findAllByCategoryId(
+                CATEGORY_ID_1, PageRequest.of(
+                        PAGE_NUMBER_1,
+                        ITEMS_PER_PAGE_3,
+                        Sort.by(SORT_CRITERION_ID)
+                ));
+        Assertions.assertEquals(expectedListOfItems, resultListOfItems);
+        /** Проверка на совпадение содержимого полученного списка товаров с содержимым ожидаемого списка товаров. */
+        for (int i = 0; i < expectedListOfItems.size(); i++) {
+            Assertions.assertEquals(
+                    expectedListOfItems.get(i),
+                    resultListOfItems.get(i)
+            );
+        }
     }
 
     @Test
-    public void getAll_shouldReturnItemsSortedBySpecifiedCriterion() {
-        // given
-
-        // when
-
-        // then
-    }
-
-
-    @Test
-    public void createNewItem_categoryIsExist_shouldSetItemIdAndCategoryIdAndInvokeSaveMethod() {
-        Item item = new Item();
-        int expectedItemId = ITEM_ID;
-        Category expectedCategory = new Category();
-
-        Mockito.when(categoryRepository.findById(CATEGORY_ID))
-                .thenReturn(Optional.of(expectedCategory));
-        Mockito.doAnswer(invocationOnMock -> {
-                    Item savedItem = invocationOnMock.getArgument(0);
-                    savedItem.setId(expectedItemId);
-                    return savedItem;
-                })
-                .when(itemRepository).save(item);
-
-        Item resultItem = itemService.createNewItem(item, CATEGORY_ID);
-        int resultItemId = resultItem.getId();
-        Category resultCategory = resultItem.getCategory();
-
-        /** У репозитория itemRepository должен вызваться метод save с аргументом item. */
-        Mockito.verify(itemRepository).save(item);
-        /** Товару должен присвоиться id, сгенерированный автоматически при обращении к репозиторию. */
-        Assertions.assertEquals(expectedItemId, resultItemId);
-        /** Товару должна присвоиться категория, id которой был передан в тестируемый метод. */
-        Assertions.assertEquals(expectedCategory, resultCategory);
-    }
-
-    @Test
-    public void createNewItem_categoryIsExist_shouldInvokeFeatureServiceAndSetItemFeaturesId() {
-        Item item = new Item();
-        Category category = new Category();
-
-        List<ItemFeature> expectedItemFeatures = new ArrayList<>();
-        for (int i = 0; i < LIST_OF_ITEM_FEATURES_3.size(); i++) {
-            expectedItemFeatures.add(LIST_OF_ITEM_FEATURES_3.get(i));
-            expectedItemFeatures.get(i).setId(i + 1);
+    public void getAll_shouldReturnItemsListSortedBySpecifiedCriterion() {
+        List<Item> expectedListOfItems = new ArrayList<>(LIST_OF_ITEMS_5);
+        for (int i = 0; i < expectedListOfItems.size(); i++) {
+            expectedListOfItems.get(i).setQuantity(i);
         }
 
-        Mockito.when(categoryRepository.findById(CATEGORY_ID))
-                .thenReturn(Optional.of(category));
-        Mockito.when(featureRepository.findAllByCategoryId(CATEGORY_ID))
-                        .thenReturn(LIST_OF_FEATURES_3);
-        /** Фиктивный featureService при вызове на нем метода createSeveralNewItemFeatures
-         * присваивает характеристикам этого товара ненулевые id. */
+        Page<Item> sortedItemPage = new PageImpl<>(expectedListOfItems);
+
+        Mockito.when(itemRepository.findAllByCategoryId(
+                        CATEGORY_ID_1, PageRequest.of(
+                                PAGE_NUMBER_0,
+                                ITEMS_PER_PAGE_10,
+                                Sort.by(SORT_CRITERION_QUANTITY)
+                        )))
+                .thenReturn(sortedItemPage);
+
+        List<Item> resultListOfItems = itemService.getItemsByCategory(CATEGORY_ID_1, PAGE_NUMBER_0, ITEMS_PER_PAGE_10, SORT_CRITERION_QUANTITY);
+        resultListOfItems.get(2).setQuantity(-33);
+
+        /** У репозитория itemRepository должен вызываться метод findAllByCategoryId. */
+        Mockito.verify(itemRepository).findAllByCategoryId(
+                CATEGORY_ID_1, PageRequest.of(
+                        PAGE_NUMBER_0,
+                        ITEMS_PER_PAGE_10,
+                        Sort.by(SORT_CRITERION_QUANTITY)
+                ));
+        /** Товары из возвращенного списка должны быть отсортированы по количеству, как в исходном списке. */
+        /*for (int i = 0; i < resultListOfItems.size(); i++) {
+            Assertions.assertEquals(
+                    expectedListOfItems.get(i).getQuantity(),
+                    resultListOfItems.get(i).getQuantity()
+            );
+        }*/
+        Assertions.assertIterableEquals(expectedListOfItems, resultListOfItems);
+    }
+
+
+    @Test
+    public void createNewItem_categoryIsExist_shouldSetItemIdAndCategoryAndInvokeOtherMethods() {
+        Item itemToSave = new Item();
+        int expectedItemToSaveId = ITEM_ID_1;
+        Category itemToSaveCategory = new Category();
+
+        Mockito.when(categoryRepository.findById(CATEGORY_ID_1))
+                .thenReturn(Optional.of(itemToSaveCategory));
         Mockito.doAnswer(invocationOnMock -> {
-                    Item itemToSave = invocationOnMock.getArgument(0);
-                    itemToSave.setFeatures(expectedItemFeatures);
-                    return itemToSave;
+                    Item savedItem = invocationOnMock.getArgument(0);
+                    savedItem.setId(expectedItemToSaveId);
+                    return savedItem;
                 })
-                .when(featureService).createSeveralNewItemFeatures(item, LIST_OF_FEATURES_3);
+                .when(itemRepository).save(itemToSave);
 
-        Item resultItem = itemService.createNewItem(item, CATEGORY_ID);
-        List<ItemFeature> resultItemFeatures = resultItem.getFeatures();
+        Item resultItem = itemService.createNewItem(itemToSave, CATEGORY_ID_1);
 
-        /** У сервиса featureService должен вызваться метод createSeveralNewItemFeatures с
-         * указанными аргументами. */
-        Mockito.verify(featureService).createSeveralNewItemFeatures(item, LIST_OF_FEATURES_3);
-        /** У характеристик товара должны быть ненулевые id. */
-        Assertions.assertEquals(expectedItemFeatures, resultItemFeatures);
+        /** У репозитоиря categoryRepository должен вызываться метод findById. */
+        Mockito.verify(categoryRepository).findById(CATEGORY_ID_1);
+        /** У репозитория itemRepository должен вызваться метод save. */
+        Mockito.verify(itemRepository).save(itemToSave);
+        /** Товару должен присвоиться id, сгенерированный автоматически при обращении к репозиторию. */
+        Assertions.assertEquals(expectedItemToSaveId, resultItem.getId());
+        /** Товару должна присвоиться категория, id которой был передан в тестируемый метод. */
+        Assertions.assertEquals(itemToSaveCategory, resultItem.getCategory());
+    }
 
+    @Test
+    public void createNewItem_categoryIsExist_shouldNotChangeItemFeaturesListRefAndInvokeOtherMethods() {
+        Item itemToSave = new Item();
+        Category itemToSaveCategory = new Category();
+        List<ItemFeature> itemToSaveFeatures = LIST_OF_ITEM_FEATURES_3;
+        itemToSave.setFeatures(itemToSaveFeatures);
+
+        Mockito.when(categoryRepository.findById(CATEGORY_ID_1))
+                .thenReturn(Optional.of(itemToSaveCategory));
+        Mockito.when(featureRepository.findAllByCategoryId(CATEGORY_ID_1))
+                .thenReturn(LIST_OF_FEATURES_3);
+
+        Mockito.doAnswer(invocationOnMock -> {
+                    ItemFeature itemFeature = invocationOnMock.getArgument(0);
+                    itemFeature.setItem(itemToSave);
+                    itemFeature.setFeature(Mockito.any());
+                    return itemFeature;
+                })
+                .when(featureService).createNewItemFeature(
+                        Mockito.any(ItemFeature.class),
+                        itemToSave,
+                        Mockito.any(Feature.class)
+                );
+
+        Item resultItem = itemService.createNewItem(itemToSave, CATEGORY_ID_1);
+
+        /** У репозитория featureRepository должен вызываться метод findAllByCategoryId. */
+        Mockito.verify(featureRepository).findAllByCategoryId(CATEGORY_ID_1);
+        /** У сервиса featureService должен вызваться метод createNewItemFeature для каждой характеристики товара. */
+
+        Mockito.verify(featureService, Mockito.times(LIST_OF_ITEM_FEATURES_3.size())).createNewItemFeature(
+                Mockito.any(ItemFeature.class),
+                itemToSave,
+                Mockito.any(Feature.class)
+        );
+
+        /** У товара ссылка на список характеристик не должна меняться. */
+        Assertions.assertEquals(itemToSave.getFeatures(), resultItem.getFeatures());
     }
 
     @Test
     public void createNewItem_categoryIsNotExist_shouldThrowNotFoundException() {
-        Item item = new Item();
+        Item itemToSave = new Item();
 
-        Mockito.when(categoryRepository.findById(CATEGORY_ID))
+        Mockito.when(categoryRepository.findById(CATEGORY_ID_1))
                 .thenReturn(Optional.empty());
 
+        /** Тестируемый метод должен выбрасывать исключение. */
         Assertions.assertThrows(
                 NotFoundException.class,
-                () -> itemService.createNewItem(item, CATEGORY_ID)
+                () -> itemService.createNewItem(itemToSave, CATEGORY_ID_1)
         );
     }
 
     @Test
-    public void update_categoryIsExist_shouldInvokeSaveMethod() {
-        Item item = new Item();
-        Category expectedCategory = new Category();
+    public void update_categoryIsExist_shouldSetItemIdAndCategoryAndShouldNotChangeItemRefAndInvokeOtherMethods() {
+        int itemToUpdateId = ITEM_ID_1;
+        Item itemToUpdate = new Item();
+        Category itemToUpdateCategory = new Category();
 
-        Mockito.when(categoryRepository.findById(CATEGORY_ID))
-                .thenReturn(Optional.of(expectedCategory));
+        Mockito.when(categoryRepository.findById(CATEGORY_ID_1))
+                .thenReturn(Optional.of(itemToUpdateCategory));
 
-        Item resultItem = itemService.updateItemInfo(ITEM_ID, item, CATEGORY_ID);
-        int resultItemId = resultItem.getId();
-        Category resultCategory = resultItem.getCategory();
+        Item resultItem = itemService.updateItemInfo(ITEM_ID_1, itemToUpdate, CATEGORY_ID_1);
 
-        /** У репозитория itemRepository должен вызваться метод save с аргументом item. */
-        Mockito.verify(itemRepository).save(item);
-        /** Товару должен присвоиться id, сгенерированный автоматически при обращении к репозиторию. */
-        Assertions.assertEquals(expectedItemId, resultItemId);
+        /** У репозитория categoryRepository должен вызваться метод findById. */
+        Mockito.verify(categoryRepository).findById(CATEGORY_ID_1);
+        /** У репозитория itemRepository должен вызваться метод save. */
+        Mockito.verify(itemRepository).save(itemToUpdate);
+        /** Товару должен присвоиться id, переданный в тестируемый метод. */
+        Assertions.assertEquals(itemToUpdateId, resultItem.getId());
         /** Товару должна присвоиться категория, id которой был передан в тестируемый метод. */
-        Assertions.assertEquals(expectedCategory, resultCategory);
+        Assertions.assertEquals(itemToUpdateCategory, resultItem.getCategory());
+        /** Метод должен возвращать тот же товар, который был передан в него. */
+        Assertions.assertEquals(itemToUpdate, resultItem);
     }
 
     @Test
-    public void deleteItem_shouldInvokeDeleteById() {
-        itemService.deleteItem(ITEM_ID);
-        Mockito.verify(itemRepository).deleteById(ITEM_ID);
+    public void updateItemInfo_categoryIsExist_shouldInvokeMethodsAndNotChangeItemFeaturesListRef() {
+        int itemToUpdateId = ITEM_ID_1;
+        Item itemToUpdate = new Item();
+        Category itemToUpdateCategory = new Category();
+        List<ItemFeature> itemToUpdateFeatures = LIST_OF_ITEM_FEATURES_3;
+        itemToUpdate.setFeatures(itemToUpdateFeatures);
+
+        Mockito.when(categoryRepository.findById(CATEGORY_ID_1))
+                .thenReturn(Optional.of(itemToUpdateCategory));
+        Mockito.when(featureRepository.findAllByCategoryId(CATEGORY_ID_1))
+                .thenReturn(LIST_OF_FEATURES_3);
+        /** Фиктивный featureService при вызове на нем метода createSeveralNewItemFeatures
+         * присваивает характеристикам этого товара ненулевые id. */
+        Mockito.doAnswer(invocationOnMock -> invocationOnMock.getArgument(0))
+                .when(featureService).updateSeveralItemFeaturesInfo(itemToUpdate, LIST_OF_FEATURES_3);
+
+        Item resultItem = itemService.updateItemInfo(itemToUpdateId, itemToUpdate, CATEGORY_ID_1);
+
+        /** У репозитория featureRepository должен вызваться метод findAllByCategoryId. */
+        Mockito.verify(featureRepository).findAllByCategoryId(CATEGORY_ID_1);
+        /** У сервиса featureService должен вызваться метод updateSeveralItemFeaturesInfo. */
+        Mockito.verify(featureService).updateSeveralItemFeaturesInfo(itemToUpdate, LIST_OF_FEATURES_3);
+        /** Ссылка на список характеритик у товара не должна меняться. */
+        Assertions.assertEquals(itemToUpdateFeatures, resultItem.getFeatures());
+    }
+
+    @Test
+    public void updateItemInfo_categoryIsNotExist_shouldThrowNotFoundException() {
+        Item itemToUpdate = new Item();
+
+        Mockito.when(categoryRepository.findById(CATEGORY_ID_1))
+                .thenReturn(Optional.empty());
+
+        /** Тестируемый метод должен выбрасывать исключение. */
+        Assertions.assertThrows(
+                NotFoundException.class,
+                () -> itemService.updateItemInfo(ITEM_ID_1, itemToUpdate, CATEGORY_ID_1)
+        );
+    }
+
+    @Test
+    public void deleteItem_shouldInvokeDeleteMethod() {
+        itemService.deleteItem(ITEM_ID_1);
+
+        /** У репозитория itemRepository должен вызываться метод deleteById. */
+        Mockito.verify(itemRepository).deleteById(ITEM_ID_1);
     }
 
     public List<Item> getListOfItems(int size) {

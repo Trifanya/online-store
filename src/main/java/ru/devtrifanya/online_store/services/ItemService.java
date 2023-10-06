@@ -1,6 +1,7 @@
 package ru.devtrifanya.online_store.services;
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -60,7 +62,13 @@ public class ItemService {
         List<Feature> categoryFeatures = featureRepository.findAllByCategoryId(categoryId);
 
         /** Каждая из характеристик сохраняемого товара сохраняется в таблицу ItemFeatures */
-        featureService.createSeveralNewItemFeatures(itemToSave, categoryFeatures);
+        for (int i = 0; i < itemToSave.getFeatures().size(); i++) {
+            featureService.createNewItemFeature(
+                    itemToSave.getFeatures().get(i),
+                    itemToSave,
+                    categoryFeatures.get(i)
+            );
+        }
 
         return itemToSave;
     }

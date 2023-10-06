@@ -55,20 +55,20 @@ public class MainClassConverter {
         return itemDTO;
     }
 
-    public ItemFeature convertToItemFeature(ItemFeatureDTO dto) {
-        return modelMapper.map(dto, ItemFeature.class);
-    }
-
-    public ItemFeatureDTO convertToItemFeatureDTO(ItemFeature itemFeature) {
-        return modelMapper.map(itemFeature, ItemFeatureDTO.class);
-    }
-
     public Feature convertToFeature(FeatureDTO dto) {
         return modelMapper.map(dto, Feature.class);
     }
 
     public FeatureDTO convertToFeatureDTO(Feature feature) {
         return modelMapper.map(feature, FeatureDTO.class);
+    }
+
+    public ItemFeature convertToItemFeature(ItemFeatureDTO dto) {
+        return modelMapper.map(dto, ItemFeature.class);
+    }
+
+    public ItemFeatureDTO convertToItemFeatureDTO(ItemFeature itemFeature) {
+        return modelMapper.map(itemFeature, ItemFeatureDTO.class);
     }
 
     public Review convertToReview(ReviewDTO dto) {
