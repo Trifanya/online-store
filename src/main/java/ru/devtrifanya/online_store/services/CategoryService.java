@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.CategoryRelation;
+import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
@@ -20,29 +21,37 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Data
 public class CategoryService {
+    private final FeatureService featureService;
     private final ItemService itemService;
+    private final CategoryRelationService categoryRelationService;
     private final CategoryRepository categoryRepository;
-    private final ItemRepository itemRepository;
 
+
+    /**
+     * Получение категории по ее id.
+     * Метод получает на вход id категории, затем вызывает метод репозитория для получения
+     * категории по id и возвращает найденную категорию.
+     * Если категория с указанным id не найдена в БД, то выбрасывается исключение.
+     */
     public Category getCategory(int categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
     }
 
     /**
-     * Данный метод находит в БД категорию по указанному id, затем находит в БД товары, принадлежащие
-     * этой категории, которые нужно отобразить согласно указанным номеру страницы, количеству
-     * товаров на странице и критерию сортировки товаров, далее присваивает найденной категории
-     * найденный набор товаров и возвращает объект категории.
-     * Если категория с указанным id не найдена, то будет выброшено исключение NotFoundException.
-     * Если у категории нет товаров, то ей будет присвоен пустой список товаров.
+     * Получение категории по ее id с частью списка товаров.
+     * Метод получает на вход id категории и параметры списка товаров категории, вызывает
+     * метод репозитория для получения категории по id, затем вызывает метод сервиса,
+     * возвращающий часть списка товаров найденной категории, далее инициализирует поле items
+     * найденной категории возвращенным из сервиса списком и возвращает найденную категорию.
+     * Если категория с указанным id не найдена в БД, то выбрасывается исключение.
      */
     public Category getCategory(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
 
         category.setItems(
-                itemService.getItemsByCategory(
+                itemService.getItemsByCategoryId(
                         categoryId,
                         pageNum,
                         itemsPerPage,
@@ -52,55 +61,79 @@ public class CategoryService {
         return category;
     }
 
-    @Transactional
-    public Category createNewCategory(Category categoryToSave, int parentId) {
-        //categoryToSave.setFeatures();
-
-
-        Category parent = categoryRepository.findById(parentId)
-                .orElseThrow(() -> new NotFoundException("Категория с таким id не найдена."));
-
-        CategoryRelation relation = new CategoryRelation();
-        relation.setParent(parent);
-        relation.setChild(categoryToSave);
-        categoryRelationRepository.save(relation);
-
-        categoryRepository.save(categoryToSave);
-        return null;
-    }
 
     /**
-     * Изменение названия категории.
+     * Добавление новой категории.
+     * Метод получает на вход категорию, которую нужно сохранить и id ее родительской
+     * категории, затем вызывает метоод репозитория для сохранения категории в БД (это
+     * нужно сделать до остальных действия, чтобы сохраняемой категории присвоился ненулевой
+     * id), далее вызывает методы сервисов для сохранения зависимых объектов: характеристик
+     * категории и товаров категори, затем создает новое отношение сохраненной категории с
+     * ее родительской категорией и наконец возвращает сохраненную категорию.
      */
     @Transactional
-    public void updateCategoryInfo(Category category, int categoryId) {
-        category.setId(categoryId);
-        categoryRepository.save(category);
+    public Category createNewCategory(Category categoryToSave, int parentId) {
+        Category savedCategory = categoryRepository.save(categoryToSave);
+
+        for (Feature feature : savedCategory.getFeatures()) {
+            featureService.createNewFeature(feature, savedCategory);
+        }
+        for (Item item : savedCategory.getItems()) {
+            itemService.createNewItem(item, savedCategory);
+        }
+
+        CategoryRelation relation = new CategoryRelation();
+        relation.setChild(savedCategory);
+        categoryRelationService.createCategoryRelation(relation, categoryRepository.findById(parentId).get());
+
+        return savedCategory;
     }
 
     /**
-     * Если удаляемая категория содержит только другие категории, то нужно
-     * связать дочерние категории этой категории с ее родительской категорией.
-     * Если удаляемая категория является конечной, то есть содержит в себе
-     * только товары, то нужно удалить все товары удаляемой категории.
+     * Обновление категории.
+     * Метод получает на вход id категории, которую нужно обновить, саму категорию и id ее
+     * родительской категории, затем инициализирует поле id обновляемой категории, в цикле
+     * обращается к методу сервиса, который обновляет каждую из характеристик обновляемой
+     * категории, затем вызывает метод репозитория для сохранения обновленной категории и
+     * возвращает обновленную категорию.
+     * Список товаров и список отношений с дочерними и родительскими категориями при этом
+     * у обновляемой категории не меняется.
+     */
+    @Transactional
+    public Category updateCategory(int categoryId, Category updatedCategory, int parentId) {
+        updatedCategory.setId(categoryId);
+
+        List<Feature> oldFeatures = featureService.getFeaturesByCategoryId(categoryId);
+        List<Feature> updatedFeatures = updatedCategory.getFeatures();
+        for (int i = 0; i < updatedCategory.getFeatures().size(); i++) {
+            featureService.updateFeatureInfo(
+                    oldFeatures.get(i).getId(),
+                    updatedFeatures.get(i),
+                    updatedCategory
+            );
+        }
+
+        return categoryRepository.save(updatedCategory);
+    }
+
+    /**
+     * Удаление категории.
+     * Метод получает на вход id удаляемой категории, затем вызывает метод репозитория
+     * для получения удаляемой категории, далее проверяет, является ли категория конечной:
+     * если нет - то нужно вызвать метод сервиса, который связывает дочерние категории
+     * удаляемой категории с родительскими категориями удаляемой категории, если да -
+     * то вышеописанное действие не нужно и можно сразу вызвать метод репозитория для
+     * удаления категории с указанным id.
      */
     @Transactional
     public void deleteCategory(int categoryId) {
-        // Если категория содержит только другие категории
-        if (!categoryRelationRepository.findAllByParentId(categoryId).isEmpty()) {
-            CategoryRelation relationWithParent = categoryRelationRepository.findByChildId(categoryId)
-                    .orElseThrow(() -> new NotFoundException("У данной категории нет родительской категории."));
-            Category parent = categoryRepository.findById(relationWithParent.getParent().getId())
-                    .orElseThrow(() -> new NotFoundException("Родительская категория удаляемой категории не найдена."));
+        Category categoryToDelete = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
 
-            List<CategoryRelation> relationsWithChildren = categoryRelationRepository.findAllByParentId(categoryId);
-            relationsWithChildren
-                    .stream()
-                    .forEach(relation -> {
-                        relation.setParent(parent);
-                        categoryRelationRepository.save(relation);
-                    });
+        if (categoryToDelete.getItems().isEmpty()) {
+            categoryRelationService.updateRelationsOfDeletingCategory(categoryId);
         }
+
         categoryRepository.deleteById(categoryId);
     }
 

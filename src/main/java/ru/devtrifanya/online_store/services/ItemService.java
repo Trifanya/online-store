@@ -10,33 +10,43 @@ import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
-import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.repositories.FeatureRepository;
-import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @Data
 public class ItemService {
-    private final FeatureService featureService;
+    private final ItemFeatureService itemFeatureService;
 
-    private final CategoryRepository categoryRepository;
     private final ItemRepository itemRepository;
-    private final FeatureRepository featureRepository;
-    private final ItemFeatureRepository itemFeatureRepository;
 
 
+    /**
+     * Получение товара по его id.
+     * Метод получает на вход id товара, затем вызывает метд репозитория для поиска
+     * товара по id и возвращает найденный товар.
+     * Если товар не найден, то выбрасывается исключение.
+     */
     public Item getItem(int itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Товар с таким названием не найден."));
     }
 
-    public List<Item> getItemsByCategory(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
+    public List<Item> getItemsByCategoryId(int categoryId) {
+        return itemRepository.findAllByCategoryId(categoryId);
+    }
+
+    /**
+     * Получение части списка товаров по id категории.
+     * Метод получает на вход id категории, номер страницы, количество товаров на одной
+     * странице и критерий сортировки, затем обращается к репозитория для получения
+     * нужной страницы товаров с указанным id категории и возвращает список товаров,
+     * соответствующий возвращенной репозиторием странице.
+     */
+    public List<Item> getItemsByCategoryId(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
         return itemRepository.findAllByCategoryId(
                 categoryId,
                 PageRequest.of(pageNum, itemsPerPage, Sort.by(sortBy))
@@ -44,60 +54,65 @@ public class ItemService {
     }
 
     /**
-     * Добавление нового товара. При этом товару назначается категория, в которой он был добавлен.
-     * При добавлении товара в таблицу ItemFeatures сохраняются все характеристики нового товара.
-     * Характеристики товара обязательно должны сохраняться после самого товара, т.к. у товара до
-     * сохранения id = 0, а после сохранения id становится равным какому-то значению,
-     * сгенерированному автоматически. Если же попытаться сохранить характеристику товара, передав
-     * в метод сохранения характеристики товар с id = 0, то будет ошибка, т.к. поле item_id
-     * в таблице item_feature не должно быть нулевым.
+     * Добавление нового товара.
+     * Метод получает на вход товар, у которого проинициализированы все поля, кроме поля
+     * rating и поля category, инициализирует rating нулевым значением, инициализирует
+     * категорию, затем вызывает метод сервиса, сохраняющий каждую из характеристик
+     * сохраняемого товара, далее вызывает метод репозитория для сохранения товара в БД
+     * и возвращает сохраненный товар.
      */
     @Transactional
-    public Item createNewItem(Item itemToSave, int categoryId) {
-        itemToSave.setCategory(categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException("Категория товара не найдена.")));
-        itemRepository.save(itemToSave);
+    public Item createNewItem(Item itemToSave, Category category) {
+        itemToSave.setRating(0);
+        itemToSave.setCategory(category);
 
-        /** Получение списка характеристик, которые есть у категории сохраняемого товара. */
-        List<Feature> categoryFeatures = featureRepository.findAllByCategoryId(categoryId);
+        Item savedItem = itemRepository.save(itemToSave);
 
-        /** Каждая из характеристик сохраняемого товара сохраняется в таблицу ItemFeatures */
         for (int i = 0; i < itemToSave.getFeatures().size(); i++) {
-            featureService.createNewItemFeature(
-                    itemToSave.getFeatures().get(i),
-                    itemToSave,
-                    categoryFeatures.get(i)
+            itemFeatureService.createNewItemFeature(
+                    savedItem.getFeatures().get(i),
+                    savedItem,
+                    category.getFeatures().get(i)
             );
         }
 
-        return itemToSave;
+        return savedItem;
     }
 
     /**
-     * Обновление информации о товаре и его характеристиках.
+     * Обновление информации о товаре.
+     * Метод получает на вход id товара, который нужно изменить, товар, у которого
+     * проинициализированы все поля, кроме поля rating и поля category, инициализирует
+     * rating, инициализирует категорию, затем вызывает метод сервиса, обновляющий каждую
+     * из характеристик сохраняемого товара, далее вызывает метод репозитория для сохранения
+     * товара в БД и возвращает обновленный товар.
      */
     @Transactional
-    public Item updateItemInfo(int itemId, Item updatedItem, int categoryId) {
+    public Item updateItemInfo(int itemId, Item updatedItem, Category category) {
+        Item oldItem = itemRepository.findById(itemId).get();
+
         updatedItem.setId(itemId);
-        updatedItem.setCategory(categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new NotFoundException("Категория товара не найдена.")));
-        itemRepository.save(updatedItem);
+        updatedItem.setRating(oldItem.getRating());
+        updatedItem.setCategory(category);
 
-        /** Получение списка характеристик, которые есть у категории сохраняемого товара. */
-        List<Feature> categoryFeatures = featureRepository.findAllByCategoryId(categoryId);
+        List<ItemFeature> oldFeatures = oldItem.getFeatures();
+        List<ItemFeature> updatedFeatures = updatedItem.getFeatures();
+        for (int i = 0; i < updatedItem.getFeatures().size(); i++) {
+            itemFeatureService.updateItemFeatureInfo(
+                    oldFeatures.get(i).getId(),
+                    updatedFeatures.get(i),
+                    updatedItem,
+                    category.getFeatures().get(i)
+            );
+        }
 
-        /** Получение списка характеристик, которые есть у сохраняемого товара. */
-        List<ItemFeature> updatedItemFeatures = updatedItem.getFeatures();
-
-        /** Апдейт каждой из характеристик сохраняемого товара */
-        featureService.updateSeveralItemFeaturesInfo(updatedItem, categoryFeatures);
-
-        return updatedItem;
+        return itemRepository.save(updatedItem);
     }
 
     /**
-     * Удаление товара из таблицы item. При удалении товара удаляются
-     * все связанные с ним характеристики из таблицы item_feature.
+     * Удаление товара.
+     * Метод получает на вход id товара, который нужно удалить, затем вызывает метод
+     * репозитория для удаления товара по id.
      */
     @Transactional
     public void deleteItem(int itemId) {

@@ -8,11 +8,23 @@ import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @Data
 public class ItemFeatureService {
     private final ItemFeatureRepository itemFeatureRepository;
+
+    /**
+     * Получение характеристик товаров по id характеристики категории.
+     * Метод получает на вход id характеристики категории, вызывает метод репозитория для
+     * получения всех характеристик товаров с указанным id характеристики категории и
+     * возвращает список искомых характеристик товаров.
+     */
+    public List<ItemFeature> getItemFeaturesByFeatureId(int featureId) {
+        return itemFeatureRepository.findAllByFeatureId(featureId);
+    }
 
     /**
      * В метод передается характеристика товара, у которой проинициализировано только

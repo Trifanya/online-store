@@ -43,6 +43,9 @@ public class Item implements Searchable {
     @Column(name = "image")
     private String imageURL;
 
+    @Column(name = "rating")
+    private double rating;
+
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     //@NotEmpty(message = "Вы не указали категорию товара.")

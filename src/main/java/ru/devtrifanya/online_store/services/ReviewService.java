@@ -3,11 +3,10 @@ package ru.devtrifanya.online_store.services;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.Review;
-import ru.devtrifanya.online_store.repositories.ItemRepository;
+import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.ReviewRepository;
-import ru.devtrifanya.online_store.repositories.UserRepository;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,10 +16,14 @@ import java.util.List;
 @Data
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
-    private final ItemRepository itemRepository;
 
-    public List<Review> getAllItemReviews(int itemId, short sortByStars) {
+    /**
+     * Получение списка всех отзывов о товаре.
+     * Метод получает на вход id товара и параметр, указывающих порядок сортировки отзывов,
+     * затем в зависимости от параметра сортировки вызывает метод репозитория для поиска
+     * отзывов по id товара и возвращает найденный список отзывов.
+     */
+    public List<Review> getReviewsByItemId(int itemId, short sortByStars) {
         List<Review> reviews = null;
         if (sortByStars == 1) {
             reviews = reviewRepository.findByItemIdOrderByStarsDesc(itemId);
@@ -29,22 +32,31 @@ public class ReviewService {
         } else {
             reviews = reviewRepository.findByItemId(itemId);
         }
-        if (reviews.size() == 0) {
-            throw new NotFoundException("О данном товаре пока что нет ни одного отзыва.");
-        }
         return reviews;
     }
 
+    /**
+     * Добавления отзыва о товаре.
+     * Метод получает на вход отзыв, у которого проинициализированы поля stars,
+     * comment и image, инициализирует ему поля item и user, вызывает метод репозитория
+     * для сохранения отзыва в БД и возвращает обновленный список отзывов.
+     */
     @Transactional
-    public void createNewReview(Review review, int itemId, int userId) {
-        review.setItem(itemRepository.findById(itemId).get());
-        review.setUser(userRepository.findById(userId).get());
-        review.setTimestamp(LocalDateTime.now());
-        reviewRepository.save(review);
+    public List<Review> createNewReview(Review reviewToSave, Item item, User user) {
+        reviewToSave.setItem(item);
+        reviewToSave.setUser(user);
+        reviewToSave.setTimestamp(LocalDateTime.now());
+        reviewRepository.save(reviewToSave);
+        return reviewRepository.findByItemId(item.getId());
     }
 
+    /**
+     * Удаление отзыва о товаре.
+     * Метод получает на вход id отзыва, который нужно удалить и вызывает метод репозитория
+     * для удаления отзыва с указанным id из БД.
+     */
     @Transactional
-    public void deleteReview(int id) {
-        reviewRepository.deleteById(id);
+    public void deleteReview(int reviewId) {
+        reviewRepository.deleteById(reviewId);
     }
 }

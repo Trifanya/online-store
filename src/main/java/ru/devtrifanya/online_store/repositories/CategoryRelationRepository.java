@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface CategoryRelationRepository extends JpaRepository<CategoryRelation, Integer> {
     List<CategoryRelation> findAllByParentId(int parentId);
 
-    Optional<CategoryRelation> findByChildId(int childId);
+    List<CategoryRelation> findAllByChildId(int childId);
 
     Optional<CategoryRelation> findByChildIdAndParentId(int childId, int parentId);
 }

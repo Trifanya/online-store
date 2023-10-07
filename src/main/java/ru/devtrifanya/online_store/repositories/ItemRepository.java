@@ -12,5 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
     Optional<Item> findByName(String name);
+    List<Item> findAllByCategoryId(int categoryId);
     Page<Item> findAllByCategoryId(int categoryId, PageRequest pageRequest);
 }
