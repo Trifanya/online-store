@@ -21,7 +21,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @Data
 public class FeatureService {
-    private final CategoryService categoryService;
+    //private final CategoryService categoryService;
     private final ItemFeatureService itemFeatureService;
     private final FeatureRepository featureRepository;
 
@@ -37,8 +37,11 @@ public class FeatureService {
      */
     @Transactional
     public Feature createNewFeature(Feature feature, Category category) {
+        //Category category = categoryService.getCategory(categoryId);
+
         feature.setCategory(category);
-        feature.setFeatures(new ArrayList<>()); // данное поле инициализируется пустым списком, т.к. при создании новой характеристики категории конкретные характеристики не указываются
+        //feature.setFeatures(new ArrayList<>()); // данное поле инициализируется пустым списком, т.к. при создании новой характеристики категории конкретные характеристики не указываются
+
         return featureRepository.save(feature);
     }
 

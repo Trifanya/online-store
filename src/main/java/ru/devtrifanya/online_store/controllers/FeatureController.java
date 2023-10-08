@@ -1,3 +1,4 @@
+/*
 package ru.devtrifanya.online_store.controllers;
 
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.FeatureDTO;
+import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
 import ru.devtrifanya.online_store.util.MainClassConverter;
@@ -26,28 +28,35 @@ public class FeatureController {
     private final MainExceptionHandler exceptionHandler;
     private final MainClassConverter converter;
 
-    /**
+    */
+/**
      * Адрес: .../{categoryId}/features/new
      * Добавление новой характеристики для текущей категории.
-     */
+     *//*
+
     @PostMapping("/newFeature")
-    public ResponseEntity<String> addNewFeature(@RequestBody @Valid FeatureDTO featureDTO,
+    public ResponseEntity<Feature> createNewFeature(@RequestBody @Valid FeatureDTO featureDTO,
                                                     @PathVariable("categoryId") int categoryId,
                                                     BindingResult bindingResult) {
         featureValidator.validate(featureDTO, categoryId);
         if (bindingResult.hasErrors()) {
             exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        featureService.createNewFeature(converter.convertToFeature(featureDTO), categoryId);
 
-        return ResponseEntity.ok("Характеритика успешно добавлена.");
+        Feature createdFeature = featureService.createNewFeature(
+                converter.convertToFeature(featureDTO),
+                categoryId
+        );
+
+        return ResponseEntity.ok(createdFeature);
     }
+
 
     @PatchMapping("/edit/{featureId}")
     public ResponseEntity<String> editFeatureInfo(@RequestBody @Valid FeatureDTO featureDTO,
-                                                     @PathVariable("categoryId") int categoryId,
-                                                     @PathVariable("featureId") int featureId,
-                                                     BindingResult bindingResult) {
+                                                  @PathVariable("categoryId") int categoryId,
+                                                  @PathVariable("featureId") int featureId,
+                                                  BindingResult bindingResult) {
         featureValidator.validate(featureDTO, categoryId);
         if (bindingResult.hasErrors()) {
             exceptionHandler.throwInvalidDataException(bindingResult);
@@ -68,3 +77,4 @@ public class FeatureController {
         return exceptionHandler.handleException(exception);
     }
 }
+*/

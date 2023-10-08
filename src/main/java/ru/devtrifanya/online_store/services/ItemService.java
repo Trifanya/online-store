@@ -10,10 +10,12 @@ import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
+import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,6 +23,7 @@ import java.util.List;
 public class ItemService {
     private final ItemFeatureService itemFeatureService;
 
+    private final CategoryRepository categoryRepository;
     private final ItemRepository itemRepository;
 
 
@@ -33,10 +36,6 @@ public class ItemService {
     public Item getItem(int itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Товар с таким названием не найден."));
-    }
-
-    public List<Item> getItemsByCategoryId(int categoryId) {
-        return itemRepository.findAllByCategoryId(categoryId);
     }
 
     /**
@@ -53,18 +52,49 @@ public class ItemService {
         ).getContent();
     }
 
+    public List<Item> getItemsByCategoryId(Map<String, String> filters) {
+        for (Map.Entry<String, String> filter : filters.entrySet()) {
+            String filterKey = filter.getKey();
+            if (filterKey.contains("Range")) { // Границы диапазона
+                String[] filterValue = filter.getValue().split("-");
+
+                double rangeStart = Double.parseDouble(filterValue[0]);
+                double rangeEnd = Double.parseDouble(filterValue[1]);
+
+                //itemRepository...
+            } else if (filterKey.contains("Values")) { // Множество значений
+                Set<String> filterValues = Arrays.stream(
+                        filter.getValue().split(",")
+                        ).collect(Collectors.toSet());
+
+                List<Item> items = itemRepository.findItemsWithFeatureInRange(
+                        filterKey.substring(0, filterKey.length() - "Values".length()),
+                        filterValues
+                );
+            } else if (filterKey.contains("Flag")) { // true или false
+                boolean flag = Boolean.parseBoolean(filter.getValue());
+
+                //itemRepository...
+            }
+        }
+        return null;
+    }
+
     /**
      * Добавление нового товара.
      * Метод получает на вход товар, у которого проинициализированы все поля, кроме поля
      * rating и поля category, инициализирует rating нулевым значением, инициализирует
-     * категорию, затем вызывает метод сервиса, сохраняющий каждую из характеристик
-     * сохраняемого товара, далее вызывает метод репозитория для сохранения товара в БД
-     * и возвращает сохраненный товар.
+     * категорию полученным из сервиса объектом, затем для каждой характеристики товара
+     * вызывает метод сервиса, сохраняющий эту характеристику, далее вызывает метод
+     * репозитория для сохранения товара в БД и возвращает сохраненный товар.
      */
     @Transactional
-    public Item createNewItem(Item itemToSave, Category category) {
+    public Item createNewItem(Item itemToSave, int categoryId) {
+        Category itemCategory = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
+
         itemToSave.setRating(0);
-        itemToSave.setCategory(category);
+        itemToSave.setCategory(itemCategory);
 
         Item savedItem = itemRepository.save(itemToSave);
 
@@ -72,10 +102,9 @@ public class ItemService {
             itemFeatureService.createNewItemFeature(
                     savedItem.getFeatures().get(i),
                     savedItem,
-                    category.getFeatures().get(i)
+                    itemCategory.getFeatures().get(i)
             );
         }
-
         return savedItem;
     }
 
@@ -88,8 +117,10 @@ public class ItemService {
      * товара в БД и возвращает обновленный товар.
      */
     @Transactional
-    public Item updateItemInfo(int itemId, Item updatedItem, Category category) {
+    public Item updateItemInfo(int itemId, Item updatedItem, int categoryId) {
         Item oldItem = itemRepository.findById(itemId).get();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
 
         updatedItem.setId(itemId);
         updatedItem.setRating(oldItem.getRating());
@@ -105,7 +136,6 @@ public class ItemService {
                     category.getFeatures().get(i)
             );
         }
-
         return itemRepository.save(updatedItem);
     }
 

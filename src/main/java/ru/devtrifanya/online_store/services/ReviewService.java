@@ -15,6 +15,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Data
 public class ReviewService {
+    private final ItemService itemService;
+    private final UserService userService;
+
     private final ReviewRepository reviewRepository;
 
     /**
@@ -42,12 +45,15 @@ public class ReviewService {
      * для сохранения отзыва в БД и возвращает обновленный список отзывов.
      */
     @Transactional
-    public List<Review> createNewReview(Review reviewToSave, Item item, User user) {
+    public Review createNewReview(Review reviewToSave, int itemId, int userId) {
+        Item item = itemService.getItem(itemId);
+        User user = userService.getUser(userId);
+
         reviewToSave.setItem(item);
         reviewToSave.setUser(user);
         reviewToSave.setTimestamp(LocalDateTime.now());
-        reviewRepository.save(reviewToSave);
-        return reviewRepository.findByItemId(item.getId());
+
+        return reviewRepository.save(reviewToSave);
     }
 
     /**

@@ -14,6 +14,7 @@ import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.util.exceptions.UnavailableActionException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,6 @@ public class CategoryService {
     private final ItemService itemService;
     private final CategoryRelationService categoryRelationService;
     private final CategoryRepository categoryRepository;
-
 
     /**
      * Получение категории по ее id.
@@ -46,30 +46,33 @@ public class CategoryService {
      * найденной категории возвращенным из сервиса списком и возвращает найденную категорию.
      * Если категория с указанным id не найдена в БД, то выбрасывается исключение.
      */
-    public Category getCategory(int categoryId, int pageNum, int itemsPerPage, String sortBy) {
+    public Category getCategory(int categoryId, int pageNum, int itemsPerPage, String sortBy, Map<String, String> allParams) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
 
-        category.setItems(
-                itemService.getItemsByCategoryId(
-                        categoryId,
-                        pageNum,
-                        itemsPerPage,
-                        sortBy)
-        );
-
+        if (!category.getItems().isEmpty()) {
+            /*category.setItems(
+                    itemService.getItemsByCategoryId(
+                            categoryId,
+                            pageNum,
+                            itemsPerPage,
+                            sortBy)
+            );*/
+            category.setItems(
+                    itemService.getItemsByCategoryId(allParams)
+            );
+        }
         return category;
     }
-
 
     /**
      * Добавление новой категории.
      * Метод получает на вход категорию, которую нужно сохранить и id ее родительской
      * категории, затем вызывает метоод репозитория для сохранения категории в БД (это
      * нужно сделать до остальных действия, чтобы сохраняемой категории присвоился ненулевой
-     * id), далее вызывает методы сервисов для сохранения зависимых объектов: характеристик
-     * категории и товаров категори, затем создает новое отношение сохраненной категории с
-     * ее родительской категорией и наконец возвращает сохраненную категорию.
+     * id), далее вызывает методы сервисов для сохранения характеристик категории, затем
+     * создает новое отношение сохраненной категории с ее родительской категорией и наконец
+     * возвращает сохраненную категорию.
      */
     @Transactional
     public Category createNewCategory(Category categoryToSave, int parentId) {
@@ -78,9 +81,9 @@ public class CategoryService {
         for (Feature feature : savedCategory.getFeatures()) {
             featureService.createNewFeature(feature, savedCategory);
         }
-        for (Item item : savedCategory.getItems()) {
+        /*for (Item item : savedCategory.getItems()) {
             itemService.createNewItem(item, savedCategory);
-        }
+        }*/
 
         CategoryRelation relation = new CategoryRelation();
         relation.setChild(savedCategory);
@@ -100,7 +103,7 @@ public class CategoryService {
      * у обновляемой категории не меняется.
      */
     @Transactional
-    public Category updateCategory(int categoryId, Category updatedCategory, int parentId) {
+    public Category updateCategory(int categoryId, Category updatedCategory) {
         updatedCategory.setId(categoryId);
 
         List<Feature> oldFeatures = featureService.getFeaturesByCategoryId(categoryId);
@@ -112,7 +115,6 @@ public class CategoryService {
                     updatedCategory
             );
         }
-
         return categoryRepository.save(updatedCategory);
     }
 

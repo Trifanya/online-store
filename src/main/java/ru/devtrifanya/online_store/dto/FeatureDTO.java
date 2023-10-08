@@ -8,5 +8,6 @@ import java.util.List;
 @Data
 public class FeatureDTO {
     private String name;
+    private String requestParamName;
     private List<ItemFeature> itemFeatures;
 }

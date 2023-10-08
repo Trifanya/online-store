@@ -31,12 +31,13 @@ public class ReviewController {
     /**
      * Адрес: /{itemId}/reviews
      * Просмотр отзывов о конкретном товаре, для пользователей и администратора;
-     * Можно отсортировать отзывы по оценке: sortByRating = -1 - по возрастанию, ... = 1 - по убыванию, ... = 0 - сортировки нет.
+     * Можно отсортировать отзывы по оценке: sortByRating = -1 - по возрастанию, ... = 1
+     * - по убыванию, ... = 0 - сортировки нет.
      */
     @GetMapping()
-    public List<ReviewDTO> showItemReviews(@PathVariable(name = "itemId") int itemId,
-                             @RequestParam(value = "sortByStars", defaultValue = "0") short sortByStars) {
-        return reviewService.getAllItemReviews(itemId, sortByStars)
+    public List<ReviewDTO> getReviews(@PathVariable(name = "itemId") int itemId,
+                                      @RequestParam(value = "sortByStars", defaultValue = "0") short sortByStars) {
+        return reviewService.getReviewsByItemId(itemId, sortByStars)
                 .stream()
                 .map(review -> converter.convertToReviewDTO(review))
                 .collect(Collectors.toList());
@@ -47,17 +48,20 @@ public class ReviewController {
      * Добавление нового отзыва о конкретном товаре, только для пользователей;
      */
     @PostMapping("/new/{userId}")
-    public ResponseEntity<String> addNewReview(@RequestBody @Valid ReviewDTO reviewDTO,
-                                      @PathVariable("itemId") int itemId,
-                                      @PathVariable("userId") int userId,
-                                      BindingResult bindingResult) {
+    public ResponseEntity<String> createNewReview(@RequestBody @Valid ReviewDTO reviewDTO,
+                                                           @PathVariable("itemId") int itemId,
+                                                           @PathVariable("userId") int userId,
+                                                           BindingResult bindingResult) {
         reviewValidator.validate(itemId, userId);
         if (bindingResult.hasErrors()) {
             mainExceptionHandler.throwInvalidDataException(bindingResult);
         }
-        reviewService.createNewReview(converter.convertToReview(reviewDTO), itemId, userId);
-
-        return ResponseEntity.ok("Ваш отзыв принят. Спасибо за обратную связь!");
+        Review createdReview = reviewService.createNewReview(
+                converter.convertToReview(reviewDTO),
+                itemId,
+                userId
+        );
+        return ResponseEntity.ok("Ваш отзыв успешно записан. Спасибо за обратную связь!");
     }
 
     /**

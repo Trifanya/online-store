@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.dto.ItemDTO;
 import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
@@ -25,12 +26,17 @@ public class ItemController {
     private final MainClassConverter converter;
 
 
+    /**
+     * Адрес: .../{categories/{categoryId}/{itemId}}
+     * Для пользователя и администратора.
+     * Метод получает на вход id товара, затем вызывает метод сервиса для получения товара
+     * по id и возвращает полученный товар, преобразованный в dto-объект.
+     */
     @GetMapping("/{itemId}")
     public ItemDTO showItemInfo(@PathVariable("itemId") int itemId) {
-        Item item = itemService.getItem(itemId);
-        ItemDTO itemDTO = converter.convertToItemDTO(item);
-        return itemDTO;
-        //return mainClassConverter.convertToItemDTO(itemService.getItem(itemId));
+        return converter.convertToItemDTO(
+                itemService.getItem(itemId)
+        );
     }
 
     /**
@@ -41,32 +47,38 @@ public class ItemController {
      * Значения характеристик будут храниться отдельно в таблице ItemCharacteristics.
      */
     @PostMapping("/newItem")
-    public ResponseEntity<String> addNewItem(@RequestBody @Valid ItemDTO itemDTO,
-                                             @PathVariable("categoryId") int categoryId,
-                                             BindingResult bindingResult) {
+    public ResponseEntity<ItemDTO> addNewItem(@RequestBody @Valid ItemDTO itemDTO,
+                                              @PathVariable("categoryId") int categoryId,
+                                              BindingResult bindingResult) {
         itemValidator.validate(itemDTO, categoryId);
         if (bindingResult.hasErrors()) {
             exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        Item item = converter.convertToItem(itemDTO);
-        itemService.createNewItem(item, categoryId);
 
-        return ResponseEntity.ok("Товар успешно добавлен.");
+        Item createdItem = itemService.createNewItem(
+                converter.convertToItem(itemDTO),
+                categoryId);
+
+        return ResponseEntity.ok(converter.convertToItemDTO(createdItem));
     }
 
     @PatchMapping("/{itemId}/edit")
-    public ResponseEntity<String> editItemInfo(@RequestBody @Valid ItemDTO itemDTO,
-                                               @PathVariable("itemId") int itemId,
-                                               @PathVariable("categoryId") int categoryId,
-                                               BindingResult bindingResult) {
+    public ResponseEntity<ItemDTO> updateItemInfo(@RequestBody @Valid ItemDTO itemDTO,
+                                                 @PathVariable("itemId") int itemId,
+                                                 @PathVariable("categoryId") int categoryId,
+                                                 BindingResult bindingResult) {
         itemValidator.validate(itemDTO, categoryId);
         if (bindingResult.hasErrors()) {
             exceptionHandler.throwInvalidDataException(bindingResult);
         }
-        Item item = converter.convertToItem(itemDTO);
-        itemService.updateItemInfo(itemId, item, categoryId);
 
-        return ResponseEntity.ok("Информация о товаре успешно изменена.");
+        Item updatedItem = itemService.updateItemInfo(
+                itemId,
+                converter.convertToItem(itemDTO),
+                categoryId
+        );
+
+        return ResponseEntity.ok(converter.convertToItemDTO(updatedItem));
     }
 
     @DeleteMapping("/{itemId}/delete")

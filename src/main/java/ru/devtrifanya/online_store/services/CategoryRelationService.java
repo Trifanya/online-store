@@ -60,6 +60,13 @@ public class CategoryRelationService {
         return relationRepository.save(updatedRelation);
     }
 
+    /**
+     * Связывание родительской категории переданной категории с ее дочерними категориями.
+     * Метод получает на вход id категории, которую планируется удалить, затем вызывает
+     * методы репозитория для получения связей этой категории с родительскими категориями
+     * и с дочерними категориями и наконец создает новые отношения между полученными
+     * родительскими и дочерими категориями.
+     */
     public void updateRelationsOfDeletingCategory(int categoryId) {
         List<CategoryRelation> relationsWithParents = relationRepository.findAllByChildId(categoryId);
         List<CategoryRelation> relationsWithChildren = relationRepository.findAllByParentId(categoryId);

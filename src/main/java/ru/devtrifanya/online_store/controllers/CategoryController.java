@@ -16,6 +16,7 @@ import ru.devtrifanya.online_store.util.MainExceptionHandler;
 import ru.devtrifanya.online_store.util.validators.CategoryValidator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,7 +31,7 @@ public class CategoryController {
 
     /**
      * Адрес: .../categories/{categoryId}
-     * Для простого пользователя и администратора.
+     * Для пользователя и администратора.
      * Получение по id dto-объекта категории со списком товаров, заданным параметрами
      * запроса, если у категории есть товары, и с пустым списком товаров, если категория
      * является промежуточной.
@@ -39,13 +40,15 @@ public class CategoryController {
     public CategoryDTO getCategory(@PathVariable("categoryId") int categoryId,
                                    @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
                                    @RequestParam(name = "itemsPerPage", defaultValue = "10") int itemsPerPage,
-                                   @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
+                                   @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                                   @RequestParam Map<String, String> allParams) {
         return converter.convertToCategoryDTO(
                 categoryService.getCategory(
                         categoryId,
                         pageNumber,
                         itemsPerPage,
-                        sortBy)
+                        sortBy,
+                        allParams)
         );
     }
 
@@ -75,17 +78,20 @@ public class CategoryController {
     }
 
     @PatchMapping("/editCategory")
-    public ResponseEntity<String> updateCategoryInfo(@RequestBody @Valid CategoryDTO categoryDTO,
-                                                     @PathVariable("categoryId") int parentId,
+    public ResponseEntity<CategoryDTO> updateCategoryInfo(@RequestBody @Valid CategoryDTO categoryDTO,
+                                                     @PathVariable("categoryId") int categoryId,
                                                      BindingResult bindingResult) {
-        categoryValidator.validate(categoryDTO, parentId);
+        categoryValidator.validate(categoryDTO, categoryId);
         if (bindingResult.hasErrors()) {
             exceptionHandler.throwInvalidDataException(bindingResult);
         }
 
-        categoryService.createNewCategory(converter.convertToCategory(categoryDTO), parentId);
+        Category updatedCategory = categoryService.updateCategory(
+                categoryId,
+                converter.convertToCategory(categoryDTO)
+        );
 
-        return ResponseEntity.ok("Категория успешно изменена.");
+        return ResponseEntity.ok(converter.convertToCategoryDTO(updatedCategory));
     }
 
     @DeleteMapping("/delete")

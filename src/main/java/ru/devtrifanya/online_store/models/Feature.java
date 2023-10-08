@@ -21,6 +21,9 @@ public class Feature {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "request_name")
+    private String requestParamName;
+
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;

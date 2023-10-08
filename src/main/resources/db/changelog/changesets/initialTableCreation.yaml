@@ -154,6 +154,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: request_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
                   name: category_id
                   type: integer
                   constraints:

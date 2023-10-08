@@ -13,6 +13,7 @@ import ru.devtrifanya.online_store.util.MainExceptionHandler;
 import ru.devtrifanya.online_store.util.validators.CartValidator;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/{userId}/cart")
@@ -24,26 +25,41 @@ public class CartController {
     private final MainClassConverter converter;
 
     @GetMapping
-    public List<CartElement> showUserCart(@PathVariable("userId") int userId) {
-        return cartElementService.getAllCartElements(userId);
+    public List<CartElementDTO> getCartElements(@PathVariable("userId") int userId) {
+        return cartElementService.getCartElementsByUserId(userId)
+                .stream()
+                .map(cartElement -> converter.convertToCartElementDTO(cartElement))
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/{itemId}")
-    public ResponseEntity<String> addItemToCart(@RequestBody CartElementDTO dto,
-                                      @PathVariable("userId") int userId,
-                                      @PathVariable("itemId") int itemId) {
+    public ResponseEntity<String> createNewCartElement(@RequestBody CartElementDTO dto,
+                                                @PathVariable("userId") int userId,
+                                                @PathVariable("itemId") int itemId) {
         cartValidator.validate(itemId);
-        cartElementService.createCartElement(converter.convertToCartElement(dto), userId, itemId);
+
+        cartElementService.createNewCartElement(
+                converter.convertToCartElement(dto),
+                userId,
+                itemId
+        );
+
         return ResponseEntity.ok("Товар успешно добавлен в корзину.");
     }
 
     @PatchMapping("/{cartElementId}/edit/{itemId}")
-    public ResponseEntity<String> editUserCart(@RequestBody CartElementDTO dto,
-                                       @PathVariable("userId") int userId,
-                                       @PathVariable("itemId") int itemId,
-                                       @PathVariable("cartElementId") int cartElementId) {
+    public ResponseEntity<String> updateCartElement(@RequestBody CartElementDTO dto,
+                                               @PathVariable("cartElementId") int cartElementId,
+                                               @PathVariable("userId") int userId,
+                                               @PathVariable("itemId") int itemId) {
         cartValidator.validate(itemId, dto.getItemCount());
-        cartElementService.updateCartElement(converter.convertToCartElement(dto), userId, itemId, cartElementId);
+
+        cartElementService.updateCartElement(
+                cartElementId,
+                converter.convertToCartElement(dto),
+                userId,
+                itemId
+        );
         return ResponseEntity.ok("Количество товара в корзине успешно изменено.");
     }
 

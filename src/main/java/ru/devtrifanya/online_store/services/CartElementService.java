@@ -21,6 +21,8 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @Data
 public class CartElementService {
+    private final UserService userService;
+    private final ItemService itemService;
     private final CartElementRepository cartElementRepository;
 
     /**
@@ -40,9 +42,13 @@ public class CartElementService {
      * элемент корзины.
      */
     @Transactional
-    public CartElement createNewCartElement(CartElement elementToSave, User user, Item item) {
+    public CartElement createNewCartElement(CartElement elementToSave, int userId, int itemId) {
+        User user = userService.getUser(userId);
+        Item item = itemService.getItem(itemId);
+
         elementToSave.setUser(user);
         elementToSave.setItem(item);
+
         return cartElementRepository.save(elementToSave);
     }
 
@@ -54,10 +60,14 @@ public class CartElementService {
      * элемента в БД и возвращает измененный элемент корзины.
      */
     @Transactional
-    public CartElement updateCartElement(int cartElementId, CartElement elementToUpdate, User user, Item item) {
+    public CartElement updateCartElement(int cartElementId, CartElement elementToUpdate, int userId, int itemId) {
+        User user = userService.getUser(userId);
+        Item item = itemService.getItem(itemId);
+
         elementToUpdate.setId(cartElementId);
         elementToUpdate.setUser(user);
         elementToUpdate.setItem(item);
+
         return cartElementRepository.save(elementToUpdate);
     }
 

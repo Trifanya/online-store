@@ -16,6 +16,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
+
     @Override
     public User loadUserByUsername(String email) {
         Optional<User> person = userRepository.findByEmail(email);
@@ -25,6 +26,11 @@ public class UserService implements UserDetailsService {
         }
 
         return person.get();
+    }
+
+    public User getUser(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с указанным id не найден."));
     }
 
     @Transactional
