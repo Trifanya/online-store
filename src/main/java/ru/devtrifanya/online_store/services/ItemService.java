@@ -52,7 +52,7 @@ public class ItemService {
         ).getContent();
     }
 
-    public List<Item> getItemsByCategoryId(Map<String, String> filters) {
+    public List<Item> getItemsByCategoryIdWithFilters(Map<String, String> filters) {
         List<Item> items = null;
         for (Map.Entry<String, String> filter : filters.entrySet()) {
             String filterKey = filter.getKey();
@@ -78,7 +78,7 @@ public class ItemService {
                 //itemRepository...
             }
         }
-        return null;
+        return items;
     }
 
     /**
@@ -97,26 +97,9 @@ public class ItemService {
         itemToSave.setRating(0);
         itemToSave.setCategory(itemCategory);
 
-        Item savedItem = itemRepository.save(itemToSave);
-
-        for (int i = 0; i < itemToSave.getFeatures().size(); i++) {
-            itemFeatureService.createNewItemFeature(
-                    savedItem.getFeatures().get(i),
-                    savedItem,
-                    itemCategory.getFeatures().get(i)
-            );
-        }
-        return savedItem;
+        return itemRepository.save(itemToSave);
     }
 
-    /**
-     * Обновление информации о товаре.
-     * Метод получает на вход id товара, который нужно изменить, товар, у которого
-     * проинициализированы все поля, кроме поля rating и поля category, инициализирует
-     * rating, инициализирует категорию, затем вызывает метод сервиса, обновляющий каждую
-     * из характеристик сохраняемого товара, далее вызывает метод репозитория для сохранения
-     * товара в БД и возвращает обновленный товар.
-     */
     @Transactional
     public Item updateItemInfo(int itemId, Item updatedItem, int categoryId) {
         Item oldItem = itemRepository.findById(itemId).get();
@@ -127,16 +110,6 @@ public class ItemService {
         updatedItem.setRating(oldItem.getRating());
         updatedItem.setCategory(category);
 
-        List<ItemFeature> oldFeatures = oldItem.getFeatures();
-        List<ItemFeature> updatedFeatures = updatedItem.getFeatures();
-        for (int i = 0; i < updatedItem.getFeatures().size(); i++) {
-            itemFeatureService.updateItemFeatureInfo(
-                    oldFeatures.get(i).getId(),
-                    updatedFeatures.get(i),
-                    updatedItem,
-                    category.getFeatures().get(i)
-            );
-        }
         return itemRepository.save(updatedItem);
     }
 

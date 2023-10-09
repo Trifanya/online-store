@@ -17,6 +17,10 @@ public class ItemFeature {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "value")
+    @NotEmpty
+    private String value;
+
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
@@ -25,7 +29,4 @@ public class ItemFeature {
     @JoinColumn(name = "feature_id", referencedColumnName = "id")
     private Feature feature;
 
-    @Column(name = "value")
-    @NotEmpty
-    private String value;
 }

@@ -24,10 +24,20 @@ public class Feature {
     @Column(name = "request_name")
     private String requestParamName;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    private Category category;
+    @Column(name = "unit")
+    private String unit;
+
+    @ManyToMany
+    @JoinTable(
+            name = "category_feature",
+            joinColumns = @JoinColumn(name = "feature_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories;
 
     @OneToMany(mappedBy = "feature", cascade = CascadeType.REMOVE)
     private List<ItemFeature> features;
+
+
+
 }

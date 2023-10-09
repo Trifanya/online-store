@@ -15,49 +15,30 @@ import java.util.List;
 public class CategoryRelationService {
     private final CategoryRelationRepository relationRepository;
 
-    /**
-     * Получение отношений между категориями по указанному childId.
-     * Метод получает на вход id дочерней категории, затем вызывает метод репозитория для
-     * получения всех отношений дочерней категории с родительскими категориями и возвращает
-     * полученный список.
-     */
     public List<CategoryRelation> getRelationsByChildId(int childId) {
         return relationRepository.findAllByChildId(childId);
     }
 
-    /**
-     * Получение отношений между категориями по указанному parentId.
-     * Метод получает на вход id родительской категории, затем вызывает метод репозитория для
-     * получения всех отношений родительской категории с дочерними категориями и возвращает
-     * полученный список.
-     */
-    public List<CategoryRelation> getRelationsByParentId(int parentId) {
-        return relationRepository.findAllByParentId(parentId);
-    }
-
-    /**
-     * В метод передается отношение, которому присвоено только поле child, поэтому
-     * данный метод инициализирует у сохраняемого отношения поле parent, а затем вызывает
-     * метод репозитория, который сохраняет это отношение в БД.
-     */
-    public CategoryRelation createCategoryRelation(CategoryRelation relationToSave,
-                                                   Category parent) {
+    public CategoryRelation createCategoryRelation(Category child, Category parent) {
+        CategoryRelation relationToSave = new CategoryRelation();
+        relationToSave.setChild(child);
         relationToSave.setParent(parent);
+
         return relationRepository.save(relationToSave);
     }
 
-    /**
-     * В метод передается отношение, которому присвоено только поле child, поэтому
-     * данный метод инициализирует id, чтобы указать, отношение с каким id будет изменено,
-     * затем инициализирует у сохраняемого отношения поле parent, а затем вызывает метод
-     * репозитория, который сохраняет это отношение в БД.
-     */
     public CategoryRelation updateCategoryRelation(int relationId,
-                                                   CategoryRelation updatedRelation,
-                                                   Category parent) {
+                                                   CategoryRelation updatedRelation) {
         updatedRelation.setId(relationId);
-        updatedRelation.setParent(parent);
         return relationRepository.save(updatedRelation);
+    }
+
+    public void updateRelationsOfDisplacedCategory(int categoryId, Category newParent) {
+        List<CategoryRelation> relationsWithParents = relationRepository.findAllByChildId(categoryId);
+
+        for (CategoryRelation relationWithParent : relationsWithParents) {
+            relationWithParent.setParent(newParent);
+        }
     }
 
     /**
@@ -77,7 +58,7 @@ public class CategoryRelationService {
                 relation.setChild(relationsWithChildren.get(j).getChild());
 
                 this.createCategoryRelation(
-                        relation,
+                        relationsWithChildren.get(j).getChild(),
                         relationsWithParents.get(i).getParent()
                 );
             }

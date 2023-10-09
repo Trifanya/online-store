@@ -15,6 +15,6 @@ public class ReviewDTO {
     private String comment;
 
     //@URL(message = "Укажите url изображения.")
-    private String imageURL;
+    //private String imageURL;
 
 }

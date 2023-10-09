@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class CategoryRelationDTO {
     private CategoryDTO child;
+    private CategoryDTO parent;
 }

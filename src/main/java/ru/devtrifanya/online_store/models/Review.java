@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "review")
@@ -32,9 +33,13 @@ public class Review {
     @Size(min = 10, max = 1000, message = "Максимальная длина комментария - 1000 символов.")
     private String comment;
 
-    @Column(name = "image")
-    //@URL(message = "Укажите url изображения.")
-    private String imageURL;
+    @OneToMany
+    @JoinTable(
+            name = "review_image",
+            joinColumns = @JoinColumn(name = "review_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<Image> images;
 
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")

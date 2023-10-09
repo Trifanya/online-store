@@ -8,12 +8,6 @@ import java.util.List;
 
 
 @Data
-public class CategoryDTO implements CatalogableDTO {
+public class CategoryDTO {
     private String name;
-
-    private List<FeatureDTO> features;
-
-    private List<ItemDTO> items;
-
-    private List<CategoryRelationDTO> relationsWithChildren;
 }

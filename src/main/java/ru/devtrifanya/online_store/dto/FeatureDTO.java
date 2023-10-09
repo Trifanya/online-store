@@ -9,5 +9,5 @@ import java.util.List;
 public class FeatureDTO {
     private String name;
     private String requestParamName;
-    private List<ItemFeature> itemFeatures;
+    private String unit;
 }

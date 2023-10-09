@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.awt.*;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item implements Searchable {
+public class Item {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +41,6 @@ public class Item implements Searchable {
     @NotEmpty(message = "Вы не добавили описание товара.")
     private String description;
 
-    @Column(name = "image")
-    private String imageURL;
-
     @Column(name = "rating")
     private double rating;
 
@@ -50,6 +48,14 @@ public class Item implements Searchable {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     //@NotEmpty(message = "Вы не указали категорию товара.")
     private Category category;
+
+    @OneToMany
+    @JoinTable(
+            name = "item_image",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<Image> images;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
     @NotEmpty

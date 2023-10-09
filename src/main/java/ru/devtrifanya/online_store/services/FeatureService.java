@@ -21,8 +21,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @Data
 public class FeatureService {
-    //private final CategoryService categoryService;
-    private final ItemFeatureService itemFeatureService;
     private final FeatureRepository featureRepository;
 
     public List<Feature> getFeaturesByCategoryId(int categoryId) {
@@ -37,11 +35,7 @@ public class FeatureService {
      */
     @Transactional
     public Feature createNewFeature(Feature feature, Category category) {
-        //Category category = categoryService.getCategory(categoryId);
-
-        feature.setCategory(category);
-        //feature.setFeatures(new ArrayList<>()); // данное поле инициализируется пустым списком, т.к. при создании новой характеристики категории конкретные характеристики не указываются
-
+        feature.getCategories().add(category);
         return featureRepository.save(feature);
     }
 
@@ -53,11 +47,15 @@ public class FeatureService {
      * возвращает сохраненную характеристику.
      */
     @Transactional
-    public Feature updateFeatureInfo(int featureId, Feature feature, Category category) {
-        feature.setId(featureId);
-        feature.setCategory(category);
-        feature.setFeatures(itemFeatureService.getItemFeaturesByFeatureId(featureId)); // данное поле инициализируется списком уже существующих характеристик товаров
-        return featureRepository.save(feature);
+    public Feature updateFeatureInfo(int featureId, Feature updatedFeature, Category category) {
+        Feature oldFeature = featureRepository.findById(featureId)
+                        .orElseThrow(() -> new NotFoundException("Характеристика с указанным id не найдена."));
+
+        updatedFeature.setCategories(oldFeature.getCategories());
+        updatedFeature.getCategories().add(category);
+        updatedFeature.setId(featureId);
+
+        return featureRepository.save(updatedFeature);
     }
 
     /**
