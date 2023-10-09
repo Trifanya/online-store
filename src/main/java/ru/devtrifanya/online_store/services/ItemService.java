@@ -53,6 +53,7 @@ public class ItemService {
     }
 
     public List<Item> getItemsByCategoryId(Map<String, String> filters) {
+        List<Item> items = null;
         for (Map.Entry<String, String> filter : filters.entrySet()) {
             String filterKey = filter.getKey();
             if (filterKey.contains("Range")) { // Границы диапазона
@@ -67,7 +68,7 @@ public class ItemService {
                         filter.getValue().split(",")
                         ).collect(Collectors.toSet());
 
-                List<Item> items = itemRepository.findItemsWithFeatureInRange(
+                items = itemRepository.findItemsWithFeatureInRange(
                         filterKey.substring(0, filterKey.length() - "Values".length()),
                         filterValues
                 );
