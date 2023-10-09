@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.dto;
+package ru.devtrifanya.online_store.content.dto;
 
 import jakarta.validation.constraints.Min;
 import lombok.Data;

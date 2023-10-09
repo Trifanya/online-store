@@ -10,6 +10,4 @@ import java.util.Optional;
 @Repository
 public interface FeatureRepository extends JpaRepository<Feature, Integer> {
     Optional<Feature> findByName(String name);
-    Optional<Feature> findByNameAndCategoryId(String featureName, int categoryid);
-    List<Feature> findAllByCategoryId(int categoryId);
 }

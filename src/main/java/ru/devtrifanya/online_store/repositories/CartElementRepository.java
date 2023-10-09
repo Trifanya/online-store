@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CartElementRepository extends JpaRepository<CartElement, Integer> {
     List<CartElement> findAllByUserId(int userId);
+    int countAllByUserId(int userId);
 }

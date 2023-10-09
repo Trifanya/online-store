@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: linkTableCreation
+      author: Nikita Trifonov
+      changes:
+        - createTable:
+            tableName: category_feature
+            columns:
+              - column:
+                  name: category_id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    references: category(id)
+                    foreignKeyName: fk_category_id
+              - column:
+                  name: feature_id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    references: feature(id)
+                    foreignKeyName: fk_feature_id

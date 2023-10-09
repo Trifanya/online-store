@@ -13,8 +13,8 @@ databaseChangeLog:
                   name: request_name
                   value: "diagonal"
               - column:
-                  name: category_id
-                  value: 2
+                  name: unit
+                  value: "см"
         - insert:
             tableName: feature
             columns:
@@ -25,8 +25,8 @@ databaseChangeLog:
                   name: request_name
                   value: "batteryCapacity"
               - column:
-                  name: category_id
-                  value: 2
+                  name: unit
+                  value: "мАч"
         - insert:
             tableName: feature
             columns:
@@ -37,20 +37,8 @@ databaseChangeLog:
                   name: request_name
                   value: "OS"
               - column:
-                  name: category_id
-                  value: 2
-        - insert:
-            tableName: feature
-            columns:
-              - column:
-                  name: name
-                  value: "Емкость аккумулятора"
-              - column:
-                  name: request_name
-                  value: "batteryCapacity"
-              - column:
-                  name: category_id
-                  value: 6
+                  name: unit
+                  value: null
         - insert:
             tableName: feature
             columns:
@@ -61,8 +49,8 @@ databaseChangeLog:
                   name: request_name
                   value: "quickCharge"
               - column:
-                  name: category_id
-                  value: 6
+                  name: unit
+                  value: null
         - insert:
             tableName: feature
             columns:
@@ -73,8 +61,8 @@ databaseChangeLog:
                   name: request_name
                   value: "cableLength"
               - column:
-                  name: category_id
-                  value: 7
+                  name: unit
+                  value: "см"
         - insert:
             tableName: feature
             columns:
@@ -85,8 +73,8 @@ databaseChangeLog:
                   name: request_name
                   value: "socket1"
               - column:
-                  name: category_id
-                  value: 7
+                  name: unit
+                  value: null
         - insert:
             tableName: feature
             columns:
@@ -97,8 +85,8 @@ databaseChangeLog:
                   name: request_name
                   value: "socket2"
               - column:
-                  name: category_id
-                  value: 7
+                  name: unit
+                  value: "см"
         - insert:
             tableName: feature
             columns:
@@ -109,8 +97,8 @@ databaseChangeLog:
                   name: request_name
                   value: "socket"
               - column:
-                  name: category_id
-                  value: 8
+                  name: unit
+                  value: null
         - insert:
             tableName: feature
             columns:
@@ -121,5 +109,5 @@ databaseChangeLog:
                   name: request_name
                   value: "outputPower"
               - column:
-                  name: category_id
-                  value: 8
+                  name: unit
+                  value: "Вт"

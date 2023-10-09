@@ -2,7 +2,7 @@ package ru.devtrifanya.online_store.util.validators;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.dto.CategoryDTO;
+import ru.devtrifanya.online_store.content.dto.CategoryDTO;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;

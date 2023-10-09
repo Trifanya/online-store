@@ -22,10 +22,8 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Data
 public class CategoryService {
-    private final FeatureService featureService;
-    private final ItemService itemService;
-    private final CategoryRelationService categoryRelationService;
     private final CategoryRepository categoryRepository;
+    private final CategoryRelationRepository categoryRelationRepository;
 
     /**
      * Получение категории по ее id.
@@ -36,6 +34,13 @@ public class CategoryService {
     public Category getCategory(int categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
+    }
+
+    public List<Category> getTopCategories() {
+        return categoryRelationRepository.parentIdIsNull()
+                .stream()
+                .map(relation -> relation.getChild())
+                .collect(Collectors.toList());
     }
 
 

@@ -2,20 +2,13 @@ package ru.devtrifanya.online_store.services;
 
 import lombok.Data;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import ru.devtrifanya.online_store.dto.CartElementDTO;
 import ru.devtrifanya.online_store.models.CartElement;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.CartElementRepository;
-import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.repositories.UserRepository;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
-import ru.devtrifanya.online_store.util.exceptions.OutOfStockException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,6 +25,10 @@ public class CartElementService {
      */
     public List<CartElement> getCartElementsByUserId(int userId) {
         return cartElementRepository.findAllByUserId(userId);
+    }
+
+    public int getCartSizeByUserId(int userId) {
+        return cartElementRepository.countAllByUserId(userId);
     }
 
     /**

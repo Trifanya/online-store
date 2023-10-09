@@ -1,9 +1,6 @@
-package ru.devtrifanya.online_store.dto;
+package ru.devtrifanya.online_store.content.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import org.springframework.transaction.annotation.Transactional;
-import ru.devtrifanya.online_store.models.Feature;
 
 @Data
 public class ItemFeatureDTO {

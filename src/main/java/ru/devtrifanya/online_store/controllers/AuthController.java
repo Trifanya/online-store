@@ -6,13 +6,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.devtrifanya.online_store.dto.UserDTO;
-import ru.devtrifanya.online_store.models.User;
+import ru.devtrifanya.online_store.content.dto.UserDTO;
 import ru.devtrifanya.online_store.services.AuthService;
 import ru.devtrifanya.online_store.security.jwt.JwtRequest;
 import ru.devtrifanya.online_store.security.jwt.JwtResponse;
@@ -20,11 +18,8 @@ import ru.devtrifanya.online_store.security.jwt.JWTUtils;
 import ru.devtrifanya.online_store.util.ErrorResponse;
 import ru.devtrifanya.online_store.util.MainClassConverter;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
-import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.AuthenticationValidator;
 import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
-
-import java.util.List;
 
 @RestController
 @Data

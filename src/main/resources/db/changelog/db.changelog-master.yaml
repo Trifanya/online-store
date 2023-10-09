@@ -1,16 +1,18 @@
 databaseChangeLog:
-  - include: #1
+  - include:
       file: db/changelog/changesets/initialTableCreation.yaml
-  - include: #2
+  - include:
+      file: db/changelog/changesets/linkTablesCreation.yaml
+  - include:
       file: db/changelog/changesets/databaseEnrichment/userTableEnrichment.yaml
-  - include: #3
+  - include:
       file: db/changelog/changesets/databaseEnrichment/categoryTableEnrichment.yaml
-  - include: #4
+  - include:
       file: db/changelog/changesets/databaseEnrichment/categoryRelationTableEnrichment.yaml
-  - include: #5
+  - include:
       file: db/changelog/changesets/databaseEnrichment/itemTableEnrichment.yaml
-  - include: #6
+  - include:
       file: db/changelog/changesets/databaseEnrichment/featureTableEnrichment.yaml
-  - include: #7
+  - include:
       file: db/changelog/changesets/databaseEnrichment/itemFeatureTableEnrichment.yaml
 

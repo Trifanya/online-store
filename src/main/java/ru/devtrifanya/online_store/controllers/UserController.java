@@ -2,24 +2,17 @@ package ru.devtrifanya.online_store.controllers;
 
 import jakarta.validation.Valid;
 import lombok.Data;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.devtrifanya.online_store.dto.UserDTO;
-import ru.devtrifanya.online_store.models.User;
+import ru.devtrifanya.online_store.content.dto.UserDTO;
 import ru.devtrifanya.online_store.services.AuthService;
 import ru.devtrifanya.online_store.services.UserService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
 import ru.devtrifanya.online_store.util.MainClassConverter;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
-import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.util.validators.RegistrationValidator;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/profile")

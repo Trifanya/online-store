@@ -1,15 +1,12 @@
 package ru.devtrifanya.online_store.services;
 
 import lombok.Data;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
@@ -52,33 +49,61 @@ public class ItemService {
         ).getContent();
     }
 
-    public List<Item> getItemsByCategoryIdWithFilters(Map<String, String> filters) {
-        List<Item> items = null;
+    public List<Item> getFilteredItems(int categoryId, Map<String, String> filters) {
+        List<Item> filteredItems = itemRepository.findAllByCategoryId(categoryId);
+
         for (Map.Entry<String, String> filter : filters.entrySet()) {
             String filterKey = filter.getKey();
             if (filterKey.contains("Range")) { // Границы диапазона
-                String[] filterValue = filter.getValue().split("-");
-
-                double rangeStart = Double.parseDouble(filterValue[0]);
-                double rangeEnd = Double.parseDouble(filterValue[1]);
-
-                //itemRepository...
+                filteredItems.retainAll(
+                        this.getItemsWithFeatureInRange(filterKey, filter.getValue())
+                );
             } else if (filterKey.contains("Values")) { // Множество значений
-                Set<String> filterValues = Arrays.stream(
-                        filter.getValue().split(",")
-                        ).collect(Collectors.toSet());
-
-                items = itemRepository.findItemsWithFeatureInRange(
-                        filterKey.substring(0, filterKey.length() - "Values".length()),
-                        filterValues
+                filteredItems.retainAll(
+                        this.getItemsWithFeatureFromSet(filterKey, filter.getValue())
                 );
             } else if (filterKey.contains("Flag")) { // true или false
-                boolean flag = Boolean.parseBoolean(filter.getValue());
-
-                //itemRepository...
+                filteredItems.retainAll(
+                        this.getItemsWithFeatureFlag(filterKey, filter.getValue())
+                );
+            } else {
+                throw new NotFoundException("Неизвестное название параметра запроса.");
             }
         }
-        return items;
+        return filteredItems;
+    }
+
+    public List<Item> getItemsWithFeatureInRange(String filterName, String filterValue) {
+        String[] filterValues = filterValue.split("-");
+
+        double rangeStart = Double.parseDouble(filterValues[0]);
+        double rangeEnd = Double.parseDouble(filterValues[1]);
+
+        return itemRepository.findItemsWithFeatureInRange(
+                filterName.substring(0, filterName.length() - "Range".length()),
+                rangeStart,
+                rangeEnd
+        );
+    }
+
+    public List<Item> getItemsWithFeatureFromSet(String filterName, String filterValue) {
+        Set<String> valuesSet = Arrays.stream(
+                filterValue.split(",")
+        ).collect(Collectors.toSet());
+
+        return itemRepository.findItemsWithFeatureFromSet(
+                filterName.substring(0, filterName.length() - "Values".length()),
+                valuesSet
+        );
+    }
+
+    public List<Item> getItemsWithFeatureFlag(String filterName, String filterValue) {
+        boolean flag = Boolean.parseBoolean(filterValue);
+
+        return itemRepository.findItemsWithFeatureFlag(
+                filterName.substring(0, filterName.length() - "Flag".length()),
+                flag
+        );
     }
 
     /**

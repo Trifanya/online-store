@@ -1,11 +1,9 @@
 package ru.devtrifanya.online_store.controllers;
 
 import lombok.Data;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.devtrifanya.online_store.dto.CartElementDTO;
-import ru.devtrifanya.online_store.models.CartElement;
+import ru.devtrifanya.online_store.content.dto.CartElementDTO;
 import ru.devtrifanya.online_store.services.CartElementService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
 import ru.devtrifanya.online_store.util.MainClassConverter;

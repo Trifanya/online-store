@@ -23,10 +23,6 @@ import java.util.Optional;
 public class FeatureService {
     private final FeatureRepository featureRepository;
 
-    public List<Feature> getFeaturesByCategoryId(int categoryId) {
-        return featureRepository.findAllByCategoryId(categoryId);
-    }
-
     /**
      * Добавление новой характеристики категории.
      * Метод получает на вход характеристику, у которой проинициализировано только

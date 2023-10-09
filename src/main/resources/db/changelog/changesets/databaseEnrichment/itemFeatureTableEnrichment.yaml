@@ -155,7 +155,7 @@ databaseChangeLog:
                   value: 5
               - column:
                   name: feature_id
-                  value: 6
+                  value: 5
               - column:
                   name: value
                   value: "200 см"
@@ -167,7 +167,7 @@ databaseChangeLog:
                   value: 5
               - column:
                   name: feature_id
-                  value: 7
+                  value: 6
               - column:
                   name: value
                   value: "Type-C"
@@ -179,7 +179,7 @@ databaseChangeLog:
                   value: 5
               - column:
                   name: feature_id
-                  value: 8
+                  value: 7
               - column:
                   name: value
                   value: "USB"
@@ -191,7 +191,7 @@ databaseChangeLog:
                   value: 6
               - column:
                   name: feature_id
-                  value: 6
+                  value: 5
               - column:
                   name: value
                   value: "120 см"
@@ -203,7 +203,7 @@ databaseChangeLog:
                   value: 6
               - column:
                   name: feature_id
-                  value: 7
+                  value: 6
               - column:
                   name: value
                   value: "Lightning"
@@ -215,7 +215,7 @@ databaseChangeLog:
                   value: 6
               - column:
                   name: feature_id
-                  value: 8
+                  value: 7
               - column:
                   name: value
                   value: "USB"
@@ -227,7 +227,7 @@ databaseChangeLog:
                   value: 8
               - column:
                   name: feature_id
-                  value: 9
+                  value: 8
               - column:
                   name: value
                   value: "USB"
@@ -239,7 +239,7 @@ databaseChangeLog:
                   value: 8
               - column:
                   name: feature_id
-                  value: 10
+                  value: 9
               - column:
                   name: value
                   value: "12 Вт"
@@ -251,7 +251,7 @@ databaseChangeLog:
                   value: 9
               - column:
                   name: feature_id
-                  value: 9
+                  value: 8
               - column:
                   name: value
                   value: "USB-C"
@@ -263,7 +263,7 @@ databaseChangeLog:
                   value: 9
               - column:
                   name: feature_id
-                  value: 10
+                  value: 9
               - column:
                   name: value
                   value: "18 Вт"
@@ -275,7 +275,7 @@ databaseChangeLog:
                   value: 10
               - column:
                   name: feature_id
-                  value: 4
+                  value: 2
               - column:
                   name: value
                   value: "20000 мАч"
@@ -287,7 +287,7 @@ databaseChangeLog:
                   value: 10
               - column:
                   name: feature_id
-                  value: 5
+                  value: 4
               - column:
                   name: value
                   value: "Есть"

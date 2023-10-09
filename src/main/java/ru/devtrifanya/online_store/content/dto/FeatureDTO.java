@@ -1,9 +1,6 @@
-package ru.devtrifanya.online_store.dto;
+package ru.devtrifanya.online_store.content.dto;
 
 import lombok.Data;
-import ru.devtrifanya.online_store.models.ItemFeature;
-
-import java.util.List;
 
 @Data
 public class FeatureDTO {

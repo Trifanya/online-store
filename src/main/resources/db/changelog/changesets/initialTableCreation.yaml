@@ -120,11 +120,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: image
-                  type: varchar(255)
-                  constraints:
-                    nullable: false
-              - column:
                   name: category_id
                   type: integer
                   constraints:
@@ -159,12 +154,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: category_id
-                  type: integer
-                  constraints:
-                    references: category(id)
-                    foreignKeyName: fk_category_id
-                    nullable: false
+                  name: unit
+                  type: varchar(50)
         # Создание таблицы item_feature
         - createTable:
             tableName: item_feature
@@ -256,9 +247,6 @@ databaseChangeLog:
                   type: text
                   constraints:
                     nullable: false
-              - column:
-                  name: image
-                  type: varchar(255)
               - column:
                   name: stars
                   type: integer

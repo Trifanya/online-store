@@ -2,18 +2,15 @@ package ru.devtrifanya.online_store.controllers;
 
 import jakarta.validation.Valid;
 import lombok.Data;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.devtrifanya.online_store.dto.ReviewDTO;
+import ru.devtrifanya.online_store.content.dto.ReviewDTO;
 import ru.devtrifanya.online_store.models.Review;
 import ru.devtrifanya.online_store.services.ReviewService;
 import ru.devtrifanya.online_store.util.ErrorResponse;
 import ru.devtrifanya.online_store.util.MainClassConverter;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
-import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.validators.ReviewValidator;
 
 import java.util.List;

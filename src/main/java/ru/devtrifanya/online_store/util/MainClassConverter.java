@@ -3,10 +3,8 @@ package ru.devtrifanya.online_store.util;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.dto.*;
+import ru.devtrifanya.online_store.content.dto.*;
 import ru.devtrifanya.online_store.models.*;
-
-import java.util.stream.Collectors;
 
 @Component
 @Data
@@ -14,63 +12,19 @@ public class MainClassConverter {
     private final ModelMapper modelMapper;
 
     public Category convertToCategory(CategoryDTO dto) {
-        Category category = modelMapper.map(dto, Category.class);
-
-        category.setFeatures(dto.getFeatures()
-                .stream()
-                .map(featureDTO -> convertToFeature(featureDTO))
-                .collect(Collectors.toList()));
-        category.setItems(dto.getItems()
-                .stream()
-                .map(itemDTO -> convertToItem(itemDTO))
-                .collect(Collectors.toList()));
-        category.setRelationsWithChildren(dto.getRelationsWithChildren()
-                .stream()
-                .map(relationDTO -> convertToCategoryRelation(relationDTO))
-                .collect(Collectors.toList()));
-
-        return category;
+        return modelMapper.map(dto, Category.class);
     }
 
     public CategoryDTO convertToCategoryDTO(Category category) {
-        CategoryDTO categoryDTO = modelMapper.map(category, CategoryDTO.class);
-
-        categoryDTO.setFeatures(category.getFeatures()
-                .stream()
-                .map(feature -> convertToFeatureDTO(feature))
-                .collect(Collectors.toList()));
-        categoryDTO.setItems(category.getItems()
-                .stream()
-                .map(item -> convertToItemDTO(item))
-                .collect(Collectors.toList()));
-        categoryDTO.setRelationsWithChildren(category.getRelationsWithChildren()
-                .stream()
-                .map(relation -> convertToCategoryRelationDTO(relation))
-                .collect(Collectors.toList()));
-
-        return categoryDTO;
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
     public Item convertToItem(ItemDTO dto) {
-        Item item = modelMapper.map(dto, Item.class);
-
-        item.setFeatures(dto.getFeatures()
-                .stream()
-                .map(itemFeatureDTO -> convertToItemFeature(itemFeatureDTO))
-                .collect(Collectors.toList()));
-
-        return item;
+        return modelMapper.map(dto, Item.class);
     }
 
     public ItemDTO convertToItemDTO(Item item) {
-        ItemDTO itemDTO = modelMapper.map(item, ItemDTO.class);
-
-        itemDTO.setFeatures(item.getFeatures()
-                .stream()
-                .map(this::convertToItemFeatureDTO)
-                .collect(Collectors.toList()));
-
-        return itemDTO;
+        return modelMapper.map(item, ItemDTO.class);
     }
 
     public CategoryRelation convertToCategoryRelation(CategoryRelationDTO dto) {

@@ -22,9 +22,6 @@ databaseChangeLog:
                   name: description
                   value: У данного товара пока нет описания
               - column:
-                  name: image
-                  value: Фото товара отсутствует
-              - column:
                   name: category_id
                   value: 2
               - column:
@@ -48,9 +45,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: У данного товара пока нет описания
-              - column:
-                  name: image
-                  value: Фото товара отсутствует
               - column:
                   name: category_id
                   value: 2
@@ -76,9 +70,6 @@ databaseChangeLog:
                   name: description
                   value: У данного товара пока нет описания
               - column:
-                  name: image
-                  value: Фото товара отсутствует
-              - column:
                   name: category_id
                   value: 2
               - column:
@@ -102,9 +93,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: У данного товара пока нет описания
-              - column:
-                  name: image
-                  value: Фото товара отсутствует
               - column:
                   name: category_id
                   value: 2
@@ -130,9 +118,6 @@ databaseChangeLog:
                   name: description
                   value: У данного товара пока нет описания
               - column:
-                  name: image
-                  value: Фото товара отсутствует
-              - column:
                   name: category_id
                   value: 7
               - column:
@@ -156,9 +141,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: У данного товара пока нет описания
-              - column:
-                  name: image
-                  value: Фото товара отсутствует
               - column:
                   name: category_id
                   value: 7
@@ -184,9 +166,6 @@ databaseChangeLog:
                   name: description
                   value: У данного товара пока нет описания
               - column:
-                  name: image
-                  value: Фото товара отсутствует
-              - column:
                   name: category_id
                   value: 8
               - column:
@@ -210,9 +189,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: У данного товара пока нет описания
-              - column:
-                  name: image
-                  value: Фото товара отсутствует
               - column:
                   name: category_id
                   value: 8
@@ -238,9 +214,6 @@ databaseChangeLog:
                   name: description
                   value: У данного товара пока нет описания
               - column:
-                  name: image
-                  value: Фото товара отсутствует
-              - column:
                   name: category_id
                   value: 5
               - column:
@@ -264,9 +237,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: У данного товара пока нет описания
-              - column:
-                  name: image
-                  value: Фото товара отсутствует
               - column:
                   name: category_id
                   value: 6

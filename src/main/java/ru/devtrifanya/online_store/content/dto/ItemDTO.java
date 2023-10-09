@@ -1,12 +1,8 @@
-package ru.devtrifanya.online_store.dto;
+package ru.devtrifanya.online_store.content.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import ru.devtrifanya.online_store.models.ItemFeature;
-
-import java.util.List;
 
 @Data
 public class ItemDTO {
