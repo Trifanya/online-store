@@ -58,6 +58,8 @@ public class Item {
     private List<Image> images;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
-    @NotEmpty
     private List<ItemFeature> features;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private List<Review> reviews;
 }

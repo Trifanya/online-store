@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class ItemFeatureDTO {
     //@NotEmpty(message = "Значение характеристики товара не должно быть пустым.")
-    private String value;
+    private String stringValue;
 
 }

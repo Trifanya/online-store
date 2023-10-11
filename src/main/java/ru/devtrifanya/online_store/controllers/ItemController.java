@@ -6,37 +6,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.content.dto.ItemDTO;
+import ru.devtrifanya.online_store.content.pages.ItemInfoPage;
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.services.FeatureService;
-import ru.devtrifanya.online_store.services.ItemService;
+import ru.devtrifanya.online_store.services.*;
 import ru.devtrifanya.online_store.util.ErrorResponse;
 import ru.devtrifanya.online_store.util.MainClassConverter;
 import ru.devtrifanya.online_store.util.MainExceptionHandler;
 import ru.devtrifanya.online_store.util.validators.ItemValidator;
 
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/categories/{categoryId}")
 @Data
 public class ItemController {
+    private final CategoryService categoryService;
     private final ItemService itemService;
-    private final FeatureService featureService;
+    private final ItemFeatureService itemFeatureService;
+    private final ReviewService reviewService;
     private final ItemValidator itemValidator;
     private final MainExceptionHandler exceptionHandler;
     private final MainClassConverter converter;
-
-
-    /**
-     * Адрес: .../{categories/{categoryId}/{itemId}}
-     * Для пользователя и администратора.
-     * Метод получает на вход id товара, затем вызывает метод сервиса для получения товара
-     * по id и возвращает полученный товар, преобразованный в dto-объект.
-     */
-    @GetMapping("/{itemId}")
-    public ItemDTO showItemInfo(@PathVariable("itemId") int itemId) {
-        return converter.convertToItemDTO(
-                itemService.getItem(itemId)
-        );
-    }
 
     /**
      * Адрес: .../{categoryId}/new

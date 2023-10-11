@@ -6,7 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.Review;
 import ru.devtrifanya.online_store.models.User;
+import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.repositories.ReviewRepository;
+import ru.devtrifanya.online_store.repositories.UserRepository;
+import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,8 +19,9 @@ import java.util.List;
 @Data
 public class ReviewService {
     private final ItemService itemService;
-    private final UserService userService;
 
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
     private final ReviewRepository reviewRepository;
 
     /**
@@ -26,7 +30,7 @@ public class ReviewService {
      * затем в зависимости от параметра сортировки вызывает метод репозитория для поиска
      * отзывов по id товара и возвращает найденный список отзывов.
      */
-    public List<Review> getReviewsByItemId(int itemId, short sortByStars) {
+    public List<Review> getReviewsByItemId(int itemId, int sortByStars) {
         List<Review> reviews = null;
         if (sortByStars == 1) {
             reviews = reviewRepository.findByItemIdOrderByStarsDesc(itemId);
@@ -46,8 +50,10 @@ public class ReviewService {
      */
     @Transactional
     public Review createNewReview(Review reviewToSave, int itemId, int userId) {
-        Item item = itemService.getItem(itemId);
-        User user = userService.getUser(userId);
+        Item item = itemService.updateItemRating(itemId, reviewToSave.getStars());
+
+        User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new NotFoundException("Пользователь с указанным id не найден."));
 
         reviewToSave.setItem(item);
         reviewToSave.setUser(user);

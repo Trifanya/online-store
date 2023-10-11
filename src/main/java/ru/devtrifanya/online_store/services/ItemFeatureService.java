@@ -20,6 +20,10 @@ public class ItemFeatureService {
         return itemFeatureRepository.findAllByFeatureId(featureId);
     }
 
+    public List<ItemFeature> getItemFeaturesByItemId(int itemId) {
+        return itemFeatureRepository.findAllByItemId(itemId);
+    }
+
     /**
      * В метод передается характеристика товара, у которой проинициализировано только
      * значение, поэтому данный метод инициализирует у сохраняемой характеристики товара
@@ -29,6 +33,16 @@ public class ItemFeatureService {
     public ItemFeature createNewItemFeature(ItemFeature itemFeature, Item item, Feature feature) {
         itemFeature.setItem(item);
         itemFeature.setFeature(feature);
+
+        String unit = feature.getUnit();
+        String stringValue = itemFeature.getStringValue();
+        if (unit != null) {
+            itemFeature.setStringValue(stringValue + " " + feature.getUnit());
+            itemFeature.setNumericValue(Double.parseDouble(stringValue));
+        } else {
+            itemFeature.setNumericValue((double) -1);
+        }
+
         return itemFeatureRepository.save(itemFeature);
     }
 

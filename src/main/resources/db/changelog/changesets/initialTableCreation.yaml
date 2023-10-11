@@ -168,8 +168,13 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: value
+                  name: string_value
                   type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: numeric_value
+                  type: decimal
                   constraints:
                     nullable: false
               - column:

@@ -13,8 +13,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 1
               - column:
-                  name: value
+                  name: string_value
                   value: "18 см"
+              - column:
+                  name: numeric_value
+                  value: 18
         - insert:
             tableName: item_feature
             columns:
@@ -25,8 +28,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 2
               - column:
-                  name: value
+                  name: string_value
                   value: "4000 мАч"
+              - column:
+                  name: numeric_value
+                  value: 4000
         - insert:
             tableName: item_feature
             columns:
@@ -37,8 +43,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 3
               - column:
-                  name: value
+                  name: string_value
                   value: "IOS"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -49,8 +58,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 1
               - column:
-                  name: value
+                  name: string_value
                   value: "20 см"
+              - column:
+                  name: numeric_value
+                  value: 20
         - insert:
             tableName: item_feature
             columns:
@@ -61,8 +73,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 2
               - column:
-                  name: value
+                  name: string_value
                   value: "5000 мАч"
+              - column:
+                  name: numeric_value
+                  value: 5000
         - insert:
             tableName: item_feature
             columns:
@@ -73,8 +88,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 3
               - column:
-                  name: value
+                  name: string_value
                   value: "IOS"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -85,8 +103,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 1
               - column:
-                  name: value
+                  name: string_value
                   value: "22 см"
+              - column:
+                  name: numeric_value
+                  value: 22
         - insert:
             tableName: item_feature
             columns:
@@ -97,8 +118,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 2
               - column:
-                  name: value
-                  value: "4600 мАч"
+                  name: string_value
+                  value: "4600 мАч" # мАч
+              - column:
+                  name: numeric_value
+                  value: 4600
         - insert:
             tableName: item_feature
             columns:
@@ -109,8 +133,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 3
               - column:
-                  name: value
+                  name: string_value
                   value: "Android"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert: # 10
             tableName: item_feature
             columns:
@@ -121,8 +148,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 1
               - column:
-                  name: value
+                  name: string_value
                   value: "19 см"
+              - column:
+                  name: numeric_value
+                  value: 19
         - insert:
             tableName: item_feature
             columns:
@@ -133,8 +163,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 2
               - column:
-                  name: value
-                  value: "4500 мАч"
+                  name: string_value
+                  value: "4500 мАч" # мАч
+              - column:
+                  name: numeric_value
+                  value: 4500
         - insert:
             tableName: item_feature
             columns:
@@ -145,8 +178,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 3
               - column:
-                  name: value
+                  name: string_value
                   value: "Android"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -157,8 +193,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 5
               - column:
-                  name: value
+                  name: string_value
                   value: "200 см"
+              - column:
+                  name: numeric_value
+                  value: 200
         - insert:
             tableName: item_feature
             columns:
@@ -169,8 +208,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 6
               - column:
-                  name: value
+                  name: string_value
                   value: "Type-C"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -181,8 +223,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 7
               - column:
-                  name: value
+                  name: string_value
                   value: "USB"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -193,8 +238,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 5
               - column:
-                  name: value
+                  name: string_value
                   value: "120 см"
+              - column:
+                  name: numeric_value
+                  value: 120
         - insert:
             tableName: item_feature
             columns:
@@ -205,8 +253,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 6
               - column:
-                  name: value
+                  name: string_value
                   value: "Lightning"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -217,8 +268,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 7
               - column:
-                  name: value
+                  name: string_value
                   value: "USB"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -229,8 +283,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 8
               - column:
-                  name: value
+                  name: string_value
                   value: "USB"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert: # 20
             tableName: item_feature
             columns:
@@ -241,8 +298,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 9
               - column:
-                  name: value
-                  value: "12 Вт"
+                  name: string_value
+                  value: "12 Вт" #Вт
+              - column:
+                  name: numeric_value
+                  value: 12
         - insert:
             tableName: item_feature
             columns:
@@ -253,8 +313,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 8
               - column:
-                  name: value
+                  name: string_value
                   value: "USB-C"
+              - column:
+                  name: numeric_value
+                  value: -1
         - insert:
             tableName: item_feature
             columns:
@@ -265,8 +328,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 9
               - column:
-                  name: value
+                  name: string_value
                   value: "18 Вт"
+              - column:
+                  name: numeric_value
+                  value: 18
         - insert:
             tableName: item_feature
             columns:
@@ -277,8 +343,11 @@ databaseChangeLog:
                   name: feature_id
                   value: 2
               - column:
-                  name: value
+                  name: string_value
                   value: "20000 мАч"
+              - column:
+                  name: numeric_value
+                  value: 20000
         - insert: # 24
             tableName: item_feature
             columns:
@@ -289,7 +358,10 @@ databaseChangeLog:
                   name: feature_id
                   value: 4
               - column:
-                  name: value
+                  name: string_value
                   value: "Есть"
+              - column:
+                  name: numeric_value
+                  value: -1
 
 

@@ -3,6 +3,7 @@ databaseChangeLog:
       file: db/changelog/changesets/initialTableCreation.yaml
   - include:
       file: db/changelog/changesets/linkTablesCreation.yaml
+
   - include:
       file: db/changelog/changesets/databaseEnrichment/userTableEnrichment.yaml
   - include:
@@ -15,4 +16,7 @@ databaseChangeLog:
       file: db/changelog/changesets/databaseEnrichment/featureTableEnrichment.yaml
   - include:
       file: db/changelog/changesets/databaseEnrichment/itemFeatureTableEnrichment.yaml
+
+  - include:
+      file: db/changelog/changesets/databaseEnrichment/linkTableCategoryFeatureEnrichment.yaml
 

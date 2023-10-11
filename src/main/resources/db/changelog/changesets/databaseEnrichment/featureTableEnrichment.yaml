@@ -86,7 +86,7 @@ databaseChangeLog:
                   value: "socket2"
               - column:
                   name: unit
-                  value: "см"
+                  value: null
         - insert:
             tableName: feature
             columns:

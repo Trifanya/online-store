@@ -26,21 +26,6 @@ public class ReviewController {
     private final MainClassConverter converter;
 
     /**
-     * Адрес: /{itemId}/reviews
-     * Просмотр отзывов о конкретном товаре, для пользователей и администратора;
-     * Можно отсортировать отзывы по оценке: sortByRating = -1 - по возрастанию, ... = 1
-     * - по убыванию, ... = 0 - сортировки нет.
-     */
-    @GetMapping()
-    public List<ReviewDTO> getReviews(@PathVariable(name = "itemId") int itemId,
-                                      @RequestParam(value = "sortByStars", defaultValue = "0") short sortByStars) {
-        return reviewService.getReviewsByItemId(itemId, sortByStars)
-                .stream()
-                .map(review -> converter.convertToReviewDTO(review))
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Адрес: .../{itemId}/reviews/new/{userId}
      * Добавление нового отзыва о конкретном товаре, только для пользователей;
      */

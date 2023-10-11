@@ -22,14 +22,6 @@ public class CartController {
     private final CartValidator cartValidator;
     private final MainClassConverter converter;
 
-    @GetMapping
-    public List<CartElementDTO> getCartElements(@PathVariable("userId") int userId) {
-        return cartElementService.getCartElementsByUserId(userId)
-                .stream()
-                .map(cartElement -> converter.convertToCartElementDTO(cartElement))
-                .collect(Collectors.toList());
-    }
-
     @PostMapping("/{itemId}")
     public ResponseEntity<String> createNewCartElement(@RequestBody CartElementDTO dto,
                                                 @PathVariable("userId") int userId,

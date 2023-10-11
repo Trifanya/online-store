@@ -3,6 +3,10 @@ package ru.devtrifanya.online_store.content.pages;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.devtrifanya.online_store.content.dto.CategoryDTO;
+import ru.devtrifanya.online_store.content.dto.ItemDTO;
+import ru.devtrifanya.online_store.content.dto.ItemFeatureDTO;
+import ru.devtrifanya.online_store.content.dto.ReviewDTO;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
@@ -15,13 +19,13 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemInfoPage {
 
-    private Item item;
+    private ItemDTO item;
 
-    private List<ItemFeature> itemFeatures;
+    private List<ItemFeatureDTO> itemFeatures;
 
-    private List<Review> itemReviews;
+    private List<ReviewDTO> itemReviews;
 
-    private List<Category> topCategories;
+    private List<CategoryDTO> topCategories;
 
     private int cartSize;
 
