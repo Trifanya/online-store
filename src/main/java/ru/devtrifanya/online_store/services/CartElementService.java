@@ -7,6 +7,8 @@ import ru.devtrifanya.online_store.models.CartElement;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.CartElementRepository;
+import ru.devtrifanya.online_store.repositories.ItemRepository;
+import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
 import java.util.List;
 
@@ -14,8 +16,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Data
 public class CartElementService {
-    private final UserService userService;
-    private final ItemService itemService;
+    private final ItemRepository itemRepository;
     private final CartElementRepository cartElementRepository;
 
     /**
@@ -39,9 +40,9 @@ public class CartElementService {
      * элемент корзины.
      */
     @Transactional
-    public CartElement createNewCartElement(CartElement elementToSave, int userId, int itemId) {
-        User user = userService.getUser(userId);
-        Item item = itemService.getItem(itemId);
+    public CartElement createNewCartElement(CartElement elementToSave, User user, int itemId) {
+        Item item = itemRepository.findById(itemId)
+                        .orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));
 
         elementToSave.setUser(user);
         elementToSave.setItem(item);
@@ -57,13 +58,10 @@ public class CartElementService {
      * элемента в БД и возвращает измененный элемент корзины.
      */
     @Transactional
-    public CartElement updateCartElement(int cartElementId, CartElement elementToUpdate, int userId, int itemId) {
-        User user = userService.getUser(userId);
-        Item item = itemService.getItem(itemId);
-
-        elementToUpdate.setId(cartElementId);
-        elementToUpdate.setUser(user);
-        elementToUpdate.setItem(item);
+    public CartElement updateCartElement(CartElement elementToUpdate) {
+        CartElement oldCartElement = cartElementRepository.findById(elementToUpdate.getId())
+                .orElseThrow(() -> new NotFoundException("Элемент корзины с указанным id не найден."));
+        elementToUpdate.setItemCount(oldCartElement.getItemCount());
 
         return cartElementRepository.save(elementToUpdate);
     }

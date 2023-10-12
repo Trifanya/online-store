@@ -7,13 +7,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import ru.devtrifanya.online_store.rest.dto.responses.ErrorResponse;
 import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.util.exceptions.UnavailableActionException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class MainExceptionHandler {

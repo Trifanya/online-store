@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Data
 public class CategoryService {
+    private final CategoryRelationService categoryRelationService;
     private final CategoryRepository categoryRepository;
     private final CategoryRelationRepository categoryRelationRepository;
 
@@ -43,27 +44,22 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-
     @Transactional
-    public Category createNewCategory(Category categoryToSave, List<Feature> features) {
-        for (Feature feature : features) {
-            categoryToSave.getFeatures().add(feature);
-        }
+    public Category createNewCategory(int parentCategoryId, Category categoryToSave, List<Feature> features) {
+        categoryRelationService.createCategoryRelation(
+                categoryToSave,
+                categoryRepository.findById(parentCategoryId).orElse(null)
+        );
+        categoryToSave.setId(0);
+        categoryToSave.setFeatures(features);
+
         return categoryRepository.save(categoryToSave);
     }
 
 
     @Transactional
-    public Category updateCategory(int categoryId, Category updatedCategory, List<Feature> newFeatures) {
-        Category oldCategory = categoryRepository.findById(categoryId).
-                orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
-
-        updatedCategory.setFeatures(oldCategory.getFeatures());
-        for (Feature feature : newFeatures) {
-            updatedCategory.getFeatures().add(feature);
-        }
-        updatedCategory.setId(categoryId);
-
+    public Category updateCategory(Category updatedCategory, List<Feature> features) {
+        updatedCategory.setFeatures(features);
         return categoryRepository.save(updatedCategory);
     }
 

@@ -16,7 +16,7 @@ databaseChangeLog:
                   name: email
                   value: "test1@mail.ru"
               - column:
-                  name: password # "testPassword1"
+                  name: password # "testPassword_1"
                   value: "$2a$12$Gneh0x1w5IJN8ThDUnJJduPCzGeguNgVozcvu8VxifVMpZ5xfqsna"
               - column:
                   name: role

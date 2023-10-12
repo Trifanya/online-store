@@ -66,6 +66,7 @@ public class ItemService {
         Category itemCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
 
+        itemToSave.setId(0);
         itemToSave.setRating(0);
         itemToSave.setCategory(itemCategory);
 
@@ -73,12 +74,12 @@ public class ItemService {
     }
 
     @Transactional
-    public Item updateItemInfo(int itemId, Item updatedItem, int categoryId) {
-        Item oldItem = itemRepository.findById(itemId).get();
+    public Item updateItemInfo(Item updatedItem, int categoryId) {
+        Item oldItem = itemRepository.findById(updatedItem.getId()).
+                orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
 
-        updatedItem.setId(itemId);
         updatedItem.setRating(oldItem.getRating());
         updatedItem.setCategory(category);
 

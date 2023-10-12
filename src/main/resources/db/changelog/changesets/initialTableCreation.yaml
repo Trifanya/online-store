@@ -258,4 +258,9 @@ databaseChangeLog:
                   constraints:
                     checkConstraint: stars > 0 and stars < 6
                     nullable: false
+              - column:
+                  name: created_at
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
 

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.devtrifanya.online_store.security.jwt.JwtRequestFilter;
 import ru.devtrifanya.online_store.services.UserService;
 
 @Configuration
@@ -27,16 +28,22 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests((authorize) -> authorize
-                        //.requestMatchers("/categories/{categoryId}/{itemId}", "/categories/{categoryId}", "/{userId}/cart", "/{userId}/cart/{itemId}", "/{userId}/cart/{cartElementId}/edit/{itemId}", "/{userId}/cart/delete/{cartElementId}", "/reviews/{itemId}", "/reviews/{itemId}/delete/{reviewId}").hasAnyRole("USER", "ADMIN")
-                        //.requestMatchers("/profile/edit/{userId}", "/reviews/{itemId}/new/{userId}").hasRole("USER")
-                        //.requestMatchers("/categories/{categoryId}/newItem", "/categories/{categoryId}/{itemId}/edit", "/categories/{categoryId}/{itemId}/delete", "/{categoryId}/features/newFeature", "/{categoryId}/features/edit/{featureId}", "/{categoryId}/features/delete/{featureId}", "/categories/{categoryId}/newCategory", "/categories/{categoryId}/edit", "/categories/{categoryId}/delete").hasRole("ADMIN")
-                        //.requestMatchers("/registration", "/authentication").permitAll()
-                        .anyRequest().permitAll())
+                        .requestMatchers(
+                                "/cart", "/reviews/newReview", "/catalog/{categoryId}/{itemId}/newCartElement", "/cart/updateCartElement", "/cart/deleteCartElement"
+                        ).hasRole("USER")
+                        .requestMatchers(
+                                "/reviews/deleteReview", "catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/{categoryId}/deleteCategory", "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/{itemId}/deleteItem"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                "/profile/updateUserInfo"
+                        ).hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(
+                                "/registration", "/authentication", "/catalog", "/catalog/{categoryId}", "/catalog/{categoryId}/{itemId}"
+                        ).permitAll())
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                        exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -8,8 +8,6 @@ import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.UserRepository;
 import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
 
-import java.util.Optional;
-
 @Service
 @Transactional(readOnly = true)
 @Data
@@ -19,28 +17,20 @@ public class UserService implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(String email) {
-        Optional<User> person = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Пользователь с указанным email не найден."));
 
-        if (person.isEmpty()) {
-            throw new NotFoundException("Пользователь с таким email не найден.");
-        }
-
-        return person.get();
-    }
-
-    public User getUser(int userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с указанным id не найден."));
+        return user;
     }
 
     @Transactional
-    public void update(int id, User user) {
-        user.setId(id);
-        userRepository.save(user);
+    public User updateUserInfo(int userId, User updatedUser) {
+        updatedUser.setId(userId);
+        return userRepository.save(updatedUser);
     }
 
     @Transactional
-    public void delete(int id) {
-        userRepository.deleteById(id);
+    public void deleteUser(int userId) {
+        userRepository.deleteById(userId);
     }
 }

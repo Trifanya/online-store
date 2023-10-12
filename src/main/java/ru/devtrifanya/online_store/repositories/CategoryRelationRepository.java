@@ -16,5 +16,9 @@ public interface CategoryRelationRepository extends JpaRepository<CategoryRelati
 
     List<CategoryRelation> findAllByChildId(int childId);
 
-    Optional<CategoryRelation> findByChildIdAndParentId(int childId, int parentId);
+    boolean existsByParentId(int parentId);
+
+    boolean existsByChildId(int childId);
+
+    boolean existsByParentIdAndChildId(int parentId, int childId);
 }

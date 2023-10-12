@@ -29,21 +29,22 @@ public class JWTUtils {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>(); // компоненты payload в jwt-токене
 
-        List<String> rolesList = user.getAuthorities()
+        /*List<String> rolesList = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
         /** Настройка полей класса, входящих в JWT-токен. */
+        claims.put("id", user.getId());
         claims.put("name", user.getName());
         claims.put("surname", user.getSurname());
         claims.put("email", user.getEmail());
-        claims.put("roles", rolesList);
 
         /** Настройка времени действия выданного JWT-токена. */
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + jwtLifetime.toMillis());
 
+        /** Генерация JWT-токена.*/
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getUsername())

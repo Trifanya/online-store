@@ -24,6 +24,6 @@ public class CartElement {
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
-    @Column(name = "item_count")
+    @Column(name = "quantity")
     private int itemCount;
 }

@@ -3,8 +3,8 @@ package ru.devtrifanya.online_store.util;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.content.dto.*;
 import ru.devtrifanya.online_store.models.*;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.*;
 
 @Component
 @Data
@@ -69,6 +69,10 @@ public class MainClassConverter {
 
     public User convertToUser(UserDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
+    }
+
+    public UserDTO convertToUserDTO(User user) {
+        return modelMapper.map(user, UserDTO.class);
     }
 
 }
