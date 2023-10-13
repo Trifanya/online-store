@@ -22,7 +22,7 @@ import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.*;
 

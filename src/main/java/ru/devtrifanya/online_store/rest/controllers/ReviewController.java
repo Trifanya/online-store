@@ -11,8 +11,8 @@ import ru.devtrifanya.online_store.models.Review;
 import ru.devtrifanya.online_store.rest.dto.requests.NewReviewRequest;
 import ru.devtrifanya.online_store.rest.dto.responses.ErrorResponse;
 import ru.devtrifanya.online_store.services.ReviewService;
-import ru.devtrifanya.online_store.util.MainClassConverter;
-import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
+import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 import ru.devtrifanya.online_store.rest.validators.ReviewValidator;
 
 @RestController
@@ -20,8 +20,11 @@ import ru.devtrifanya.online_store.rest.validators.ReviewValidator;
 @Data
 public class ReviewController {
     private final ReviewService reviewService;
+
     private final ReviewValidator reviewValidator;
+
     private final MainExceptionHandler mainExceptionHandler;
+
     private final MainClassConverter converter;
 
     /**
@@ -30,12 +33,9 @@ public class ReviewController {
      */
     @PostMapping("/newReview")
     public ResponseEntity<String> createNewReview(@RequestBody @Valid NewReviewRequest request,
-                                                  @AuthenticationPrincipal User user,
-                                                  BindingResult bindingResult) {
+                                                  @AuthenticationPrincipal User user) {
         reviewValidator.validate(request.getItemId(), user.getId());
-        if (bindingResult.hasErrors()) {
-            mainExceptionHandler.throwInvalidDataException(bindingResult);
-        }
+
         Review createdReview = reviewService.createNewReview(
                 converter.convertToReview(request.getReview()),
                 request.getItemId(),
@@ -53,10 +53,5 @@ public class ReviewController {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok("Отзыв успешно удален.");
 
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        return mainExceptionHandler.handleException(exception);
     }
 }

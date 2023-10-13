@@ -1,27 +1,26 @@
 package ru.devtrifanya.online_store.rest.dto.entities_dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
 public class ItemDTO {
     private int id;
 
-    @NotEmpty(message = "Вы не указали название товара.")
+    @NotBlank(message = "Необходимо указать название товара.")
     private String name;
 
-    @NotEmpty(message = "Вы не указали производителя товара.")
+    @NotBlank(message = "Необходимо указать производителя товара.")
     private String manufacturer;
 
-    //@NotEmpty(message = "Вы не указали цену товара.")
+    @NotNull(message = "Необходимо указать цену товара.")
     @Min(value = 0, message = "Цена не может быть ниже 0 руб.")
     private double price;
 
-    //@NotEmpty(message = "Вы не указали количество товара.")
+    @NotNull(message = "Необходимо указать количество товара в наличии.")
     private int quantity;
 
-    @NotEmpty(message = "Вы не добавили описание товара.")
+    @NotBlank(message = "Необходимо указать описание товара.")
     private String description;
 
     private double rating;

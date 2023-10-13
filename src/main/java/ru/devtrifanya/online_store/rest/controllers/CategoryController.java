@@ -12,8 +12,8 @@ import ru.devtrifanya.online_store.services.CartElementService;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.util.MainClassConverter;
-import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
+import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 import ru.devtrifanya.online_store.rest.validators.CategoryValidator;
 
 import java.util.stream.Collectors;
@@ -35,12 +35,9 @@ public class CategoryController {
      * Добавление новой категории товаров, только для администратора.
      */
     @PostMapping("/newCategory")
-    public ResponseEntity<?> createNewCategory(@RequestBody @Valid NewCategoryRequest request,
-                                               BindingResult bindingResult) {
+    public ResponseEntity<?> createNewCategory(@RequestBody @Valid NewCategoryRequest request) {
         categoryValidator.validate(request);
-        if (bindingResult.hasErrors()) {
-            exceptionHandler.throwInvalidDataException(bindingResult);
-        }
+
         Category savedCategory = categoryService.createNewCategory(
                 request.getParentCategoryId(),
                 converter.convertToCategory(request.getCategory()),
@@ -57,12 +54,9 @@ public class CategoryController {
      * Обновление информации о категории товаров, только для администратора.
      */
     @PatchMapping("/updateCategory")
-    public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid NewCategoryRequest request,
-                                                BindingResult bindingResult) {
+    public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid NewCategoryRequest request) {
         categoryValidator.validate(request);
-        if (bindingResult.hasErrors()) {
-            exceptionHandler.throwInvalidDataException(bindingResult);
-        }
+
         Category updatedCategory = categoryService.updateCategory(
                 converter.convertToCategory(request.getCategory()),
                 request.getFeatures()
@@ -82,10 +76,5 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.ok("Категория успешно удалена.");
 
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        return exceptionHandler.handleException(exception);
     }
 }

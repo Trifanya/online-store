@@ -4,18 +4,12 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.models.CategoryRelation;
 import ru.devtrifanya.online_store.models.Feature;
-import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
-import ru.devtrifanya.online_store.util.exceptions.UnavailableActionException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

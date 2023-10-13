@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.UserRepository;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 @Service
 @Transactional(readOnly = true)

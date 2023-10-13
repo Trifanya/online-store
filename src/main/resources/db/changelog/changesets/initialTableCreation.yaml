@@ -55,6 +55,8 @@ databaseChangeLog:
                   name: name
                   type: varchar(50)
                   constraints:
+                    unique: true
+                    uniqueConstraintName: uq_category_name
                     nullable: false
         # Создание таблицы category_relation
         - createTable:
@@ -97,6 +99,7 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     unique: true
+                    uniqueConstraintName: uq_item_name
                     nullable: false
               - column:
                   name: manufacturer
@@ -147,11 +150,15 @@ databaseChangeLog:
                   name: name
                   type: varchar(50)
                   constraints:
+                    unique: true
+                    uniqueConstraintName: uq_feature_name
                     nullable: false
               - column:
                   name: request_name
                   type: varchar(50)
                   constraints:
+                    unique: true
+                    uniqueConstraintName: uq_feature_requestname
                     nullable: false
               - column:
                   name: unit

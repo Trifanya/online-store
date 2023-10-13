@@ -2,7 +2,6 @@ package ru.devtrifanya.online_store.unit_tests.services;
 
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,15 +10,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.repositories.FeatureRepository;
-import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.services.CategoryRelationService;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;

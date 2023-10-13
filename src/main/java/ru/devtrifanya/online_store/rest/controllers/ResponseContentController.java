@@ -10,8 +10,8 @@ import ru.devtrifanya.online_store.rest.dto.responses.CategoryItemsResponse;
 import ru.devtrifanya.online_store.rest.dto.responses.ItemInfoResponse;
 import ru.devtrifanya.online_store.rest.dto.responses.MainResponse;
 import ru.devtrifanya.online_store.services.*;
-import ru.devtrifanya.online_store.util.MainClassConverter;
-import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
+import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,10 +48,11 @@ public class ResponseContentController {
     @GetMapping("/catalog/{categoryId}")
     public CategoryItemsResponse getItemsPage(@PathVariable("categoryId") int categoryId,
                                               @AuthenticationPrincipal User user,
-                                              @RequestParam Map<String, String> allParams,
                                               @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
                                               @RequestParam(name = "itemsPerPage", defaultValue = "10") int itemsPerPage,
-                                              @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
+                                              @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                                              @RequestParam(name = "sortDir", defaultValue = "ASC") String sortDir,
+                                              @RequestParam Map<String, String> allParams) {
         CategoryItemsResponse categoryItemsResponse = new CategoryItemsResponse();
 
         Category currentCategory = categoryService.getCategory(categoryId);
@@ -63,7 +64,7 @@ public class ResponseContentController {
                         .collect(Collectors.toList())
         );
         categoryItemsResponse.setCategoryItems(
-                itemService.getFilteredItems(categoryId, allParams, pageNumber, itemsPerPage, sortBy)
+                itemService.getFilteredItems(categoryId, allParams, pageNumber, itemsPerPage, sortBy, sortDir)
                         .stream()
                         .map(item -> converter.convertToItemDTO(item))
                         .collect(Collectors.toList())

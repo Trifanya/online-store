@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.util;
+package ru.devtrifanya.online_store.rest.utils;
 
 import lombok.Data;
 import org.modelmapper.ModelMapper;

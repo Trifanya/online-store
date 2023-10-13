@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.util.exceptions;
+package ru.devtrifanya.online_store.exceptions;
 
 public class AlreadyExistException extends RuntimeException {
     public AlreadyExistException(String message) {

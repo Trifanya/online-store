@@ -1,21 +1,12 @@
 package ru.devtrifanya.online_store.services;
 
 import lombok.Data;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Feature;
-import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.models.ItemFeature;
-import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
-import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 @Service
 @Transactional(readOnly = true)

@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.devtrifanya.online_store.repositories.UserRepository;
 import ru.devtrifanya.online_store.rest.dto.requests.SignInRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.SignUpRequest;
-import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
-import ru.devtrifanya.online_store.util.exceptions.InvalidDataException;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.InvalidDataException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 @Component
 @Data

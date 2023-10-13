@@ -11,8 +11,8 @@ import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
 import ru.devtrifanya.online_store.services.CartElementService;
 import ru.devtrifanya.online_store.rest.dto.requests.NewCartElementRequest;
 import ru.devtrifanya.online_store.rest.dto.responses.ErrorResponse;
-import ru.devtrifanya.online_store.util.MainClassConverter;
-import ru.devtrifanya.online_store.util.MainExceptionHandler;
+import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
+import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 import ru.devtrifanya.online_store.rest.validators.CartValidator;
 
 @RestController
@@ -28,12 +28,9 @@ public class CartController {
      */
     @PostMapping("/catalog/{categoryId}/{itemId}/newCartElement")
     public ResponseEntity<?> createNewCartElement(@RequestBody @Valid NewCartElementRequest request,
-                                                  @AuthenticationPrincipal User user,
-                                                  BindingResult bindingResult) {
+                                                  @AuthenticationPrincipal User user) {
         cartValidator.validate(request.getItemId());
-        if (bindingResult.hasErrors()) {
-            mainExceptionHandler.throwInvalidDataException(bindingResult);
-        }
+
         cartElementService.createNewCartElement(
                 converter.convertToCartElement(request.getCartElement()),
                 user,
@@ -46,12 +43,9 @@ public class CartController {
      * Изменение количества товара в корзине, только для пользователей.
      */
     @PatchMapping("/cart/updateCartElement")
-    public ResponseEntity<?> updateCartElement(@RequestBody @Valid CartElementDTO cartElementDTO,
-                                               BindingResult bindingResult) {
+    public ResponseEntity<?> updateCartElement(@RequestBody @Valid CartElementDTO cartElementDTO) {
         cartValidator.validate(cartElementDTO.getId());
-        if (bindingResult.hasErrors()) {
-            mainExceptionHandler.throwInvalidDataException(bindingResult);
-        }
+
         cartElementService.updateCartElement(
                 converter.convertToCartElement(cartElementDTO)
         );
@@ -65,10 +59,5 @@ public class CartController {
     public ResponseEntity<String> deleteCartElement(@RequestBody int cartElementId) {
         cartElementService.deleteCartElement(cartElementId);
         return ResponseEntity.ok("Товар успешно удален из корзины.");
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        return mainExceptionHandler.handleException(exception);
     }
 }

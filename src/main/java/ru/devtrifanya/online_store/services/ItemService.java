@@ -11,10 +11,9 @@ import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.services.specifications.ItemSpecificationConstructor;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,7 +40,11 @@ public class ItemService {
 
     public List<Item> getFilteredItems(int categoryId,
                                        Map<String, String> filters,
-                                       int pageNum, int itemsPerPage, String sortBy) {
+                                       int pageNumber, int itemsPerPage, String sortBy, String sortDir) {
+        for (String paramName : List.of("pageNumber", "itemsPerPage", "sortBy", "sortDir")) {
+            filters.remove(paramName);
+        }
+
         Specification<Item> itemSpecification = specificationConstructor.createItemSpecification(
                 categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена.")),
                 filters
@@ -49,7 +52,11 @@ public class ItemService {
 
         return itemRepository.findAll(
                 itemSpecification,
-                PageRequest.of(pageNum, itemsPerPage, Sort.by(sortBy))
+                PageRequest.of(
+                        pageNumber,
+                        itemsPerPage,
+                        Sort.by(Sort.Direction.valueOf(sortDir), sortBy)
+                )
         ).getContent();
     }
 

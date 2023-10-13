@@ -9,7 +9,7 @@ import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.repositories.ReviewRepository;
 import ru.devtrifanya.online_store.repositories.UserRepository;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;

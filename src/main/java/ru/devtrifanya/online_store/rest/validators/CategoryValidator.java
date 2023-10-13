@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.rest.dto.requests.NewCategoryRequest;
-import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
+import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 
 @Component
 @Data

@@ -1,6 +1,8 @@
 package ru.devtrifanya.online_store.rest.dto.entities_dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 @Data

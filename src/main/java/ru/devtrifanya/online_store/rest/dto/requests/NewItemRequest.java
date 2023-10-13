@@ -1,5 +1,6 @@
 package ru.devtrifanya.online_store.rest.dto.requests;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ImageDTO;
@@ -15,7 +16,7 @@ public class NewItemRequest {
 
     private int categoryId;
 
-    private List<ImageDTO> itemImages;
+    private List<@Valid ImageDTO> itemImages;
 
-    private List<ItemFeatureDTO> itemFeatures;
+    private List<@Valid ItemFeatureDTO> itemFeatures;
 }

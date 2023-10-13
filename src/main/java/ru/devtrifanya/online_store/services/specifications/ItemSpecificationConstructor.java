@@ -7,9 +7,10 @@ import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -77,7 +78,7 @@ public class ItemSpecificationConstructor {
 
     public static Specification<Item> itemRatingIsMoreThan(double minRating) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.greaterThan(root.get("rating"), minRating);
+                criteriaBuilder.greaterThanOrEqualTo(root.get("rating"), minRating);
     }
 
     public static Specification<Item> itemCategoryIs(Category category) {
@@ -116,9 +117,9 @@ public class ItemSpecificationConstructor {
 
             Predicate predicate1 = criteriaBuilder.equal(itemAndAllFeatures.get("requestParamName"), featureRequestName);
             Predicate predicate2 = flag == true ?
-                    criteriaBuilder.equal(itemAndItemFeatures.get("value"), "Есть")
+                    criteriaBuilder.equal(itemAndItemFeatures.get("stringValue"), "Есть")
                     : // flag == false
-                    criteriaBuilder.equal(itemAndItemFeatures.get("value"), "Нет");
+                    criteriaBuilder.equal(itemAndItemFeatures.get("stringValue"), "Нет");
 
             return criteriaBuilder.and(predicate1, predicate2);
         };

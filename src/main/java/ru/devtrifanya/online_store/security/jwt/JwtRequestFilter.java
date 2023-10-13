@@ -12,10 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.devtrifanya.online_store.models.User;
+import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 import ru.devtrifanya.online_store.security.jwt.JWTUtils;
 import ru.devtrifanya.online_store.services.UserService;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,30 +32,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
+            try {
+                String username = jwtUtils.getUsername(jwt);
+                User user = userService.loadUserByUsername(username);
 
-            if (jwt.isBlank()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "На сервер был передан пустой JWT.");
-            } else {
-                try {
-                    String username = jwtUtils.getUsername(jwt);
-                    User user = userService.loadUserByUsername(username);
-
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(
-                                    user,
-                                    user.getPassword(),
-                                    user.getAuthorities()
-                            );
-                    if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Недействительный JWT.");
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(
+                                user,
+                                user.getPassword(),
+                                user.getAuthorities()
+                        );
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Недействительный JWT.");
             }
+
         } else {
             System.out.println("JWT не был передан.");
+            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Для доступа к данной странице необходимо авторизоваться.");
         }
         filterChain.doFilter(request, response);
     }

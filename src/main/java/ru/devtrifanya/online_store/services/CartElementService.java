@@ -8,7 +8,7 @@ import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.CartElementRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.util.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.List;
 

@@ -2,10 +2,9 @@ package ru.devtrifanya.online_store.rest.validators;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.UserRepository;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.UserDTO;
-import ru.devtrifanya.online_store.util.exceptions.AlreadyExistException;
+import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 
 @Component
 @Data
