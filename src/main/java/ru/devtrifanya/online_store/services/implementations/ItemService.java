@@ -1,6 +1,8 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +28,14 @@ public class ItemService {
 
     private final ItemSpecificationConstructor specificationConstructor;
 
+    @Autowired
+    public ItemService(@Lazy ItemFeatureService itemFeatureService,
+                       CategoryRepository categoryRepository, ItemRepository itemRepository, ItemSpecificationConstructor specificationConstructor) {
+        this.itemFeatureService = itemFeatureService;
+        this.categoryRepository = categoryRepository;
+        this.itemRepository = itemRepository;
+        this.specificationConstructor = specificationConstructor;
+    }
 
     /**
      * Получение товара по его id.

@@ -1,26 +1,24 @@
 package ru.devtrifanya.online_store.rest.controllers;
 
 import jakarta.validation.Valid;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
-import ru.devtrifanya.online_store.services.CartElementService;
+import ru.devtrifanya.online_store.services.implementations.CartElementService;
 import ru.devtrifanya.online_store.rest.dto.requests.NewCartElementRequest;
-import ru.devtrifanya.online_store.rest.dto.responses.ErrorResponse;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 import ru.devtrifanya.online_store.rest.validators.CartValidator;
 
 @RestController
-@Data
+@RequiredArgsConstructor
 public class CartController {
     private final CartElementService cartElementService;
-    private final MainExceptionHandler mainExceptionHandler;
+
     private final CartValidator cartValidator;
+
     private final MainClassConverter converter;
 
     /**
@@ -33,7 +31,7 @@ public class CartController {
 
         cartElementService.createNewCartElement(
                 converter.convertToCartElement(request.getCartElement()),
-                user,
+                user.getId(),
                 request.getItemId()
         );
         return ResponseEntity.ok("Товар успешно добавлен в корзину.");

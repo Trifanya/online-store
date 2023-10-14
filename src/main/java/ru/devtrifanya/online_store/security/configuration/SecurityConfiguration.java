@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.devtrifanya.online_store.security.jwt.JwtRequestFilter;
-import ru.devtrifanya.online_store.services.UserService;
+import ru.devtrifanya.online_store.services.implementations.UserService;
 
 @Configuration
 @Data

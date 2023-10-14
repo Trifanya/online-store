@@ -1,6 +1,8 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Category;
@@ -16,9 +18,20 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Data
 public class CategoryService {
+    private final FeatureService featureService;
     private final CategoryRelationService categoryRelationService;
+
     private final CategoryRepository categoryRepository;
     private final CategoryRelationRepository categoryRelationRepository;
+
+    @Autowired
+    public CategoryService(@Lazy FeatureService featureService, @Lazy CategoryRelationService categoryRelationService,
+                           CategoryRepository categoryRepository, CategoryRelationRepository categoryRelationRepository) {
+        this.featureService = featureService;
+        this.categoryRelationService = categoryRelationService;
+        this.categoryRepository = categoryRepository;
+        this.categoryRelationRepository = categoryRelationRepository;
+    }
 
     /**
      * Получение категории по ее id.
@@ -39,21 +52,22 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category createNewCategory(int parentCategoryId, Category categoryToSave, List<Feature> features) {
-        categoryRelationService.createCategoryRelation(
-                categoryToSave,
-                categoryRepository.findById(parentCategoryId).orElse(null)
-        );
+    public Category createNewCategory(Category categoryToSave, int[] featuresId) {
         categoryToSave.setId(0);
-        categoryToSave.setFeatures(features);
-
+        for (int i = 0; i < featuresId.length; i++) {
+            Feature feature = featureService.getFeature(featuresId[i]);
+            categoryToSave.getFeatures().add(feature);
+        }
         return categoryRepository.save(categoryToSave);
     }
 
 
     @Transactional
-    public Category updateCategory(Category updatedCategory, List<Feature> features) {
-        updatedCategory.setFeatures(features);
+    public Category updateCategoryInfo(Category updatedCategory, int[] featuresId) {
+        for (int i = 0; i < featuresId.length; i++) {
+            Feature feature = featureService.getFeature(featuresId[i]);
+            updatedCategory.getFeatures().add(feature);
+        }
         return categoryRepository.save(updatedCategory);
     }
 

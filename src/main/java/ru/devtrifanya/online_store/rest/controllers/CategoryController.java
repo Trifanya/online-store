@@ -1,33 +1,24 @@
 package ru.devtrifanya.online_store.rest.controllers;
 
 import jakarta.validation.Valid;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.rest.dto.requests.NewCategoryRequest;
-import ru.devtrifanya.online_store.rest.dto.responses.ErrorResponse;
-import ru.devtrifanya.online_store.services.CartElementService;
-import ru.devtrifanya.online_store.services.CategoryService;
-import ru.devtrifanya.online_store.services.FeatureService;
-import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 import ru.devtrifanya.online_store.rest.validators.CategoryValidator;
-
-import java.util.stream.Collectors;
+import ru.devtrifanya.online_store.services.implementations.*;
 
 @RestController
 @RequestMapping("/catalog/{categoryId}")
-@Data
+@RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final ItemService itemService;
-    private final FeatureService featureService;
-    private final CartElementService cartElementService;
+    private final CategoryRelationService categoryRelationService;
+
     private final CategoryValidator categoryValidator;
-    private final MainExceptionHandler exceptionHandler;
+
     private final MainClassConverter converter;
 
     /**
@@ -38,14 +29,15 @@ public class CategoryController {
     public ResponseEntity<?> createNewCategory(@RequestBody @Valid NewCategoryRequest request) {
         categoryValidator.validate(request);
 
-        Category savedCategory = categoryService.createNewCategory(
-                request.getParentCategoryId(),
+        Category createdCategory = categoryService.createNewCategory(
                 converter.convertToCategory(request.getCategory()),
-                request.getFeatures()
-                        .stream()
-                        .map(featureDTO -> converter.convertToFeature(featureDTO))
-                        .collect(Collectors.toList())
+                request.getFeaturesId()
         );
+        categoryRelationService.createNewCategoryRelation(
+                createdCategory.getId(),
+                request.getParentCategoryId()
+        );
+
         return ResponseEntity.ok("Категория успешно добавлена в дерево категорий.");
     }
 
@@ -57,13 +49,15 @@ public class CategoryController {
     public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid NewCategoryRequest request) {
         categoryValidator.validate(request);
 
-        Category updatedCategory = categoryService.updateCategory(
+        Category updatedCategory = categoryService.updateCategoryInfo(
                 converter.convertToCategory(request.getCategory()),
-                request.getFeatures()
-                        .stream()
-                        .map(featureDTO -> converter.convertToFeature(featureDTO))
-                        .collect(Collectors.toList())
+                request.getFeaturesId()
         );
+        categoryRelationService.updateRelationsOfReplacedCategory(
+                updatedCategory.getId(),
+                request.getParentCategoryId()
+        );
+
         return ResponseEntity.ok("Информация о категории успешно обновлена.");
     }
 

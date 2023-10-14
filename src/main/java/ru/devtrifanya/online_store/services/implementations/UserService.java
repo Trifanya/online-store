@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +21,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с указанным email не найден."));
 
         return user;
+    }
+
+    public User getUser(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с указанным id не найден."));
     }
 
     @Transactional

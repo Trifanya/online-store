@@ -1,26 +1,23 @@
 package ru.devtrifanya.online_store.rest.controllers;
 
 import jakarta.validation.Valid;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.UserDTO;
 import ru.devtrifanya.online_store.rest.validators.UserValidator;
-import ru.devtrifanya.online_store.services.UserService;
+import ru.devtrifanya.online_store.services.implementations.UserService;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 
 @RestController
 @RequestMapping("/profile")
-@Data
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
     private final UserValidator userValidator;
-
-    private final MainExceptionHandler exceptionHandler;
 
     private final MainClassConverter converter;
 

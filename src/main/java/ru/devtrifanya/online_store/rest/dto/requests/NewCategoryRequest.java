@@ -10,10 +10,11 @@ import java.util.List;
 
 @Data
 public class NewCategoryRequest {
-    private int parentCategoryId;
-
     private @Valid CategoryDTO category;
 
-    private List<@Valid FeatureDTO> features;
+    private int parentCategoryId;
+
+    //private List<Integer> featuresId;
+    private int[] featuresId;
 
 }

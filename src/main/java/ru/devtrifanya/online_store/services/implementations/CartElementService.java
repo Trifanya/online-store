@@ -1,13 +1,14 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.CartElement;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.repositories.CartElementRepository;
-import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.List;
@@ -16,8 +17,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Data
 public class CartElementService {
-    private final ItemRepository itemRepository;
+    private final UserService userService;
+    private final ItemService itemService;
+
     private final CartElementRepository cartElementRepository;
+
+    @Autowired
+    public CartElementService(@Lazy UserService userService, @Lazy ItemService itemService,
+                              CartElementRepository cartElementRepository) {
+        this.userService = userService;
+        this.itemService = itemService;
+        this.cartElementRepository = cartElementRepository;
+    }
 
     /**
      * Получение корзины (всех элементов корзины) пользователя по id пользователя.
@@ -40,9 +51,9 @@ public class CartElementService {
      * элемент корзины.
      */
     @Transactional
-    public CartElement createNewCartElement(CartElement elementToSave, User user, int itemId) {
-        Item item = itemRepository.findById(itemId)
-                        .orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));
+    public CartElement createNewCartElement(CartElement elementToSave, int userId, int itemId) {
+        User user = userService.getUser(userId);
+        Item item = itemService.getItem(itemId);
 
         elementToSave.setUser(user);
         elementToSave.setItem(item);
@@ -52,16 +63,14 @@ public class CartElementService {
 
     /**
      * Изменение количества единиц конкретного товара в корзине пользователя.
-     * Метод получает на вход id элемента корзины который будет изменен, элемент корзины,
-     * у которого проинициализировано только поле count, инициализирует у сохраняемого
-     * элемента поля user и item, затем вызывает метод репозитория для сохранения этого
-     * элемента в БД и возвращает измененный элемент корзины.
      */
     @Transactional
     public CartElement updateCartElement(CartElement elementToUpdate) {
         CartElement oldCartElement = cartElementRepository.findById(elementToUpdate.getId())
                 .orElseThrow(() -> new NotFoundException("Элемент корзины с указанным id не найден."));
-        elementToUpdate.setItemCount(oldCartElement.getItemCount());
+
+        elementToUpdate.setUser(oldCartElement.getUser());
+        elementToUpdate.setItem(oldCartElement.getItem());
 
         return cartElementRepository.save(elementToUpdate);
     }

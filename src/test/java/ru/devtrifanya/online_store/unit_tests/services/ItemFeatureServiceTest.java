@@ -12,7 +12,7 @@ import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
-import ru.devtrifanya.online_store.services.ItemFeatureService;
+import ru.devtrifanya.online_store.services.implementations.ItemFeatureService;
 
 @ExtendWith(MockitoExtension.class)
 @Data

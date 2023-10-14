@@ -1,6 +1,8 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Category;
@@ -13,13 +15,26 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Data
 public class CategoryRelationService {
+    private final CategoryService categoryService;
+
     private final CategoryRelationRepository relationRepository;
 
     public List<CategoryRelation> getRelationsByChildId(int childId) {
         return relationRepository.findAllByChildId(childId);
     }
 
-    public CategoryRelation createCategoryRelation(Category child, Category parent) {
+    @Autowired
+    public CategoryRelationService(@Lazy CategoryService categoryService,
+                                   CategoryRelationRepository relationRepository) {
+        this.categoryService = categoryService;
+        this.relationRepository = relationRepository;
+    }
+
+    //public CategoryRelation createNewCategoryRelation(Category child, Category parent) {
+    public CategoryRelation createNewCategoryRelation(int childId, int parentId) {
+        Category child = categoryService.getCategory(childId);
+        Category parent = categoryService.getCategory(parentId);
+
         CategoryRelation relationToSave = new CategoryRelation();
         relationToSave.setChild(child);
         relationToSave.setParent(parent);
@@ -27,17 +42,16 @@ public class CategoryRelationService {
         return relationRepository.save(relationToSave);
     }
 
-    public CategoryRelation updateCategoryRelation(int relationId,
-                                                   CategoryRelation updatedRelation) {
-        updatedRelation.setId(relationId);
-        return relationRepository.save(updatedRelation);
-    }
+    public void updateRelationsOfReplacedCategory(int categoryId, int newParentId) {
+        if (relationRepository.existsByParentIdAndChildId(newParentId, categoryId)) {
+            return; // Такое отношение уже существует, значит, категория не была перемещена.
+        }
+        Category newParent = categoryService.getCategory(newParentId);
 
-    public void updateRelationsOfDisplacedCategory(int categoryId, Category newParent) {
         List<CategoryRelation> relationsWithParents = relationRepository.findAllByChildId(categoryId);
-
         for (CategoryRelation relationWithParent : relationsWithParents) {
             relationWithParent.setParent(newParent);
+            relationRepository.save(relationWithParent);
         }
     }
 
@@ -56,11 +70,8 @@ public class CategoryRelationService {
             for (int j = 0; j < relationsWithChildren.size(); j++) {
                 CategoryRelation relation = new CategoryRelation();
                 relation.setChild(relationsWithChildren.get(j).getChild());
-
-                this.createCategoryRelation(
-                        relationsWithChildren.get(j).getChild(),
-                        relationsWithParents.get(i).getParent()
-                );
+                relation.setParent(relationsWithParents.get(i).getParent());
+                relationRepository.save(relation);
             }
         }
     }

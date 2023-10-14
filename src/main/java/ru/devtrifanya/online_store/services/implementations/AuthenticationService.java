@@ -1,11 +1,10 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +29,10 @@ public class AuthenticationService {
      * пользователя и сохраняет в БД.
      */
     @Transactional
-    public User createNewUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER");
-        return userRepository.save(user);
+    public User createNewUser(User userToSave) {
+        userToSave.setPassword(passwordEncoder.encode(userToSave.getPassword()));
+        userToSave.setRole("ROLE_USER");
+        return userRepository.save(userToSave);
     }
 
     /**

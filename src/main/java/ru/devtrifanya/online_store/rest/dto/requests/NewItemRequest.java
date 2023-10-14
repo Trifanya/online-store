@@ -8,15 +8,16 @@ import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemDTO;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class NewItemRequest {
-    @NotNull
-    private ItemDTO item;
+    private @Valid ItemDTO item;
 
+    @NotNull(message = "Необходимо указать категорию товара.")
     private int categoryId;
 
     private List<@Valid ImageDTO> itemImages;
 
-    private List<@Valid ItemFeatureDTO> itemFeatures;
+    private Map<Integer, @Valid ItemFeatureDTO> itemFeatures; // Map<(id характеристики категории), (значение характеристики товара)>
 }

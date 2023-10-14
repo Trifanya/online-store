@@ -20,8 +20,8 @@ import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.services.FeatureService;
-import ru.devtrifanya.online_store.services.ItemService;
+import ru.devtrifanya.online_store.services.implementations.FeatureService;
+import ru.devtrifanya.online_store.services.implementations.ItemService;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.*;

@@ -1,28 +1,27 @@
 package ru.devtrifanya.online_store.rest.controllers;
 
 import jakarta.validation.Valid;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.NewItemRequest;
-import ru.devtrifanya.online_store.rest.dto.responses.ErrorResponse;
-import ru.devtrifanya.online_store.services.*;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.utils.MainExceptionHandler;
 import ru.devtrifanya.online_store.rest.validators.ItemValidator;
+import ru.devtrifanya.online_store.services.implementations.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/catalog/{categoryId}")
-@Data
+@RequiredArgsConstructor
 public class ItemController {
-    private final CategoryService categoryService;
     private final ItemService itemService;
     private final ItemFeatureService itemFeatureService;
-    private final ReviewService reviewService;
+
     private final ItemValidator itemValidator;
-    private final MainExceptionHandler exceptionHandler;
+
     private final MainClassConverter converter;
 
     /**
@@ -32,11 +31,19 @@ public class ItemController {
     @PostMapping("/newItem")
     public ResponseEntity<?> createNewItem(@RequestBody @Valid NewItemRequest request) {
         itemValidator.validate(request);
-
+        // сохранение товара
         Item createdItem = itemService.createNewItem(
                 converter.convertToItem(request.getItem()),
                 request.getCategoryId()
         );
+        // сохранение характеристик товара
+        for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
+            itemFeatureService.createNewItemFeature(
+                    converter.convertToItemFeature(itemFeature.getValue()),
+                    createdItem.getId(),
+                    itemFeature.getKey()
+            );
+        }
         return ResponseEntity.ok("Товар успешно добавлен.");
     }
 
@@ -47,11 +54,19 @@ public class ItemController {
     @PatchMapping("/{itemId}/updateItem")
     public ResponseEntity<?> updateItemInfo(@RequestBody @Valid NewItemRequest request) {
         itemValidator.validate(request);
-
+        // обновление товара
         Item updatedItem = itemService.updateItemInfo(
                 converter.convertToItem(request.getItem()),
                 request.getCategoryId()
         );
+        // обновление характеристик товара
+        for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
+            itemFeatureService.updateItemFeatureInfo(
+                    converter.convertToItemFeature(itemFeature.getValue()),
+                    updatedItem.getId(),
+                    itemFeature.getKey()
+            );
+        }
         return ResponseEntity.ok("Информация о товаре успешно обновлена.");
     }
 

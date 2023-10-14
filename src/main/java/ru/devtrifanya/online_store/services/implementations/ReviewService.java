@@ -1,6 +1,8 @@
-package ru.devtrifanya.online_store.services;
+package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.devtrifanya.online_store.models.Item;
@@ -23,6 +25,20 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ReviewRepository reviewRepository;
+
+    @Autowired
+    public ReviewService(@Lazy ItemService itemService,
+                         UserRepository userRepository, ItemRepository itemRepository, ReviewRepository reviewRepository) {
+        this.itemService = itemService;
+        this.userRepository = userRepository;
+        this.itemRepository = itemRepository;
+        this.reviewRepository = reviewRepository;
+    }
+
+    public Review getReview(int reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NotFoundException("Отзыв с указанным id не найден."));
+    }
 
     /**
      * Получение списка всех отзывов о товаре.
