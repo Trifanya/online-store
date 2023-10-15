@@ -70,6 +70,14 @@ public class ItemService {
         ).getContent();
     }
 
+    @Transactional
+    public void buyItem(int itemId, int itemToBuyQuantity) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));
+        item.setQuantity(item.getQuantity() - itemToBuyQuantity);
+        itemRepository.save(item);
+    }
+
     /**
      * Добавление нового товара.
      * Метод получает на вход товар, у которого проинициализированы все поля, кроме поля

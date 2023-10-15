@@ -10,4 +10,5 @@ import java.util.List;
 public interface CartElementRepository extends JpaRepository<CartElement, Integer> {
     List<CartElement> findAllByUserId(int userId);
     int countAllByUserId(int userId);
+    boolean existsByItemIdAndUserId(int itemId, int userId);
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CategoryDTO;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemDTO;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ import java.util.List;
 public class CartInfoResponse {
 
     private List<CartElementDTO> userCart;
+
+    private List<ItemDTO> items;
 
     private List<CategoryDTO> topCategories;
 }

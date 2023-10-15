@@ -11,15 +11,34 @@ import ru.devtrifanya.online_store.services.implementations.CartElementService;
 import ru.devtrifanya.online_store.rest.dto.requests.NewCartElementRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.CartValidator;
+import ru.devtrifanya.online_store.services.implementations.ItemService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class CartController {
     private final CartElementService cartElementService;
+    private final ItemService itemService;
 
     private final CartValidator cartValidator;
 
     private final MainClassConverter converter;
+
+    /**
+     * Оформление заказа.
+     */
+    @PostMapping("/cart/placeAnOrder")
+    public ResponseEntity<?> placeAnOrder(@RequestBody List<@Valid CartElementDTO> cartContent,
+                                          @AuthenticationPrincipal User user) {
+        cartValidator.validate(cartContent);
+
+        for (CartElementDTO cartElement : cartContent) {
+            itemService.buyItem(cartElement.getItemId(),cartElement.getItemCount()); // уменьшение количества купленного товара
+            cartElementService.deleteCartElement(cartElement.getId()); // удаление купленного товара из корзины
+        }
+        return ResponseEntity.ok("Заказ успешно оформлен.");
+    }
 
     /**
      * Добавление товара в корзину, только для пользователей.
@@ -27,12 +46,12 @@ public class CartController {
     @PostMapping("/catalog/{categoryId}/{itemId}/newCartElement")
     public ResponseEntity<?> createNewCartElement(@RequestBody @Valid NewCartElementRequest request,
                                                   @AuthenticationPrincipal User user) {
-        cartValidator.validate(request.getItemId());
+        cartValidator.validate(request.getCartElement(), user.getId());
 
         cartElementService.createNewCartElement(
                 converter.convertToCartElement(request.getCartElement()),
                 user.getId(),
-                request.getItemId()
+                request.getCartElement().getItemId()
         );
         return ResponseEntity.ok("Товар успешно добавлен в корзину.");
     }
@@ -42,7 +61,7 @@ public class CartController {
      */
     @PatchMapping("/cart/updateCartElement")
     public ResponseEntity<?> updateCartElement(@RequestBody @Valid CartElementDTO cartElementDTO) {
-        cartValidator.validate(cartElementDTO.getId());
+        cartValidator.validate(cartElementDTO.getId(), cartElementDTO.getItemCount());
 
         cartElementService.updateCartElement(
                 converter.convertToCartElement(cartElementDTO)

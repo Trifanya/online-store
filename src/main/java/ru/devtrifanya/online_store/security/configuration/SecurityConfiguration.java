@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                                 "/cart", "/reviews/newReview", "/catalog/{categoryId}/{itemId}/newCartElement", "/cart/updateCartElement", "/cart/deleteCartElement"
                         ).hasRole("USER")
                         .requestMatchers(
-                                "/reviews/deleteReview", "catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/{categoryId}/deleteCategory", "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/{itemId}/deleteItem"
+                                "/reviews/deleteReview", "catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/{categoryId}/deleteCategory", "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/{itemId}/deleteItem", "/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/editFeature"
                         ).hasRole("ADMIN")
                         .requestMatchers(
                                 "/profile/updateUserInfo"

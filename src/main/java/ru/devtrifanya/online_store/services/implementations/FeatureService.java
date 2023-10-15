@@ -10,6 +10,8 @@ import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
+import java.util.ArrayList;
+
 @Service
 @Transactional(readOnly = true)
 @Data
@@ -37,6 +39,7 @@ public class FeatureService {
     //public Feature createNewFeature(Feature feature, Category category) {
     public Feature createNewFeature(Feature featureToSave, int categoryId) {
         Category category = categoryService.getCategory(categoryId);
+        featureToSave.setCategories(new ArrayList<>());
         featureToSave.getCategories().add(category);
         return featureRepository.save(featureToSave);
     }
