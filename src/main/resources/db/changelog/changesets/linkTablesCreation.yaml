@@ -10,13 +10,26 @@ databaseChangeLog:
                   name: category_id
                   type: int
                   constraints:
-                    primaryKey: true
                     references: category(id)
                     foreignKeyName: fk_category_id
               - column:
                   name: feature_id
                   type: int
                   constraints:
-                    primaryKey: true
                     references: feature(id)
                     foreignKeyName: fk_feature_id
+        - createTable:
+            tableName: item_image
+            columns:
+              - column:
+                  name: item_id
+                  type: int
+                  constraints:
+                    references: item(id)
+                    foreignKeyName: fk_item_id
+              - column:
+                  name: image_id
+                  type: int
+                  constraints:
+                    references: image_for_item(id)
+                    foreignKeyName: fk_image_id

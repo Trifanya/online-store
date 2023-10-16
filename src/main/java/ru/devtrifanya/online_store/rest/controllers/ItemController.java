@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemImageDTO;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
-import ru.devtrifanya.online_store.rest.dto.requests.NewItemRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.AddItemRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.ItemValidator;
 import ru.devtrifanya.online_store.services.implementations.*;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class ItemController {
     private final ItemService itemService;
     private final ItemFeatureService itemFeatureService;
+    private final ImageService imageService;
 
     private final ItemValidator itemValidator;
 
@@ -29,7 +31,7 @@ public class ItemController {
      * Добавление нового товара, только для администратора.
      */
     @PostMapping("/newItem")
-    public ResponseEntity<?> createNewItem(@RequestBody @Valid NewItemRequest request) {
+    public ResponseEntity<?> createNewItem(@RequestBody @Valid AddItemRequest request) {
         itemValidator.validate(request);
         // сохранение товара
         Item createdItem = itemService.createNewItem(
@@ -43,6 +45,12 @@ public class ItemController {
                     createdItem.getId(),
                     itemFeature.getKey()
             );
+        } // сохранение изображений товара
+        for (ItemImageDTO image : request.getItemImages()) {
+            imageService.createNewImageIfNotExist(
+                    converter.convertToImage(image),
+                    createdItem.getId()
+            );
         }
         return ResponseEntity.ok("Товар успешно добавлен.");
     }
@@ -52,7 +60,7 @@ public class ItemController {
      * Обновление информации о товаре, только для администратора.
      */
     @PatchMapping("/{itemId}/updateItem")
-    public ResponseEntity<?> updateItemInfo(@RequestBody @Valid NewItemRequest request) {
+    public ResponseEntity<?> updateItemInfo(@RequestBody @Valid AddItemRequest request) {
         itemValidator.validate(request);
         // обновление товара
         Item updatedItem = itemService.updateItemInfo(
@@ -65,6 +73,12 @@ public class ItemController {
                     converter.convertToItemFeature(itemFeature.getValue()),
                     updatedItem.getId(),
                     itemFeature.getKey()
+            );
+        }
+        for (ItemImageDTO image : request.getItemImages()) {
+            imageService.createNewImageIfNotExist(
+                    converter.convertToImage(image),
+                    updatedItem.getId()
             );
         }
         return ResponseEntity.ok("Информация о товаре успешно обновлена.");

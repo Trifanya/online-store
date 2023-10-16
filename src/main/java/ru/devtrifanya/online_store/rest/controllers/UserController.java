@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.UserDTO;
+import ru.devtrifanya.online_store.rest.dto.requests.UpdateUserRequest;
 import ru.devtrifanya.online_store.rest.validators.UserValidator;
 import ru.devtrifanya.online_store.services.implementations.UserService;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
@@ -22,12 +23,12 @@ public class UserController {
     private final MainClassConverter converter;
 
     @PatchMapping("/updateUserInfo")
-    public ResponseEntity<UserDTO> updateUserInfo(@RequestBody @Valid UserDTO userDTO,
-                                                 @AuthenticationPrincipal User user) {
-        userValidator.validate(userDTO);
+    public ResponseEntity<?> updateUserInfo(@RequestBody @Valid UpdateUserRequest request,
+                                            @AuthenticationPrincipal User user) {
+        userValidator.validate(request.getUser(), user.getId());
 
-        User updatedUser = userService.updateUserInfo(user.getId(), converter.convertToUser(userDTO));
+        User updatedUser = userService.updateUserInfo(user.getId(), converter.convertToUser(request.getUser()));
 
-        return ResponseEntity.ok(converter.convertToUserDTO(updatedUser));
+        return ResponseEntity.ok("Данные пользователя успешно изменены.");
     }
 }

@@ -45,7 +45,7 @@ public class ItemService {
      */
     public Item getItem(int itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Товар с таким названием не найден."));
+                .orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));
     }
 
     public List<Item> getFilteredItems(int categoryId,

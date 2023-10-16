@@ -35,6 +35,15 @@ databaseChangeLog:
             columns:
               - column:
                   name: category_id
+                  value: 2
+              - column:
+                  name: feature_id
+                  value: 10
+        - insert:
+            tableName: category_feature
+            columns:
+              - column:
+                  name: category_id
                   value: 6
               - column:
                   name: feature_id

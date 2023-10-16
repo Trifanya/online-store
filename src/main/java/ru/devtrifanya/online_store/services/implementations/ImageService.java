@@ -5,11 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.devtrifanya.online_store.models.Image;
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.models.Review;
-import ru.devtrifanya.online_store.repositories.ImageRepository;
+import ru.devtrifanya.online_store.models.ItemImage;
+import ru.devtrifanya.online_store.models.ReviewImage;
+import ru.devtrifanya.online_store.repositories.ItemImageRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,39 +20,33 @@ public class ImageService {
     private final ItemService itemService;
     private final ReviewService reviewService;
 
-    private final ImageRepository imageRepository;
+    private final ItemImageRepository itemImageRepository;
 
     @Autowired
     public ImageService(@Lazy ItemService itemService, @Lazy ReviewService reviewService,
-                        ImageRepository imageRepository) {
+                        ItemImageRepository itemImageRepository) {
         this.itemService = itemService;
         this.reviewService = reviewService;
-        this.imageRepository = imageRepository;
+        this.itemImageRepository = itemImageRepository;
     }
 
-    public List<Image> getImagesByItemId(int itemId) {
-        return imageRepository.findAllByItemId(itemId);
-    }
-
-    public List<Image> getImagesByReviewId(int reviewId) {
-        return imageRepository.findAllByReviewId(reviewId);
-    }
-
-    //public Image createNewImageForItem(Image imageToSave, Item item) {
-    public Image createNewImageForItem(Image imageToSave, int itemId) {
+    @Transactional
+    public ItemImage createNewImageIfNotExist(ItemImage itemImageToSave, int itemId) {
         Item item = itemService.getItem(itemId);
-        imageToSave.setItem(item);
-        return imageRepository.save(imageToSave);
+        ItemImage image = itemImageRepository.findByUrl(itemImageToSave.getUrl()).orElse(null);
+
+        if (image != null) { // если изображение c указанным url есть в БД
+            image.getItems().add(item);
+            return itemImageRepository.save(image);
+        } else { // если изображения с указанным url нет в БД
+            itemImageToSave.setItems(new ArrayList<>());
+            itemImageToSave.getItems().add(item);
+            return itemImageRepository.save(itemImageToSave);
+        }
     }
 
-    //public Image createNewImageForReview(Image imageToSave, Review review) {
-    public Image createNewImageForReview(Image imageToSave, int reviewId) {
-        Review review = reviewService.getReview(reviewId);
-        imageToSave.setReview(review);
-        return imageRepository.save(imageToSave);
-    }
-
+    @Transactional
     public void deleteImage(int imageId) {
-        imageRepository.deleteById(imageId);
+        itemImageRepository.deleteById(imageId);
     }
 }

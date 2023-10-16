@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.UserDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.SignUpRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.SignInRequest;
 import ru.devtrifanya.online_store.rest.dto.responses.JwtResponse;
@@ -23,20 +22,30 @@ public class AuthenticationController {
 
     private final MainClassConverter converter;
 
+    /**
+     * Регистрация нового аккаунта.
+     */
     @PostMapping("/registration")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
         authenticationValidator.validate(signUpRequest);
-        UserDTO userDTO = converter.convertToUserDTO(
+
+        converter.convertToUserDTO(
                 authenticationService.createNewUser(
                         converter.convertToUser(signUpRequest.getUser())
                 ));
-        return ResponseEntity.ok(userDTO);
+
+        return ResponseEntity.ok("Регистрация прошла успешно.");
     }
 
+    /**
+     * Вход в зарегистрированный аккаунт.
+     */
     @PostMapping("/authentication")
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInRequest signInRequest) {
         authenticationValidator.validate(signInRequest);
+
         String jwt = authenticationService.getJWT(signInRequest);
+
         return ResponseEntity.ok(new JwtResponse(jwt));
     }
 }

@@ -111,3 +111,15 @@ databaseChangeLog:
               - column:
                   name: unit
                   value: "Вт"
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Объем памяти"
+              - column:
+                  name: request_name
+                  value: "memorySize"
+              - column:
+                  name: unit
+                  value: "ГБ"

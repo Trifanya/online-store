@@ -53,6 +53,21 @@ databaseChangeLog:
             columns:
               - column:
                   name: item_id
+                  value: 1
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: string_value
+                  value: "128"
+              - column:
+                  name: numeric_value
+                  value: 128
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
                   value: 2
               - column:
                   name: feature_id
@@ -98,6 +113,21 @@ databaseChangeLog:
             columns:
               - column:
                   name: item_id
+                  value: 2
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: string_value
+                  value: "256"
+              - column:
+                  name: numeric_value
+                  value: 256
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
                   value: 3
               - column:
                   name: feature_id
@@ -138,6 +168,21 @@ databaseChangeLog:
               - column:
                   name: numeric_value
                   value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 3
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: string_value
+                  value: "128"
+              - column:
+                  name: numeric_value
+                  value: 128
         - insert: # 10
             tableName: item_feature
             columns:
@@ -183,6 +228,21 @@ databaseChangeLog:
               - column:
                   name: numeric_value
                   value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 4
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: string_value
+                  value: "256"
+              - column:
+                  name: numeric_value
+                  value: 256
         - insert:
             tableName: item_feature
             columns:

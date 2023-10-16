@@ -44,6 +44,7 @@ public class MainExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleException(HttpMessageNotReadableException exception) {
+        exception.printStackTrace();
         String errorMessage = "Некорректное тело запроса.";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorResponse response = new ErrorResponse(errorMessage);

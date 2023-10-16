@@ -1,6 +1,7 @@
 package ru.devtrifanya.online_store.services.implementations;
 
 import lombok.Data;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public User updateUserInfo(int userId, User updatedUser) {
+        User oldUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с указанным id не найден."));
         updatedUser.setId(userId);
+        updatedUser.setRole(oldUser.getRole());
         return userRepository.save(updatedUser);
     }
 

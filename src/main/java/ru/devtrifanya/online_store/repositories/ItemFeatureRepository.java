@@ -10,5 +10,4 @@ import java.util.List;
 public interface ItemFeatureRepository extends JpaRepository<ItemFeature, Integer> {
     List<ItemFeature> findAllByFeatureId(int featureId);
     List<ItemFeature> findAllByItemId(int itemId);
-    void deleteAllByFeatureId(int featureId);
 }

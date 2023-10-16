@@ -17,23 +17,5 @@ import java.util.Set;
 public interface ItemRepository extends JpaRepository<Item, Integer>, JpaSpecificationExecutor<Item> {
     Optional<Item> findByName(String name);
 
-    List<Item> findAllByCategoryId(int categoryId);
-
     Page<Item> findAllByCategoryId(int categoryId, PageRequest pageRequest);
-
-    /*@Query(value = "select item.* from (item join (feature join item_feature on feature.id = item_feature.feature_id)" +
-            "as features on item.id = features.item_id) where features.request_name = ? and features.value between ? and ? ",
-            nativeQuery = true)
-    List<Item> findItemsWithFeatureInRange(String featureName, double rangeStart, double rangeEnd);*/
-
-    /*@Query(value = "select item.* from (item join (feature join item_feature on feature.id = item_feature.feature_id) " +
-            "as features on item.id = features.item_id) where features.request_name = ? and features.value in ?",
-            nativeQuery = true)
-    List<Item> findItemsWithFeatureFromSet(String featureName, Set<String> valuesSet);*/
-
-
-    /*@Query(value = "select item.* from (item join (feature join item_feature on feature.id = item_feature.feature_id)" +
-            "as features on item.id = features.item_id) where features.request_name = ? and features.value = ?",
-            nativeQuery = true)
-    List<Item> findItemsWithFeatureFlag(String featureName, boolean flag);*/
 }

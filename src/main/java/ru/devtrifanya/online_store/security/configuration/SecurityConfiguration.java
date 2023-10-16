@@ -29,16 +29,21 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(
-                                "/cart", "/reviews/newReview", "/catalog/{categoryId}/{itemId}/newCartElement", "/cart/updateCartElement", "/cart/deleteCartElement"
+                                "/cart", "/catalog/{categoryId}/{itemId}/newReview",
+                                "/catalog/{categoryId}/{itemId}/newCartElement", "/cart/updateCartElement", "/cart/deleteCartElement"
                         ).hasRole("USER")
                         .requestMatchers(
-                                "/reviews/deleteReview", "catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/{categoryId}/deleteCategory", "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/{itemId}/deleteItem", "/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/editFeature"
+                                "/catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/{categoryId}/deleteCategory",
+                                "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/{itemId}/deleteItem",
+                                "/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/updateFeature", "/catalog/{categoryId}/deleteFeature",
+                                "/catalog/{categoryId}/{itemId}/newReview", "/catalog/{categoryId}/{itemId}/deleteReview"
                         ).hasRole("ADMIN")
                         .requestMatchers(
                                 "/profile/updateUserInfo"
                         ).hasAnyRole("USER", "ADMIN")
                         .requestMatchers(
-                                "/registration", "/authentication", "/catalog", "/catalog/{categoryId}", "/catalog/{categoryId}/{itemId}"
+                                "/registration", "/authentication",
+                                "/catalog", "/catalog/{categoryId}", "/catalog/{categoryId}/{itemId}"
                         ).permitAll())
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

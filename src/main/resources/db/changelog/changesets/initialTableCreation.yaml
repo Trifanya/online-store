@@ -270,4 +270,44 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     nullable: false
+        # Создание таблицы item_image
+        - createTable:
+            tableName: image_for_item
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        # Создание таблицы review_image
+        - createTable:
+            tableName: image_for_review
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_id
+                  type: integer
+                  constraints:
+                    references: review(id)
+                    foreignKeyName: fk_review_id
+                    nullable: false
+
 

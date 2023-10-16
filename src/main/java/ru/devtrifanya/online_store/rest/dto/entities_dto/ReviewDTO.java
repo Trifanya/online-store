@@ -1,7 +1,9 @@
 package ru.devtrifanya.online_store.rest.dto.entities_dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import ru.devtrifanya.online_store.models.ReviewImage;
 
 import java.util.List;
 
@@ -9,7 +11,6 @@ import java.util.List;
 public class ReviewDTO {
     private int id;
 
-    @NotNull(message = "Для оставления отзыва необходимо указать рейтинг товара.")
     @Min(value = 1, message = "Минимальная оценка товара - 1.")
     @Max(value = 5, message = "Максимальная оценка товара - 5.")
     private int stars;
@@ -17,6 +18,6 @@ public class ReviewDTO {
     @Size(min = 10, max = 1000, message = "Длина комментария должна составлять не менее 10 и не более 1000 символов.")
     private String comment;
 
-    private List<String> images;
+    private List<@Valid ReviewImageDTO> images;
 
 }

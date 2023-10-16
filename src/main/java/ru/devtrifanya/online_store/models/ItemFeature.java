@@ -1,16 +1,11 @@
 package ru.devtrifanya.online_store.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @Table(name = "itemFeature")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ItemFeature {
     @Id
     @Column(name = "id")

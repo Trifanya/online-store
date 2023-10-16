@@ -5,12 +5,13 @@ import org.springframework.stereotype.Component;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Feature;
+import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
-import ru.devtrifanya.online_store.rest.dto.requests.NewItemRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.AddItemRequest;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.exceptions.UnavailableActionException;
 
@@ -24,9 +25,10 @@ public class ItemValidator {
     private final FeatureRepository featureRepository;
     private final CategoryRelationRepository categoryRelationRepository;
 
-    public void validate(NewItemRequest request) {
+    public void validate(AddItemRequest request) {
         // Проверка названия товара на уникальность
-        if (itemRepository.findByName(request.getItem().getName()).isPresent()) {
+        Item item = itemRepository.findByName(request.getItem().getName()).orElse(null);
+        if (item != null && item.getId() != request.getItem().getId()) {
             throw new AlreadyExistException("Товар с таким названием уже есть на сайте.");
         }
         // Категория, в которую добавляется товар должна быть конечной
@@ -51,5 +53,7 @@ public class ItemValidator {
             }
         }
     }
+
+
 
 }

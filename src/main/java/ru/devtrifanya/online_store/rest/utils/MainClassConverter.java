@@ -75,11 +75,19 @@ public class MainClassConverter {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    public Image convertToImage(ImageDTO imageDTO) {
-        return modelMapper.map(imageDTO, Image.class);
+    public ItemImage convertToImage(ItemImageDTO itemImageDTO) {
+        return modelMapper.map(itemImageDTO, ItemImage.class);
     }
 
-    public ImageDTO convertToImageDTO(Image image) {
-        return modelMapper.map(image, ImageDTO.class);
+    public ItemImageDTO convertToImageDTO(ItemImage itemImage) {
+        return modelMapper.map(itemImage, ItemImageDTO.class);
+    }
+
+    public ReviewImage convertToImage(ReviewImageDTO imageDTO) {
+        return modelMapper.map(imageDTO, ReviewImage.class);
+    }
+
+    public ReviewImageDTO convertToImageDTO(ReviewImage image) {
+        return modelMapper.map(image, ReviewImageDTO.class);
     }
 }

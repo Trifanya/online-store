@@ -9,8 +9,11 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
-    List<Review> findByItemId(int id);
-    List<Review> findByItemIdOrderByStarsAsc(int id);
-    List<Review> findByItemIdOrderByStarsDesc(int id);
     Optional<Review> findByItemIdAndUserId(int itemId, int userId);
+
+    List<Review> findByItemId(int id);
+
+    List<Review> findByItemIdOrderByStarsAsc(int id);
+
+    List<Review> findByItemIdOrderByStarsDesc(int id);
 }

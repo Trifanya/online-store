@@ -5,7 +5,7 @@ import lombok.Data;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.FeatureDTO;
 
 @Data
-public class NewFeatureRequest {
+public class AddFeatureRequest {
     private @Valid FeatureDTO feature;
 
     private int categoryId;

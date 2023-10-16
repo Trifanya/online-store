@@ -5,70 +5,94 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.rest.dto.requests.NewCategoryRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.CategoryValidator;
+import ru.devtrifanya.online_store.rest.validators.FeatureValidator;
 import ru.devtrifanya.online_store.services.implementations.*;
 
 @RestController
-@RequestMapping("/catalog/{categoryId}")
 @RequiredArgsConstructor
+@RequestMapping("/catalog/{categoryId}")
 public class CategoryController {
+    private final FeatureService featureService;
     private final CategoryService categoryService;
     private final CategoryRelationService categoryRelationService;
 
+    private final FeatureValidator featureValidator;
     private final CategoryValidator categoryValidator;
 
     private final MainClassConverter converter;
 
     /**
-     * Адрес: 1) .../catalog/{categoryId}/newCategory
+     * Адрес: .../catalog/{categoryId}/newCategory
      * Добавление новой категории товаров, только для администратора.
      */
     @PostMapping("/newCategory")
-    public ResponseEntity<?> createNewCategory(@RequestBody @Valid NewCategoryRequest request) {
+    public ResponseEntity<?> createNewCategory(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
         categoryValidator.validate(request);
 
+        // Сохранение новой категории
         Category createdCategory = categoryService.createNewCategory(
                 converter.convertToCategory(request.getCategory()),
-                request.getFeaturesId()
+                request.getExistingFeaturesId()
         );
+        // Создание связи между новой категорией и ее родительской категорией
         categoryRelationService.createNewCategoryRelation(
                 createdCategory.getId(),
                 request.getParentCategoryId()
         );
+        // Сохранение новых характеристик, если такие есть
+        request.getNewFeatures().stream()
+                .forEach(featureDTO -> {
+                    featureValidator.validate(featureDTO);
+                    featureService.createNewFeature(
+                            converter.convertToFeature(featureDTO),
+                            createdCategory.getId()
+                    );
+                });
 
         return ResponseEntity.ok("Категория успешно добавлена в дерево категорий.");
     }
 
     /**
-     * Адрес: 1) .../catalog/{categoryId}/updateCategory
+     * Адрес: .../catalog/{categoryId}/updateCategory
      * Обновление информации о категории товаров, только для администратора.
      */
     @PatchMapping("/updateCategory")
-    public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid NewCategoryRequest request) {
+    public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
         categoryValidator.validate(request);
 
+        // Апдейт информации о категории
         Category updatedCategory = categoryService.updateCategoryInfo(
                 converter.convertToCategory(request.getCategory()),
-                request.getFeaturesId()
+                request.getExistingFeaturesId()
         );
+        // Апдейт связей между категориями, если категория была перемещена
         categoryRelationService.updateRelationsOfReplacedCategory(
                 updatedCategory.getId(),
                 request.getParentCategoryId()
         );
+        // Сохранение новых характеристик, если такие есть
+        request.getNewFeatures().stream()
+                .forEach(featureDTO -> {
+                    featureValidator.validate(featureDTO);
+                    featureService.createNewFeature(
+                            converter.convertToFeature(featureDTO),
+                            updatedCategory.getId()
+                    );
+                });
 
         return ResponseEntity.ok("Информация о категории успешно обновлена.");
     }
 
     /**
-     * Адрес: 1) .../catalog/{categoryId}/deleteCategory
+     * Адрес: .../catalog/{categoryId}/deleteCategory
      * Удаление категории товаров, только для администратора.
      */
     @DeleteMapping("/deleteCategory")
     public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") int categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.ok("Категория успешно удалена.");
-
     }
 }

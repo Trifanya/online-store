@@ -36,7 +36,6 @@ public class FeatureService {
      * Добавление новой характеристики категории.
      */
     @Transactional
-    //public Feature createNewFeature(Feature feature, Category category) {
     public Feature createNewFeature(Feature featureToSave, int categoryId) {
         Category category = categoryService.getCategory(categoryId);
         featureToSave.setCategories(new ArrayList<>());
@@ -48,11 +47,7 @@ public class FeatureService {
      * Обновление характеристики категории.
      */
     @Transactional
-    //public Feature updateFeatureInfo(Feature updatedFeature, Category category) {
     public Feature updateFeatureInfo(Feature updatedFeature/*, int categoryId*/) {
-        /*Category category = categoryService.getCategory(categoryId);
-        updatedFeature.getCategories().add(category);*/
-
         return featureRepository.save(updatedFeature);
     }
 

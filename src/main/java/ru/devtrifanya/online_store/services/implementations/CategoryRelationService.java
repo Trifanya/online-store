@@ -1,6 +1,5 @@
 package ru.devtrifanya.online_store.services.implementations;
 
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -13,15 +12,10 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-@Data
 public class CategoryRelationService {
     private final CategoryService categoryService;
 
     private final CategoryRelationRepository relationRepository;
-
-    public List<CategoryRelation> getRelationsByChildId(int childId) {
-        return relationRepository.findAllByChildId(childId);
-    }
 
     @Autowired
     public CategoryRelationService(@Lazy CategoryService categoryService,
@@ -30,7 +24,12 @@ public class CategoryRelationService {
         this.relationRepository = relationRepository;
     }
 
-    //public CategoryRelation createNewCategoryRelation(Category child, Category parent) {
+
+    public List<CategoryRelation> getRelationsByChildId(int childId) {
+        return relationRepository.findAllByChildId(childId);
+    }
+
+    @Transactional
     public CategoryRelation createNewCategoryRelation(int childId, int parentId) {
         Category child = categoryService.getCategory(childId);
         Category parent = categoryService.getCategory(parentId);
@@ -42,12 +41,15 @@ public class CategoryRelationService {
         return relationRepository.save(relationToSave);
     }
 
+    /**
+     * Обновление связей перемещенной в дереве категории.
+     */
+    @Transactional
     public void updateRelationsOfReplacedCategory(int categoryId, int newParentId) {
         if (relationRepository.existsByParentIdAndChildId(newParentId, categoryId)) {
             return; // Такое отношение уже существует, значит, категория не была перемещена.
         }
         Category newParent = categoryService.getCategory(newParentId);
-
         List<CategoryRelation> relationsWithParents = relationRepository.findAllByChildId(categoryId);
         for (CategoryRelation relationWithParent : relationsWithParents) {
             relationWithParent.setParent(newParent);
@@ -56,12 +58,11 @@ public class CategoryRelationService {
     }
 
     /**
-     * Связывание родительской категории переданной категории с ее дочерними категориями.
-     * Метод получает на вход id категории, которую планируется удалить, затем вызывает
-     * методы репозитория для получения связей этой категории с родительскими категориями
-     * и с дочерними категориями и наконец создает новые отношения между полученными
-     * родительскими и дочерими категориями.
+     * Обновление связей удаленной категории.
+     * Родительские категории удаляемой категории образуют связи с дочерними категориями
+     * удаляемой категории.
      */
+    @Transactional
     public void updateRelationsOfDeletingCategory(int categoryId) {
         List<CategoryRelation> relationsWithParents = relationRepository.findAllByChildId(categoryId);
         List<CategoryRelation> relationsWithChildren = relationRepository.findAllByParentId(categoryId);

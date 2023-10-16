@@ -42,7 +42,6 @@ public class ItemFeatureService {
      * поле item и поле feature и сохраняет эту характеристику в БД.
      */
     @Transactional
-    //public ItemFeature createNewItemFeature(ItemFeature itemFeature, Item item, Feature feature) {
     public ItemFeature createNewItemFeature(ItemFeature itemFeature, int itemId, int featureId) {
         Item item = itemService.getItem(itemId);
         Feature feature = featureService.getFeature(featureId);
@@ -69,13 +68,22 @@ public class ItemFeatureService {
      * эту характеристику в БД.
      */
     @Transactional
-    //public ItemFeature updateItemFeatureInfo(ItemFeature updatedItemFeature, Item item, Feature feature) {
     public ItemFeature updateItemFeatureInfo(ItemFeature updatedItemFeature, int itemId, int featureId) {
         Item item = itemService.getItem(itemId);
         Feature feature = featureService.getFeature(featureId);
 
         updatedItemFeature.setItem(item);
         updatedItemFeature.setFeature(feature);
+
+        String unit = feature.getUnit();
+        String stringValue = updatedItemFeature.getStringValue();
+        if (unit != null) {
+            updatedItemFeature.setStringValue(stringValue + " " + feature.getUnit());
+            updatedItemFeature.setNumericValue(Double.parseDouble(stringValue));
+        } else {
+            updatedItemFeature.setNumericValue((double) -1);
+        }
+
         return itemFeatureRepository.save(updatedItemFeature);
     }
 }

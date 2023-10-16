@@ -11,6 +11,7 @@ import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class CategoryService {
     }
 
     public List<Category> getTopCategories() {
-        return categoryRelationRepository.parentIdIsNull()
+        return categoryRelationRepository.findAllByParentIdIsNull()
                 .stream()
                 .map(relation -> relation.getChild())
                 .collect(Collectors.toList());
@@ -54,6 +55,7 @@ public class CategoryService {
     @Transactional
     public Category createNewCategory(Category categoryToSave, int[] featuresId) {
         categoryToSave.setId(0);
+        categoryToSave.setFeatures(new ArrayList<>());
         for (int i = 0; i < featuresId.length; i++) {
             Feature feature = featureService.getFeature(featuresId[i]);
             categoryToSave.getFeatures().add(feature);
@@ -64,6 +66,7 @@ public class CategoryService {
 
     @Transactional
     public Category updateCategoryInfo(Category updatedCategory, int[] featuresId) {
+        updatedCategory.setFeatures(new ArrayList<>());
         for (int i = 0; i < featuresId.length; i++) {
             Feature feature = featureService.getFeature(featuresId[i]);
             updatedCategory.getFeatures().add(feature);
@@ -74,6 +77,7 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory(int categoryId) {
+        categoryRelationService.updateRelationsOfDeletingCategory(categoryId);
         categoryRepository.deleteById(categoryId);
     }
 

@@ -1,17 +1,13 @@
 package ru.devtrifanya.online_store.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "category")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Category {
     @Id
     @Column(name = "id")
@@ -21,9 +17,6 @@ public class Category {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "categories")
-    private List<Feature> features;
-
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<Item> items;
 
@@ -32,4 +25,12 @@ public class Category {
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.REMOVE)
     private List<CategoryRelation> relationsWithParents;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "category_feature",
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "feature_id")
+    )
+    private List<Feature> features;
 }
