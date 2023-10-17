@@ -1,23 +1,44 @@
 package ru.devtrifanya.online_store.rest.validators;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
-import ru.devtrifanya.online_store.exceptions.NotFoundException;
+
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.repositories.CartElementRepository;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
+import ru.devtrifanya.online_store.repositories.CartElementRepository;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.exceptions.OutOfStockException;
+import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
+import ru.devtrifanya.online_store.rest.dto.requests.PlaceAnOrderRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.DeleteFromCartRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCartElementRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.PlaceAnOrderRequest;
 
 @Component
-@Data
+@RequiredArgsConstructor
 public class CartValidator {
     private final ItemRepository itemRepository;
     private final CartElementRepository cartElementRepository;
+
+    /**
+     * Проверка количества товара при увеличении количества данного товара в корзине.
+     */
+    public void validate(AddOrUpdateCartElementRequest request) {
+        Item item = itemRepository.findById(request.getCartElement().getItemId()).get();
+        if (item.getQuantity() < request.getCartElement().getItemCount()) {
+            throw new OutOfStockException("Недостаточно товара в наличии.");
+        }
+    }
+
+    /**
+     * Проверка товара на наличие в корзине пользователя.
+     */
+    public void validate(AddOrUpdateCartElementRequest request, int userId) {
+        if (cartElementRepository.existsByItemIdAndUserId(request.getCartElement().getItemId(), userId)) {
+            throw new AlreadyExistException("Товар уже добавлен в корзину.");
+        }
+    }
 
     /**
      * Проверка товара на наличие перед оформлением заказа.
@@ -34,22 +55,6 @@ public class CartValidator {
                 System.out.println(item.getName() + ": " + item.getQuantity());
                 throw new OutOfStockException("Недостаточно товара в наличии.");
             }
-        }
-    }
-
-    public void validate(AddOrUpdateCartElementRequest request, int userId) {
-        if (cartElementRepository.existsByItemIdAndUserId(request.getCartElement().getItemId(), userId)) {
-            throw new AlreadyExistException("Товар уже добавлен в корзину.");
-        }
-    }
-
-    /**
-     * Проверка количества товара при увеличении количества данного товара в корзине.
-     */
-    public void validate(AddOrUpdateCartElementRequest request) {
-        Item item = itemRepository.findById(request.getCartElement().getItemId()).get();
-        if (item.getQuantity() < request.getCartElement().getItemCount()) {
-            throw new OutOfStockException("Недостаточно товара в наличии.");
         }
     }
 

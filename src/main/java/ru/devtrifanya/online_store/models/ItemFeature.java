@@ -1,7 +1,7 @@
 package ru.devtrifanya.online_store.models;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import jakarta.persistence.*;
 
 @Data
 @Entity

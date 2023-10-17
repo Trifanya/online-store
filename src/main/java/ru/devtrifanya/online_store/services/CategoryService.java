@@ -1,23 +1,21 @@
-package ru.devtrifanya.online_store.services.implementations;
+package ru.devtrifanya.online_store.services;
 
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.models.Feature;
-import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
-import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
-import java.util.ArrayList;
+import ru.devtrifanya.online_store.models.Feature;
+import ru.devtrifanya.online_store.models.Category;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.repositories.CategoryRepository;
+import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
+
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
-@Data
 public class CategoryService {
     private final FeatureService featureService;
     private final CategoryRelationService categoryRelationService;
@@ -36,25 +34,26 @@ public class CategoryService {
 
     /**
      * Получение категории по ее id.
-     * Метод получает на вход id категории, затем вызывает метод репозитория для получения
-     * категории по id и возвращает найденную категорию.
-     * Если категория с указанным id не найдена в БД, то выбрасывается исключение.
      */
     public Category getCategory(int categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));
     }
 
-    public List<Category> getTopCategories() {
+    /**
+     * Получение корневых категорий.
+     */
+    public List<Category> getRootCategories() {
         return categoryRelationRepository.findAllByParentIdIsNull()
                 .stream()
                 .map(relation -> relation.getChild())
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public Category createNewCategory(Category categoryToSave, int[] featuresId) {
-        categoryToSave.setId(0);
+    /**
+     * Добавление новой категории.
+     */
+    public Category createOrUpdateCategory(Category categoryToSave, int[] featuresId) {
         categoryToSave.setFeatures(new ArrayList<>());
         for (int i = 0; i < featuresId.length; i++) {
             Feature feature = featureService.getFeature(featuresId[i]);
@@ -63,18 +62,9 @@ public class CategoryService {
         return categoryRepository.save(categoryToSave);
     }
 
-
-    @Transactional
-    public Category updateCategoryInfo(Category updatedCategory, int[] featuresId) {
-        updatedCategory.setFeatures(new ArrayList<>());
-        for (int i = 0; i < featuresId.length; i++) {
-            Feature feature = featureService.getFeature(featuresId[i]);
-            updatedCategory.getFeatures().add(feature);
-        }
-        return categoryRepository.save(updatedCategory);
-    }
-
-
+    /**
+     * Удаление категории.
+     */
     @Transactional
     public void deleteCategory(int categoryId) {
         categoryRelationService.updateRelationsOfDeletingCategory(categoryId);

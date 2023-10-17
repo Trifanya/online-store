@@ -1,7 +1,8 @@
 package ru.devtrifanya.online_store.rest.dto.entities_dto;
 
-import jakarta.validation.constraints.*;
 import lombok.Data;
+
+import jakarta.validation.constraints.*;
 
 @Data
 public class ItemDTO {

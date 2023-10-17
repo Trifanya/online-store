@@ -1,17 +1,18 @@
-package ru.devtrifanya.online_store.services.implementations;
+package ru.devtrifanya.online_store.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.CategoryRelation;
 import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 public class CategoryRelationService {
     private final CategoryService categoryService;
 
@@ -22,11 +23,6 @@ public class CategoryRelationService {
                                    CategoryRelationRepository relationRepository) {
         this.categoryService = categoryService;
         this.relationRepository = relationRepository;
-    }
-
-
-    public List<CategoryRelation> getRelationsByChildId(int childId) {
-        return relationRepository.findAllByChildId(childId);
     }
 
     @Transactional
@@ -53,8 +49,8 @@ public class CategoryRelationService {
         List<CategoryRelation> relationsWithParents = relationRepository.findAllByChildId(categoryId);
         for (CategoryRelation relationWithParent : relationsWithParents) {
             relationWithParent.setParent(newParent);
-            relationRepository.save(relationWithParent);
         }
+        relationRepository.saveAll(relationsWithParents);
     }
 
     /**
@@ -67,13 +63,15 @@ public class CategoryRelationService {
         List<CategoryRelation> relationsWithParents = relationRepository.findAllByChildId(categoryId);
         List<CategoryRelation> relationsWithChildren = relationRepository.findAllByParentId(categoryId);
 
+        List<CategoryRelation> newRelations = new ArrayList<>();
         for (int i = 0; i < relationsWithParents.size(); i++) {
             for (int j = 0; j < relationsWithChildren.size(); j++) {
                 CategoryRelation relation = new CategoryRelation();
                 relation.setChild(relationsWithChildren.get(j).getChild());
                 relation.setParent(relationsWithParents.get(i).getParent());
-                relationRepository.save(relation);
+                newRelations.add(relation);
             }
         }
+        relationRepository.saveAll(newRelations);
     }
 }

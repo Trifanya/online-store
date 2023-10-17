@@ -1,18 +1,19 @@
 package ru.devtrifanya.online_store.services.specifications;
 
 import jakarta.persistence.criteria.*;
-import org.springframework.data.jpa.domain.Specification;
+
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.models.Feature;
+import org.springframework.data.jpa.domain.Specification;
+
 import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.models.Feature;
+import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Component

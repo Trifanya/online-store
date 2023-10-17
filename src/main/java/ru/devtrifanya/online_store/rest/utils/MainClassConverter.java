@@ -1,13 +1,16 @@
 package ru.devtrifanya.online_store.rest.utils;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
+
 import org.springframework.stereotype.Component;
+
 import ru.devtrifanya.online_store.models.*;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.*;
 
 @Component
-@Data
+@RequiredArgsConstructor
 public class MainClassConverter {
     private final ModelMapper modelMapper;
 

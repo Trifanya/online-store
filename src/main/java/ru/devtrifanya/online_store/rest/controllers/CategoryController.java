@@ -9,7 +9,9 @@ import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.CategoryValidator;
 import ru.devtrifanya.online_store.rest.validators.FeatureValidator;
-import ru.devtrifanya.online_store.services.implementations.*;
+import ru.devtrifanya.online_store.services.CategoryRelationService;
+import ru.devtrifanya.online_store.services.CategoryService;
+import ru.devtrifanya.online_store.services.FeatureService;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class CategoryController {
         categoryValidator.validate(request);
 
         // Сохранение новой категории
-        Category createdCategory = categoryService.createNewCategory(
+        Category createdCategory = categoryService.createOrUpdateCategory(
                 converter.convertToCategory(request.getCategory()),
                 request.getExistingFeaturesId()
         );
@@ -64,7 +66,7 @@ public class CategoryController {
         categoryValidator.validate(request);
 
         // Апдейт информации о категории
-        Category updatedCategory = categoryService.updateCategoryInfo(
+        Category updatedCategory = categoryService.createOrUpdateCategory(
                 converter.convertToCategory(request.getCategory()),
                 request.getExistingFeaturesId()
         );

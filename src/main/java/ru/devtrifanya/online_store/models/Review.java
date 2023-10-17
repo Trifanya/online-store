@@ -1,10 +1,10 @@
 package ru.devtrifanya.online_store.models;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @Entity

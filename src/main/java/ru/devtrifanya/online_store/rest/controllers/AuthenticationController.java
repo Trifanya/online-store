@@ -11,7 +11,7 @@ import ru.devtrifanya.online_store.rest.dto.requests.SignInRequest;
 import ru.devtrifanya.online_store.rest.dto.responses.JwtResponse;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.AuthenticationValidator;
-import ru.devtrifanya.online_store.services.implementations.AuthenticationService;
+import ru.devtrifanya.online_store.services.AuthenticationService;
 
 @RestController
 @RequiredArgsConstructor

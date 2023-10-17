@@ -1,17 +1,19 @@
 package ru.devtrifanya.online_store.rest.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.web.bind.annotation.*;
-import ru.devtrifanya.online_store.models.CartElement;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.rest.dto.responses.CartInfoResponse;
-import ru.devtrifanya.online_store.rest.dto.responses.CategoryItemsResponse;
-import ru.devtrifanya.online_store.rest.dto.responses.ItemInfoResponse;
-import ru.devtrifanya.online_store.rest.dto.responses.MainResponse;
+import ru.devtrifanya.online_store.models.CartElement;
+import ru.devtrifanya.online_store.services.*;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.services.implementations.*;
+import ru.devtrifanya.online_store.rest.dto.responses.MainResponse;
+import ru.devtrifanya.online_store.rest.dto.responses.CartInfoResponse;
+import ru.devtrifanya.online_store.rest.dto.responses.ItemInfoResponse;
+import ru.devtrifanya.online_store.rest.dto.responses.CategoryItemsResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -21,26 +23,28 @@ import java.util.stream.Collectors;
 @RequestMapping()
 @RequiredArgsConstructor
 public class ResponseContentController {
-    private final CategoryService categoryService;
     private final ItemService itemService;
+    private final ReviewService reviewService;
+    private final CategoryService categoryService;
     private final ItemFeatureService itemFeatureService;
     private final CartElementService cartElementService;
-    private final ReviewService reviewService;
 
     private final MainClassConverter converter;
 
     @GetMapping("/catalog")
     public MainResponse getMainPage(@AuthenticationPrincipal User user) {
-        MainResponse mainResponse = new MainResponse();
-        mainResponse.setTopCategories(
-                categoryService.getTopCategories().stream()
+        MainResponse response = new MainResponse();
+
+        response.setTopCategories(
+                categoryService.getRootCategories().stream()
                         .map(category -> converter.convertToCategoryDTO(category))
                         .collect(Collectors.toList())
         );
-        mainResponse.setCartSize(
+        response.setCartSize(
                 user == null ? 0 : cartElementService.getCartSizeByUserId(user.getId())
         );
-        return mainResponse;
+
+        return response;
     }
 
     @GetMapping("/catalog/{categoryId}")
@@ -66,16 +70,16 @@ public class ResponseContentController {
                         .map(item -> converter.convertToItemDTO(item))
                         .collect(Collectors.toList())
         );
-
         categoryItemsResponse.setCurrentCategory(converter.convertToCategoryDTO(currentCategory));
         categoryItemsResponse.setTopCategories(
-                categoryService.getTopCategories().stream()
+                categoryService.getRootCategories().stream()
                         .map(category -> converter.convertToCategoryDTO(category))
                         .collect(Collectors.toList())
         );
         categoryItemsResponse.setCartSize(
                 user == null ? 0 : cartElementService.getCartSizeByUserId(user.getId())
         );
+
         return categoryItemsResponse;
     }
 
@@ -98,7 +102,7 @@ public class ResponseContentController {
                         .collect(Collectors.toList())
         );
         itemInfoResponse.setTopCategories(
-                categoryService.getTopCategories().stream()
+                categoryService.getRootCategories().stream()
                         .map(category -> converter.convertToCategoryDTO(category))
                         .collect(Collectors.toList())
         );
@@ -125,7 +129,7 @@ public class ResponseContentController {
                         .collect(Collectors.toList())
         );
         cartInfoResponse.setTopCategories(
-                categoryService.getTopCategories().stream()
+                categoryService.getRootCategories().stream()
                         .map(category -> converter.convertToCategoryDTO(category))
                         .collect(Collectors.toList())
         );

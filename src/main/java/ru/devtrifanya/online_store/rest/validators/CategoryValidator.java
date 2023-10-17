@@ -1,16 +1,16 @@
 package ru.devtrifanya.online_store.rest.validators;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
+
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
-
-import static ch.qos.logback.core.joran.spi.ConsoleTarget.findByName;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
 
 @Component
-@Data
+@RequiredArgsConstructor
 public class CategoryValidator {
     private final CategoryRepository categoryRepository;
 

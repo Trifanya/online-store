@@ -1,9 +1,9 @@
 package ru.devtrifanya.online_store.rest.dto.entities_dto;
 
+import lombok.Data;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.Data;
-import ru.devtrifanya.online_store.models.ReviewImage;
 
 import java.util.List;
 

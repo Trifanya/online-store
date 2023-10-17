@@ -1,15 +1,17 @@
 package ru.devtrifanya.online_store.rest.validators;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.exceptions.NotFoundException;
+
 import ru.devtrifanya.online_store.repositories.ReviewRepository;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteReviewRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.AddReviewRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.DeleteReviewRequest;
 
 @Component
-@Data
+@RequiredArgsConstructor
 public class ReviewValidator {
     private final ReviewRepository reviewRepository;
 

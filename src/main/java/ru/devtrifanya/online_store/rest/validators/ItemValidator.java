@@ -1,28 +1,30 @@
 package ru.devtrifanya.online_store.rest.validators;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
-import ru.devtrifanya.online_store.exceptions.NotFoundException;
-import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.models.Feature;
-import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
-import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.repositories.FeatureRepository;
-import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
+
 import ru.devtrifanya.online_store.rest.dto.requests.AddItemRequest;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
+import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.models.Feature;
+import ru.devtrifanya.online_store.models.Category;
+import ru.devtrifanya.online_store.repositories.ItemRepository;
+import ru.devtrifanya.online_store.repositories.FeatureRepository;
+import ru.devtrifanya.online_store.repositories.CategoryRepository;
+import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.exceptions.UnavailableActionException;
 
 import java.util.Map;
 
 @Component
-@Data
+@RequiredArgsConstructor
 public class ItemValidator {
-    private final CategoryRepository categoryRepository;
     private final ItemRepository itemRepository;
     private final FeatureRepository featureRepository;
+    private final CategoryRepository categoryRepository;
     private final CategoryRelationRepository categoryRelationRepository;
 
     public void validate(AddItemRequest request) {
@@ -35,7 +37,6 @@ public class ItemValidator {
         if (categoryRelationRepository.existsByParentId(request.getCategoryId())) {
             throw new UnavailableActionException("Нельзя добавить товар в промежуточную категорию.");
         }
-
         // У добавляемого товара должны быть указаны все характеристики, которые есть у категории, в которую он добавляется
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new NotFoundException("Категория с указанным id не найдена."));

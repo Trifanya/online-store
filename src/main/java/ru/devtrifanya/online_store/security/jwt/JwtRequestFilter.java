@@ -1,21 +1,24 @@
 package ru.devtrifanya.online_store.security.jwt;
 
+import lombok.RequiredArgsConstructor;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Data;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import ru.devtrifanya.online_store.models.User;
-import ru.devtrifanya.online_store.services.implementations.UserService;
+import ru.devtrifanya.online_store.services.UserService;
 
 import java.io.IOException;
 
 @Component
-@Data
+@RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final JWTUtils jwtUtils;
     private final UserService userService;
@@ -46,7 +49,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         } else {
             System.out.println("JWT не был передан.");
-            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Для доступа к данной странице необходимо авторизоваться.");
         }
         filterChain.doFilter(request, response);
     }

@@ -1,8 +1,9 @@
 package ru.devtrifanya.online_store.rest.dto.entities_dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ public class CategoryDTO {
     @NotBlank(message = "Название категории не должно быть пустым.")
     private String name;
 
-    private List<CategoryRelationDTO> relationsWithChildren;
+    private List<@Valid CategoryRelationDTO> relationsWithChildren;
 }

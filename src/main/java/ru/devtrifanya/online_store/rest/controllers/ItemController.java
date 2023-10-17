@@ -10,13 +10,15 @@ import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.AddItemRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.ItemValidator;
-import ru.devtrifanya.online_store.services.implementations.*;
+import ru.devtrifanya.online_store.services.ImageService;
+import ru.devtrifanya.online_store.services.ItemFeatureService;
+import ru.devtrifanya.online_store.services.ItemService;
 
 import java.util.Map;
 
 @RestController
-@RequestMapping("/catalog/{categoryId}")
 @RequiredArgsConstructor
+@RequestMapping("/catalog/{categoryId}")
 public class ItemController {
     private final ItemService itemService;
     private final ItemFeatureService itemFeatureService;
@@ -40,7 +42,7 @@ public class ItemController {
         );
         // сохранение характеристик товара
         for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
-            itemFeatureService.createNewItemFeature(
+            itemFeatureService.createOrUpdateItemFeature(
                     converter.convertToItemFeature(itemFeature.getValue()),
                     createdItem.getId(),
                     itemFeature.getKey()
@@ -62,25 +64,28 @@ public class ItemController {
     @PatchMapping("/{itemId}/updateItem")
     public ResponseEntity<?> updateItemInfo(@RequestBody @Valid AddItemRequest request) {
         itemValidator.validate(request);
-        // обновление товара
+
+        // Обновление товара
         Item updatedItem = itemService.updateItemInfo(
                 converter.convertToItem(request.getItem()),
                 request.getCategoryId()
         );
-        // обновление характеристик товара
+        // Обновление характеристик товара
         for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
-            itemFeatureService.updateItemFeatureInfo(
+            itemFeatureService.createOrUpdateItemFeature(
                     converter.convertToItemFeature(itemFeature.getValue()),
                     updatedItem.getId(),
                     itemFeature.getKey()
             );
         }
+        // Обновление изображение товара
         for (ItemImageDTO image : request.getItemImages()) {
             imageService.createNewImageIfNotExist(
                     converter.convertToImage(image),
                     updatedItem.getId()
             );
         }
+
         return ResponseEntity.ok("Информация о товаре успешно обновлена.");
     }
 

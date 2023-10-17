@@ -1,19 +1,19 @@
 package ru.devtrifanya.online_store.security.jwt;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
+
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+
 import ru.devtrifanya.online_store.models.User;
 
-import java.time.Duration;
+import java.util.Map;
+import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.time.Duration;
 
 @Component
 public class JWTUtils {

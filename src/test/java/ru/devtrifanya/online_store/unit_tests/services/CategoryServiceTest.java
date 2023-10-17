@@ -11,10 +11,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.services.implementations.CategoryRelationService;
-import ru.devtrifanya.online_store.services.implementations.CategoryService;
-import ru.devtrifanya.online_store.services.implementations.FeatureService;
-import ru.devtrifanya.online_store.services.implementations.ItemService;
+import ru.devtrifanya.online_store.services.CategoryRelationService;
+import ru.devtrifanya.online_store.services.CategoryService;
+import ru.devtrifanya.online_store.services.FeatureService;
+import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 
 import java.util.ArrayList;

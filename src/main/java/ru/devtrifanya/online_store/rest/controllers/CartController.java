@@ -9,11 +9,11 @@ import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.DeleteFromCartRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.PlaceAnOrderRequest;
-import ru.devtrifanya.online_store.services.implementations.CartElementService;
+import ru.devtrifanya.online_store.services.CartElementService;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCartElementRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.CartValidator;
-import ru.devtrifanya.online_store.services.implementations.ItemService;
+import ru.devtrifanya.online_store.services.ItemService;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class CartController {
         cartValidator.validate(request);
 
         for (CartElementDTO cartElement : request.getCartContent()) {
-            itemService.buyItem(cartElement.getItemId(),cartElement.getItemCount()); // уменьшение количества купленного товара
+            itemService.reduceItemQuantity(cartElement.getItemId(),cartElement.getItemCount()); // уменьшение количества купленного товара
             cartElementService.deleteCartElement(cartElement.getId()); // удаление купленного товара из корзины
         }
 

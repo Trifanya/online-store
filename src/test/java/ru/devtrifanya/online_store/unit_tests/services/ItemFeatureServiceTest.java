@@ -12,7 +12,7 @@ import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.repositories.ItemFeatureRepository;
-import ru.devtrifanya.online_store.services.implementations.ItemFeatureService;
+import ru.devtrifanya.online_store.services.ItemFeatureService;
 
 @ExtendWith(MockitoExtension.class)
 @Data
@@ -49,7 +49,7 @@ public class ItemFeatureServiceTest {
                 })
                 .when(itemFeatureRepository).save(expectedItemFeature);
 
-        ItemFeature resultItemFeature = itemFeatureService.createNewItemFeature(itemFeatureToSave, expectedItem, expectedFeature);
+        ItemFeature resultItemFeature = itemFeatureService.createOrUpdateItemFeature(itemFeatureToSave, expectedItem, expectedFeature);
 
         Assertions.assertNotNull(resultItemFeature.getId());
         Assertions.assertEquals(expectedItem, resultItemFeature.getItem());
@@ -80,7 +80,7 @@ public class ItemFeatureServiceTest {
         Mockito.when(itemFeatureRepository.save(expectedItemFeature))
                 .thenReturn(expectedItemFeature);
 
-        ItemFeature resultItemFeature = itemFeatureService.updateItemFeatureInfo(
+        ItemFeature resultItemFeature = itemFeatureService.createOrUpdateItemFeature(
                 expectedId, updatedItemFeature, expectedItem, expectedFeature
         );
 

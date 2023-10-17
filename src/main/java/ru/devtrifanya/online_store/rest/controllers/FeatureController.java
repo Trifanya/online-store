@@ -4,11 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.rest.dto.requests.DeleteFeatureRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.AddFeatureRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.services.implementations.FeatureService;
+import ru.devtrifanya.online_store.services.FeatureService;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,18 +19,20 @@ public class FeatureController {
 
     @PostMapping("/newFeature")
     public ResponseEntity<?> createNewFeature(@RequestBody @Valid AddFeatureRequest request) {
-        Feature createdFeature = featureService.createNewFeature(
+        featureService.createNewFeature(
                 converter.convertToFeature(request.getFeature()),
                 request.getCategoryId()
         );
+
         return ResponseEntity.ok("Характеристика успешно добавлена.");
     }
 
     @PatchMapping("/updateFeature")
     public ResponseEntity<?> updateFeatureInfo(@RequestBody @Valid AddFeatureRequest request) {
-        Feature updatedFeature = featureService.updateFeatureInfo(
+        featureService.updateFeatureInfo(
                 converter.convertToFeature(request.getFeature())
         );
+
         return ResponseEntity.ok("Характеристика успешно обновлена.");
     }
 

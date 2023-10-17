@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.devtrifanya.online_store.models.*;
 import ru.devtrifanya.online_store.repositories.CategoryRelationRepository;
-import ru.devtrifanya.online_store.services.implementations.CategoryRelationService;
+import ru.devtrifanya.online_store.services.CategoryRelationService;
 
 @ExtendWith(MockitoExtension.class)
 @Data

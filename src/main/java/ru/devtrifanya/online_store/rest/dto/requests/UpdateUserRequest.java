@@ -1,8 +1,9 @@
 package ru.devtrifanya.online_store.rest.dto.requests;
 
+import lombok.Data;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+
 import ru.devtrifanya.online_store.rest.dto.entities_dto.UserDTO;
 
 @Data

@@ -1,4 +1,4 @@
-package ru.devtrifanya.online_store.services.implementations;
+package ru.devtrifanya.online_store.services;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
