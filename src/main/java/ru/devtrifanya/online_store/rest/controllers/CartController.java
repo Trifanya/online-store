@@ -31,7 +31,7 @@ public class CartController {
      */
     @PostMapping("/cart/placeAnOrder")
     public ResponseEntity<?> placeAnOrder(@RequestBody @Valid PlaceAnOrderRequest request) {
-        cartValidator.validate(request);
+        cartValidator.validateOrder(request);
 
         for (CartElementDTO cartElement : request.getCartContent()) {
             itemService.reduceItemQuantity(cartElement.getItemId(),cartElement.getItemCount()); // уменьшение количества купленного товара
@@ -48,7 +48,7 @@ public class CartController {
     @PostMapping("/catalog/{categoryId}/{itemId}/newCartElement")
     public ResponseEntity<?> createNewCartElement(@RequestBody @Valid AddOrUpdateCartElementRequest request,
                                                   @AuthenticationPrincipal User user) {
-        cartValidator.validate(request, user.getId());
+        cartValidator.validateNewCartElement(request, user.getId());
 
         cartElementService.createNewCartElement(
                 converter.convertToCartElement(request.getCartElement()),
@@ -65,7 +65,7 @@ public class CartController {
      */
     @PatchMapping("/cart/updateCartElement")
     public ResponseEntity<?> updateCartElement(@RequestBody @Valid AddOrUpdateCartElementRequest request) {
-        cartValidator.validate(request);
+        cartValidator.validateUpdatedCartElement(request);
 
         cartElementService.updateCartElement(
                 converter.convertToCartElement(request.getCartElement())
@@ -80,7 +80,7 @@ public class CartController {
      */
     @DeleteMapping("/cart/deleteCartElement")
     public ResponseEntity<String> deleteCartElement(@RequestBody DeleteFromCartRequest request) {
-        cartValidator.validate(request);
+        cartValidator.validateDeleteFromCart(request);
 
         cartElementService.deleteCartElement(request.getCartElementToDeleteId());
 

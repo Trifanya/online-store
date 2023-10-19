@@ -10,7 +10,6 @@ import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -40,8 +39,7 @@ public class CategoryService {
      * Получение корневых категорий.
      */
     public List<Category> getRootCategories() {
-        List<Category> topCategories = categoryRepository.findTopCategories();
-        return categoryRepository.findTopCategories();
+        return categoryRepository.findRootCategories();
     }
 
     /**

@@ -31,7 +31,6 @@ public class CategoryController {
     @PostMapping("/newCategory")
     public ResponseEntity<?> createNewCategory(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
         categoryValidator.validateNewCategory(request);
-        request.getNewFeatures().forEach(featureValidator::validateNewFeature);
 
         // Сохранение новой категории
         Category createdCategory = categoryService.createNewCategory(
@@ -40,8 +39,8 @@ public class CategoryController {
                 request.getNewParentId()
         );
         // Сохранение новых характеристик, если такие есть
-        request.getNewFeatures().forEach(featureDTO ->
-                featureService.createNewFeature(
+        request.getNewFeatures().forEach(
+                featureDTO -> featureService.createNewFeature(
                         converter.convertToFeature(featureDTO),
                         createdCategory.getId()
                 ));
@@ -66,8 +65,8 @@ public class CategoryController {
                 request.getNewParentId()
         );
         // Сохранение новых характеристик, если такие есть
-        request.getNewFeatures().forEach(featureDTO ->
-                featureService.createNewFeature(
+        request.getNewFeatures().forEach(
+                featureDTO -> featureService.createNewFeature(
                         converter.convertToFeature(featureDTO),
                         updatedCategory.getId()
                 ));

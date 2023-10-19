@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemImageDTO;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
-import ru.devtrifanya.online_store.rest.dto.requests.AddItemRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.ItemValidator;
 import ru.devtrifanya.online_store.services.ImageService;
@@ -33,8 +33,9 @@ public class ItemController {
      * Добавление нового товара, только для администратора.
      */
     @PostMapping("/newItem")
-    public ResponseEntity<?> createNewItem(@RequestBody @Valid AddItemRequest request) {
-        itemValidator.validate(request);
+    public ResponseEntity<?> createNewItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
+        itemValidator.validateNewItem(request);
+
         // сохранение товара
         Item createdItem = itemService.createNewItem(
                 converter.convertToItem(request.getItem()),
@@ -47,13 +48,14 @@ public class ItemController {
                     createdItem.getId(),
                     itemFeature.getKey()
             );
-        } // сохранение изображений товара
-        for (ItemImageDTO image : request.getItemImages()) {
-            imageService.createNewImageIfNotExist(
-                    converter.convertToImage(image),
-                    createdItem.getId()
-            );
         }
+        // сохранение изображений товара
+        request.getItemImages().forEach(
+                image -> imageService.createNewImageIfNotExist(
+                        converter.convertToImage(image),
+                        createdItem.getId()
+                ));
+
         return ResponseEntity.ok("Товар успешно добавлен.");
     }
 
@@ -62,8 +64,8 @@ public class ItemController {
      * Обновление информации о товаре, только для администратора.
      */
     @PatchMapping("/{itemId}/updateItem")
-    public ResponseEntity<?> updateItemInfo(@RequestBody @Valid AddItemRequest request) {
-        itemValidator.validate(request);
+    public ResponseEntity<?> updateItemInfo(@RequestBody @Valid AddOrUpdateItemRequest request) {
+        itemValidator.validateUpdatedItem(request);
 
         // Обновление товара
         Item updatedItem = itemService.updateItemInfo(
@@ -78,13 +80,12 @@ public class ItemController {
                     itemFeature.getKey()
             );
         }
-        // Обновление изображение товара
-        for (ItemImageDTO image : request.getItemImages()) {
-            imageService.createNewImageIfNotExist(
-                    converter.convertToImage(image),
-                    updatedItem.getId()
-            );
-        }
+        // Обновление изображений товара
+        request.getItemImages().forEach(
+                image -> imageService.createNewImageIfNotExist(
+                        converter.convertToImage(image),
+                        updatedItem.getId()
+                ));
 
         return ResponseEntity.ok("Информация о товаре успешно обновлена.");
     }

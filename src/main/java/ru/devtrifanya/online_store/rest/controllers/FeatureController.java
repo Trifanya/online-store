@@ -7,21 +7,25 @@ import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.rest.dto.requests.DeleteFeatureRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.AddFeatureRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
+import ru.devtrifanya.online_store.rest.validators.FeatureValidator;
 import ru.devtrifanya.online_store.services.FeatureService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/catalog/{categoryId}")
+@RequestMapping("/catalog/allFeatures")
 public class FeatureController {
     private final FeatureService featureService;
+
+    private final FeatureValidator validator;
 
     private final MainClassConverter converter;
 
     @PostMapping("/newFeature")
     public ResponseEntity<?> createNewFeature(@RequestBody @Valid AddFeatureRequest request) {
+        validator.validateNewFeature(request.getFeature());
+
         featureService.createNewFeature(
-                converter.convertToFeature(request.getFeature()),
-                request.getCategoryId()
+                converter.convertToFeature(request.getFeature())
         );
 
         return ResponseEntity.ok("Характеристика успешно добавлена.");
@@ -29,6 +33,8 @@ public class FeatureController {
 
     @PatchMapping("/updateFeature")
     public ResponseEntity<?> updateFeatureInfo(@RequestBody @Valid AddFeatureRequest request) {
+        validator.validateUpdatedFeature(request.getFeature());
+
         featureService.updateFeatureInfo(
                 converter.convertToFeature(request.getFeature())
         );
@@ -39,7 +45,6 @@ public class FeatureController {
     @DeleteMapping("/deleteFeature")
     public ResponseEntity<?> deleteFeature(@RequestBody @Valid DeleteFeatureRequest request) {
         featureService.deleteFeature(request.getFeatureToDeleteId());
-
         return ResponseEntity.ok("Характеристика успешно удалена.");
     }
 }

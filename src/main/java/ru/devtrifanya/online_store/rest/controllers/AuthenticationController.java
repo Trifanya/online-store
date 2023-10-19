@@ -27,7 +27,7 @@ public class AuthenticationController {
      */
     @PostMapping("/registration")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
-        authenticationValidator.validate(signUpRequest);
+        authenticationValidator.validateSignUp(signUpRequest);
 
         converter.convertToUserDTO(
                 authenticationService.createNewUser(
@@ -42,7 +42,7 @@ public class AuthenticationController {
      */
     @PostMapping("/authentication")
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInRequest signInRequest) {
-        authenticationValidator.validate(signInRequest);
+        authenticationValidator.validateUserIsExist(signInRequest);
 
         String jwt = authenticationService.getJWT(signInRequest);
 

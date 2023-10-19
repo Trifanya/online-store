@@ -12,8 +12,9 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Optional<Category> findByName(String name);
 
-    @Query(value = "select category.* from category join category_relation on " +
-            "category.id = category_relation.child_id where parent_id is null",
+    @Query(value = "select children.id, children.name from (category join category_relation on " +
+            "category.id = category_relation.child_id) as children join category " +
+            "on children.parent_id = category.id where category.name = 'root'",
             nativeQuery = true)
-    List<Category> findTopCategories();
+    List<Category> findRootCategories();
 }

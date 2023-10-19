@@ -55,7 +55,7 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/{categoryId}/deleteCategory",
                                 "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/{itemId}/deleteItem",
-                                "/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/updateFeature", "/catalog/{categoryId}/deleteFeature",
+                                "/catalog/allFeatures","/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/updateFeature", "/catalog/{categoryId}/deleteFeature",
                                 "/catalog/{categoryId}/{itemId}/newReview", "/catalog/{categoryId}/{itemId}/deleteReview"
                         ).hasRole("ADMIN")
                         .requestMatchers(

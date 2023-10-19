@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class AddItemRequest {
+public class AddOrUpdateItemRequest {
     private @Valid ItemDTO item;
 
     @NotNull(message = "Необходимо указать категорию товара.")

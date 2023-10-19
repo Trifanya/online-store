@@ -10,6 +10,7 @@ import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class FeatureService {
@@ -33,7 +34,26 @@ public class FeatureService {
     }
 
     /**
-     * Добавление новой характеристики категории.
+     * Получение списка всех характеристик категорий.
+     */
+    public List<Feature> getAllFeatures() {
+        return featureRepository.findAll();
+    }
+
+    /**
+     * Добавление новой характеристики в общий список характеристик.
+     * Данный метод предназначен для добавления новой характеристики со страницы
+     * с общим списком характеристик.
+     */
+    public Feature createNewFeature(Feature featureToSave) {
+        return featureRepository.save(featureToSave);
+    }
+
+    /**
+     * Добавление новой характеристики в общий список характеристик и назначение
+     * категории с указанным id.
+     * Данный метод предназначен для добавления новой характеристики со страницы
+     * добавления или редактирования категории товаров.
      */
     public Feature createNewFeature(Feature featureToSave, int categoryId) {
         Category category = categoryService.getCategory(categoryId);

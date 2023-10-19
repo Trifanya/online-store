@@ -32,7 +32,7 @@ public class ReviewController {
     @PostMapping("/newReview")
     public ResponseEntity<String> createNewReview(@RequestBody @Valid AddReviewRequest request,
                                                   @AuthenticationPrincipal User user) {
-        reviewValidator.validate(request, user.getId());
+        reviewValidator.validateNewReview(request, user.getId());
 
         // сохранение отзыва
         Review createdReview = reviewService.createNewReview(
@@ -41,12 +41,11 @@ public class ReviewController {
                 user.getId()
         );
         // сохранение изображений из отзыва
-        request.getReview().getImages().stream()
-                .forEach(reviewImage ->
-                        reviewImageService.createNewReviewImage(
-                                converter.convertToImage(reviewImage),
-                                createdReview.getId()
-                        ));
+        request.getReview().getImages().forEach(
+                reviewImage -> reviewImageService.createNewReviewImage(
+                        converter.convertToImage(reviewImage),
+                        createdReview.getId()
+                ));
 
         return ResponseEntity.ok("Ваш отзыв успешно записан. Спасибо за обратную связь!");
     }
@@ -57,7 +56,7 @@ public class ReviewController {
      */
     @DeleteMapping("/deleteReview")
     public ResponseEntity<String> deleteReview(@RequestBody @Valid DeleteReviewRequest request) {
-        reviewValidator.validate(request);
+        reviewValidator.validateDeleteReview(request);
         reviewService.deleteReview(request.getReviewToDeleteId());
         return ResponseEntity.ok("Отзыв успешно удален.");
     }

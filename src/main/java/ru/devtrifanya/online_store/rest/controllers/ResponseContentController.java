@@ -8,12 +8,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.models.CartElement;
+import ru.devtrifanya.online_store.rest.dto.responses.*;
 import ru.devtrifanya.online_store.services.*;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.dto.responses.MainResponse;
-import ru.devtrifanya.online_store.rest.dto.responses.CartInfoResponse;
-import ru.devtrifanya.online_store.rest.dto.responses.ItemInfoResponse;
-import ru.devtrifanya.online_store.rest.dto.responses.CategoryItemsResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +22,7 @@ import java.util.stream.Collectors;
 public class ResponseContentController {
     private final ItemService itemService;
     private final ReviewService reviewService;
+    private final FeatureService featureService;
     private final CategoryService categoryService;
     private final ItemFeatureService itemFeatureService;
     private final CartElementService cartElementService;
@@ -42,6 +40,27 @@ public class ResponseContentController {
         );
         response.setCartSize(
                 user == null ? 0 : cartElementService.getCartSizeByUserId(user.getId())
+        );
+
+        return response;
+    }
+
+    /**
+     * Страница со списком всех характеристик категорий, только для администратора.
+     */
+    @GetMapping("/catalog/allFeatures")
+    public AllFeaturesInfoResponse getAllFeatures() {
+        AllFeaturesInfoResponse response = new AllFeaturesInfoResponse();
+
+        response.setAllFeatures(
+                featureService.getAllFeatures().stream()
+                        .map(converter::convertToFeatureDTO)
+                        .collect(Collectors.toList())
+        );
+        response.setRootCategories(
+                categoryService.getRootCategories().stream()
+                        .map(converter::convertToCategoryDTO)
+                        .collect(Collectors.toList())
         );
 
         return response;

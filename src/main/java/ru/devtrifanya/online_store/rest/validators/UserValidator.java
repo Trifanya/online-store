@@ -15,8 +15,8 @@ public class UserValidator {
     private final UserRepository userRepository;
 
     public void validate(UserDTO user, int userId) {
-        User user1 = userRepository.findByEmail(user.getEmail()).orElse(null);
-        if (user1 != null && user1.getId() != userId) {
+        User namesake = userRepository.findByEmail(user.getEmail()).orElse(null);
+        if (namesake != null && namesake.getId() != userId) {
             throw new AlreadyExistException("Пользователь с указанным email уже зарегистрирован.");
         }
     }
