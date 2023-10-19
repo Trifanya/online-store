@@ -10,12 +10,14 @@ databaseChangeLog:
                   name: category_id
                   type: int
                   constraints:
+                    primaryKey: true
                     references: category(id)
                     foreignKeyName: fk_category_id
               - column:
                   name: feature_id
                   type: int
                   constraints:
+                    primaryKey: true
                     references: feature(id)
                     foreignKeyName: fk_feature_id
         - createTable:
@@ -25,11 +27,30 @@ databaseChangeLog:
                   name: item_id
                   type: int
                   constraints:
+                    primaryKey: true
                     references: item(id)
                     foreignKeyName: fk_item_id
               - column:
                   name: image_id
                   type: int
                   constraints:
+                    primaryKey: true
                     references: image_for_item(id)
                     foreignKeyName: fk_image_id
+        - createTable:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    references: category(id)
+                    foreignKeyName: fk_childcategory_id
+              - column:
+                  name: parent_id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    references: category(id)
+                    foreignKeyName: fk_parentcategory_id

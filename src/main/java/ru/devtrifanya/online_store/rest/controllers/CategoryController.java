@@ -9,7 +9,6 @@ import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.CategoryValidator;
 import ru.devtrifanya.online_store.rest.validators.FeatureValidator;
-import ru.devtrifanya.online_store.services.CategoryRelationService;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.services.FeatureService;
 
@@ -19,7 +18,6 @@ import ru.devtrifanya.online_store.services.FeatureService;
 public class CategoryController {
     private final FeatureService featureService;
     private final CategoryService categoryService;
-    private final CategoryRelationService categoryRelationService;
 
     private final FeatureValidator featureValidator;
     private final CategoryValidator categoryValidator;
@@ -32,27 +30,22 @@ public class CategoryController {
      */
     @PostMapping("/newCategory")
     public ResponseEntity<?> createNewCategory(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
-        categoryValidator.validate(request);
+        categoryValidator.validateNewCategory(request);
+        request.getNewFeatures().forEach(featureValidator::validateNewFeature);
 
         // Сохранение новой категории
-        Category createdCategory = categoryService.createOrUpdateCategory(
+        Category createdCategory = categoryService.createNewCategory(
                 converter.convertToCategory(request.getCategory()),
-                request.getExistingFeaturesId()
-        );
-        // Создание связи между новой категорией и ее родительской категорией
-        categoryRelationService.createNewCategoryRelation(
-                createdCategory.getId(),
-                request.getParentCategoryId()
+                request.getExistingFeaturesId(),
+                request.getNewParentId()
         );
         // Сохранение новых характеристик, если такие есть
-        request.getNewFeatures().stream()
-                .forEach(featureDTO -> {
-                    featureValidator.validate(featureDTO);
-                    featureService.createNewFeature(
-                            converter.convertToFeature(featureDTO),
-                            createdCategory.getId()
-                    );
-                });
+        request.getNewFeatures().forEach(featureDTO ->
+                featureService.createNewFeature(
+                        converter.convertToFeature(featureDTO),
+                        createdCategory.getId()
+                ));
+
 
         return ResponseEntity.ok("Категория успешно добавлена в дерево категорий.");
     }
@@ -63,27 +56,21 @@ public class CategoryController {
      */
     @PatchMapping("/updateCategory")
     public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
-        categoryValidator.validate(request);
+        categoryValidator.validateUpdatedCategory(request);
 
         // Апдейт информации о категории
-        Category updatedCategory = categoryService.createOrUpdateCategory(
+        Category updatedCategory = categoryService.updateCategoryInfo(
                 converter.convertToCategory(request.getCategory()),
-                request.getExistingFeaturesId()
-        );
-        // Апдейт связей между категориями, если категория была перемещена
-        categoryRelationService.updateRelationsOfReplacedCategory(
-                updatedCategory.getId(),
-                request.getParentCategoryId()
+                request.getExistingFeaturesId(),
+                request.getPrevParentId(),
+                request.getNewParentId()
         );
         // Сохранение новых характеристик, если такие есть
-        request.getNewFeatures().stream()
-                .forEach(featureDTO -> {
-                    featureValidator.validate(featureDTO);
-                    featureService.createNewFeature(
-                            converter.convertToFeature(featureDTO),
-                            updatedCategory.getId()
-                    );
-                });
+        request.getNewFeatures().forEach(featureDTO ->
+                featureService.createNewFeature(
+                        converter.convertToFeature(featureDTO),
+                        updatedCategory.getId()
+                ));
 
         return ResponseEntity.ok("Информация о категории успешно обновлена.");
     }

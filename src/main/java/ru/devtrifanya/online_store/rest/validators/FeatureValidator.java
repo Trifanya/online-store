@@ -13,11 +13,19 @@ import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 public class FeatureValidator {
     public final FeatureRepository featureRepository;
 
-    public void validate(FeatureDTO feature) {
-        if (featureRepository.findByName(feature.getName()).isPresent()) {
+    public void validateNewFeature(FeatureDTO feature) {
+        validateFeatureName(feature.getName());
+        validateFeatureRequestParamName(feature.getRequestParamName());
+    }
+
+    public void validateFeatureName(String name) {
+        if (featureRepository.findByName(name).isPresent()) {
             throw new AlreadyExistException("Характеристика с указанным названием уже существует.");
         }
-        if (featureRepository.findByRequestParamName(feature.getRequestParamName()).isPresent()) {
+    }
+
+    public void validateFeatureRequestParamName(String requestParamName) {
+        if (featureRepository.findByRequestParamName(requestParamName).isPresent()) {
             throw new AlreadyExistException("Характеристика с указанным псевдонимом уже существует.");
         }
     }

@@ -8,6 +8,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
+                  value: "root"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
                   value: "Смартфоны и аксессуары"
         - insert:
             tableName: category

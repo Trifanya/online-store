@@ -4,6 +4,7 @@ import lombok.Data;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -20,17 +21,40 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<Item> items;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
-    private List<CategoryRelation> relationsWithChildren;
-
-    @OneToMany(mappedBy = "child", cascade = CascadeType.REMOVE)
-    private List<CategoryRelation> relationsWithParents;
-
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "category_relation",
+            joinColumns = @JoinColumn(name = "parent_id"),
+            inverseJoinColumns = @JoinColumn(name = "child_id")
+    )
+    private List<Category> children;
+
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(
+            name = "category_relation",
+            joinColumns = @JoinColumn(name = "child_id"),
+            inverseJoinColumns = @JoinColumn(name = "parent_id")
+    )
+    private List<Category> parents;
+
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "category_feature",
             joinColumns = @JoinColumn(name = "category_id"),
             inverseJoinColumns = @JoinColumn(name = "feature_id")
     )
     private List<Feature> features;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return id == category.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

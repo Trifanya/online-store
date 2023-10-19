@@ -9,8 +9,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/changesets/databaseEnrichment/categoryTableEnrichment.yaml
   - include:
-      file: db/changelog/changesets/databaseEnrichment/categoryRelationTableEnrichment.yaml
-  - include:
       file: db/changelog/changesets/databaseEnrichment/itemTableEnrichment.yaml
   - include:
       file: db/changelog/changesets/databaseEnrichment/featureTableEnrichment.yaml
@@ -19,4 +17,5 @@ databaseChangeLog:
 
   - include:
       file: db/changelog/changesets/databaseEnrichment/linkTableCategoryFeatureEnrichment.yaml
-
+  - include:
+      file: db/changelog/changesets/databaseEnrichment/linkTableCategoryRelationEnrichment.yaml

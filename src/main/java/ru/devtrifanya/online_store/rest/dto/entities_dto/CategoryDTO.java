@@ -15,5 +15,5 @@ public class CategoryDTO {
     @NotBlank(message = "Название категории не должно быть пустым.")
     private String name;
 
-    private List<@Valid CategoryRelationDTO> relationsWithChildren;
+    private List<@Valid CategoryDTO> children;
 }

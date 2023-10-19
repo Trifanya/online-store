@@ -1,17 +1,8 @@
 databaseChangeLog:
   - changeSet:
-      id: categoryRelationTableEnrichment
+      id: linkTableCategoryRelationEnrichment
       author: Nikita Trifonov
       changes:
-        - insert:
-            tableName: category_relation
-            columns:
-              - column:
-                  name: child_id
-                  value: 1
-              - column:
-                  name: parent_id
-                  value: null
         - insert:
             tableName: category_relation
             columns:
@@ -29,7 +20,7 @@ databaseChangeLog:
                   value: 3
               - column:
                   name: parent_id
-                  value: 1
+                  value: 2
         - insert:
             tableName: category_relation
             columns:
@@ -38,7 +29,7 @@ databaseChangeLog:
                   value: 4
               - column:
                   name: parent_id
-                  value: 3
+                  value: 2
         - insert:
             tableName: category_relation
             columns:
@@ -47,7 +38,7 @@ databaseChangeLog:
                   value: 5
               - column:
                   name: parent_id
-                  value: 3
+                  value: 4
         - insert:
             tableName: category_relation
             columns:
@@ -56,7 +47,7 @@ databaseChangeLog:
                   value: 6
               - column:
                   name: parent_id
-                  value: 3
+                  value: 4
         - insert:
             tableName: category_relation
             columns:
@@ -74,4 +65,13 @@ databaseChangeLog:
                   value: 8
               - column:
                   name: parent_id
-                  value: 4
+                  value: 5
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 9
+              - column:
+                  name: parent_id
+                  value: 5

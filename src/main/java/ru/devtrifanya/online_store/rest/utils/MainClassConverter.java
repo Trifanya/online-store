@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import ru.devtrifanya.online_store.models.*;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.*;
 
+import java.util.stream.Collectors;
+
 @Component
 @RequiredArgsConstructor
 public class MainClassConverter {
@@ -19,7 +21,13 @@ public class MainClassConverter {
     }
 
     public CategoryDTO convertToCategoryDTO(Category category) {
-        return modelMapper.map(category, CategoryDTO.class);
+        CategoryDTO dto = modelMapper.map(category, CategoryDTO.class);
+        dto.setChildren(
+                category.getChildren().stream()
+                        .map(child -> convertToCategoryDTO(child))
+                        .collect(Collectors.toList())
+        );
+        return dto;
     }
 
     public Item convertToItem(ItemDTO dto) {
@@ -28,14 +36,6 @@ public class MainClassConverter {
 
     public ItemDTO convertToItemDTO(Item item) {
         return modelMapper.map(item, ItemDTO.class);
-    }
-
-    public CategoryRelation convertToCategoryRelation(CategoryRelationDTO dto) {
-        return modelMapper.map(dto, CategoryRelation.class);
-    }
-
-    public CategoryRelationDTO convertToCategoryRelationDTO(CategoryRelation relation) {
-        return modelMapper.map(relation, CategoryRelationDTO.class);
     }
 
     public Feature convertToFeature(FeatureDTO dto) {
