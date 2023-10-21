@@ -45,7 +45,7 @@ public class ItemFeatureService {
 
         String unit = feature.getUnit();
         String stringValue = itemFeature.getStringValue();
-        if (!unit.isBlank()) {
+        if (unit != null) {
             itemFeature.setStringValue(stringValue + " " + feature.getUnit());
             itemFeature.setNumericValue(Double.parseDouble(stringValue));
         } else {

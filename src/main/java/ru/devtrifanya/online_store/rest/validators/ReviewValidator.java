@@ -15,11 +15,17 @@ import ru.devtrifanya.online_store.rest.dto.requests.DeleteReviewRequest;
 public class ReviewValidator {
     private final ReviewRepository reviewRepository;
 
-    public void validateNewReview(AddReviewRequest request, int userId) {
+    /**
+     * Валидация запроса на добавление отзыва.
+     */
+    public void performNewReviewValidation(AddReviewRequest request, int userId) {
         validateReviewIsNotExist(request.getItemId(), userId);
     }
 
-    public void validateDeleteReview(DeleteReviewRequest request) {
+    /**
+     * Валидация запроса на удаление отзыва.
+     */
+    public void performDeleteReviewValidation(DeleteReviewRequest request) {
         validateReviewIsExist(request.getReviewToDeleteId());
     }
 
@@ -39,8 +45,7 @@ public class ReviewValidator {
      * Если отзыв с указанным id не найден, то выбрасывается исключение.
      */
     public void validateReviewIsExist(int reviewId) {
-        if (reviewRepository.findById(reviewId).isPresent()) {
-            throw new NotFoundException("Отзыв с указанным id не найден.");
-        }
+        reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NotFoundException("Отзыв с указанным id не найден."));
     }
 }

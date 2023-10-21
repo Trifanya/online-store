@@ -18,16 +18,22 @@ public class CategoryValidator {
 
     private final CategoryRepository categoryRepository;
 
-    public void validateNewCategory(AddOrUpdateCategoryRequest request) {
+    /**
+     * Валидация запроса на добавление новой категории.
+     */
+    public void performNewCategoryValidation(AddOrUpdateCategoryRequest request) {
         validateUniqueName(request.getCategory());
         validateParentIsNotFinal(request.getNewParentId());
         // если в новую категорию добавляются новые характеристики, то нужно провалидировать каждую из них
         if (!request.getNewFeatures().isEmpty()) {
-            request.getNewFeatures().forEach(featureValidator::validateNewFeature);
+            request.getNewFeatures().forEach(featureValidator::performNewFeatureValidation);
         }
     }
 
-    public void validateUpdatedCategory(AddOrUpdateCategoryRequest request) {
+    /**
+     * Валидация запроса на обновление информации о категории.
+     */
+    public void performUpdatedCategoryValidation(AddOrUpdateCategoryRequest request) {
         validateUniqueName(request.getCategory());
         // если категория была перемещена
         if (request.getPrevParentId() != request.getNewParentId()) {
@@ -36,10 +42,12 @@ public class CategoryValidator {
         // если в конечную категорию добавляются новые характеристики, то нужно провалидировать каждую из них
         // если новые характеристики добавляются в неконечную категорию, то выбрасывается исключение
         Category category = categoryRepository.findById(request.getCategory().getId()).orElse(null);
-        if (!request.getNewFeatures().isEmpty() && category.getChildren().isEmpty()) { // если категория является конечной
-            request.getNewFeatures().forEach(featureValidator::validateNewFeature);
-        } else {
-            throw new UnavailableActionException("Нельзя добавить характеристику промежуточной категории.");
+        if (!request.getNewFeatures().isEmpty() || request.getExistingFeaturesId().length > 0) { // если в категорию добавляются новые характеристики
+            if (!category.getChildren().isEmpty()) { // если категория является конечной
+                throw new UnavailableActionException("Нельзя добавить характеристику промежуточной категории.");
+            } else {
+                request.getNewFeatures().forEach(featureValidator::performNewFeatureValidation);
+            }
         }
     }
 

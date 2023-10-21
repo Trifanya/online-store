@@ -22,7 +22,7 @@ public class FeatureController {
 
     @PostMapping("/newFeature")
     public ResponseEntity<?> createNewFeature(@RequestBody @Valid AddFeatureRequest request) {
-        validator.validateNewFeature(request.getFeature());
+        validator.performNewFeatureValidation(request.getFeature());
 
         featureService.createNewFeature(
                 converter.convertToFeature(request.getFeature())
@@ -33,7 +33,7 @@ public class FeatureController {
 
     @PatchMapping("/updateFeature")
     public ResponseEntity<?> updateFeatureInfo(@RequestBody @Valid AddFeatureRequest request) {
-        validator.validateUpdatedFeature(request.getFeature());
+        validator.performUpdatedFeatureValidation(request.getFeature());
 
         featureService.updateFeatureInfo(
                 converter.convertToFeature(request.getFeature())

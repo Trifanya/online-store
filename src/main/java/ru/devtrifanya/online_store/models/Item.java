@@ -38,6 +38,9 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
     private List<Review> reviews;
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
+    private List<CartElement> cartElements;
+
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "item_image",

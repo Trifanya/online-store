@@ -40,11 +40,11 @@ public class ReviewService {
     /**
      * Получение из списка всех отзывов о товаре.
      */
-    public List<Review> getReviewsByItemId(int itemId, int sortByStars) {
+    public List<Review> getReviewsByItemId(int itemId, String sortByStars) {
         List<Review> reviews = null;
-        if (sortByStars == 1) {
+        if (sortByStars.equalsIgnoreCase("desc")) {
             reviews = reviewRepository.findByItemIdOrderByStarsDesc(itemId); // сначала высокие оценки
-        } else if (sortByStars == -1) {
+        } else if (sortByStars.equalsIgnoreCase("asc")) {
             reviews = reviewRepository.findByItemIdOrderByStarsAsc(itemId); // сначала низкие оценки
         } else {
             reviews = reviewRepository.findByItemId(itemId); // сортировка по оценке отсутствует

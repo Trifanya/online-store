@@ -26,7 +26,7 @@ public class Feature {
     @OneToMany(mappedBy = "feature", cascade = CascadeType.REMOVE)
     private List<ItemFeature> features;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany//(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "category_feature",
             joinColumns = @JoinColumn(name = "feature_id"),

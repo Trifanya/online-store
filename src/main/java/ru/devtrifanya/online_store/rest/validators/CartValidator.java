@@ -23,26 +23,38 @@ public class CartValidator {
     private final ItemRepository itemRepository;
     private final CartElementRepository cartElementRepository;
 
-    public void validateNewCartElement(AddOrUpdateCartElementRequest request, int userId) {
+    /**
+     * Валидация запроса на добавление товара в корзину.
+     */
+    public void performNewElementValidation(AddOrUpdateCartElementRequest request, int userId) {
         validateAlreadyInCart(request.getCartElement().getItemId(), userId);
     }
 
-    public void validateUpdatedCartElement(AddOrUpdateCartElementRequest request) {
+    /**
+     * Валидация запроса на изменение количества товаров в корзине.
+     */
+    public void performUpdatedElementValidation(AddOrUpdateCartElementRequest request) {
         validateItemQuantity(request.getCartElement().getItemId(), request.getCartElement().getItemCount());
     }
 
-    public void validateOrder(PlaceAnOrderRequest request) {
+    /**
+     * Валидация запроса на оформление заказа.
+     */
+    public void performOrderValidation(PlaceAnOrderRequest request) {
         validateEnoughQuantity(request.getCartContent());
     }
 
-    public void validateDeleteFromCart(DeleteFromCartRequest request) {
+    /**
+     * Валидация запроса на удаление товара из корзины.
+     */
+    public void performDeleteFromCartValidation(DeleteFromCartRequest request) {
         validateNotExist(request.getCartElementToDeleteId());
     }
 
     /**
      * Сравнение количества товара в заказе и в наличии.
      */
-    public void validateItemQuantity(int itemId, int quantityInCart) {
+    private void validateItemQuantity(int itemId, int quantityInCart) {
         Item item = itemRepository.findById(itemId).get();
         if (item.getQuantity() < quantityInCart) {
             throw new OutOfStockException("Недостаточно товара в наличии.");
@@ -52,7 +64,7 @@ public class CartValidator {
     /**
      * Проверка товара на наличие в корзине пользователя.
      */
-    public void validateAlreadyInCart(int itemId, int userId) {
+    private void validateAlreadyInCart(int itemId, int userId) {
         if (cartElementRepository.existsByItemIdAndUserId(itemId, userId)) {
             throw new AlreadyExistException("Товар уже добавлен в корзину.");
         }
@@ -61,7 +73,7 @@ public class CartValidator {
     /**
      * Проверка существования элемента корзины с указанным в запросе id.
      */
-    public void validateNotExist(int cartElementId) {
+    private void validateNotExist(int cartElementId) {
         if (cartElementRepository.findById(cartElementId).isEmpty()) {
             throw new NotFoundException("В корзине нет элемента с указанным id.");
         }
@@ -70,7 +82,7 @@ public class CartValidator {
     /**
      * Проверка наличия и количества товара при оформлении заказа.
      */
-    public void validateEnoughQuantity(List<CartElementDTO> cartContent) {
+    private void validateEnoughQuantity(List<CartElementDTO> cartContent) {
         for (CartElementDTO cartElement : cartContent) {
             Item item = itemRepository.findById(cartElement.getItemId())
                     .orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));

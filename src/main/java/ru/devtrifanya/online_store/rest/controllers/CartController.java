@@ -31,10 +31,10 @@ public class CartController {
      */
     @PostMapping("/cart/placeAnOrder")
     public ResponseEntity<?> placeAnOrder(@RequestBody @Valid PlaceAnOrderRequest request) {
-        cartValidator.validateOrder(request);
+        cartValidator.performOrderValidation(request);
 
         for (CartElementDTO cartElement : request.getCartContent()) {
-            itemService.reduceItemQuantity(cartElement.getItemId(),cartElement.getItemCount()); // уменьшение количества купленного товара
+            itemService.reduceItemQuantity(cartElement.getItemId(), cartElement.getItemCount()); // уменьшение количества купленного товара
             cartElementService.deleteCartElement(cartElement.getId()); // удаление купленного товара из корзины
         }
 
@@ -45,10 +45,13 @@ public class CartController {
      * Адрес: .../catalog/{categoryId}/itemId}/newCartElement
      * Добавление товара в корзину, только для пользователя.
      */
-    @PostMapping("/catalog/{categoryId}/{itemId}/newCartElement")
+    @PostMapping({
+            "/catalog/{categoryId}/newCartElement",
+            "/catalog/{categoryId}/{itemId}/newCartElement"
+    })
     public ResponseEntity<?> createNewCartElement(@RequestBody @Valid AddOrUpdateCartElementRequest request,
                                                   @AuthenticationPrincipal User user) {
-        cartValidator.validateNewCartElement(request, user.getId());
+        cartValidator.performNewElementValidation(request, user.getId());
 
         cartElementService.createNewCartElement(
                 converter.convertToCartElement(request.getCartElement()),
@@ -65,7 +68,7 @@ public class CartController {
      */
     @PatchMapping("/cart/updateCartElement")
     public ResponseEntity<?> updateCartElement(@RequestBody @Valid AddOrUpdateCartElementRequest request) {
-        cartValidator.validateUpdatedCartElement(request);
+        cartValidator.performUpdatedElementValidation(request);
 
         cartElementService.updateCartElement(
                 converter.convertToCartElement(request.getCartElement())
@@ -80,7 +83,7 @@ public class CartController {
      */
     @DeleteMapping("/cart/deleteCartElement")
     public ResponseEntity<String> deleteCartElement(@RequestBody DeleteFromCartRequest request) {
-        cartValidator.validateDeleteFromCart(request);
+        cartValidator.performDeleteFromCartValidation(request);
 
         cartElementService.deleteCartElement(request.getCartElementToDeleteId());
 

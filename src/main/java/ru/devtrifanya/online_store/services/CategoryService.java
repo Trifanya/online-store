@@ -103,7 +103,9 @@ public class CategoryService {
      */
     @Transactional
     public void deleteCategory(int categoryId) {
-        updateRelationsOfRemovingCategory(categoryId);
+        if (!getCategory(categoryId).getChildren().isEmpty()) {
+            updateRelationsOfRemovingCategory(categoryId);
+        }
         categoryRepository.deleteById(categoryId);
     }
 
@@ -113,22 +115,18 @@ public class CategoryService {
     @Transactional
     public void updateRelationsOfRemovingCategory(int deletingCategoryId) {
         Category categoryToDelete = getCategory(deletingCategoryId);
-        // Если удаляемая категория является конечной, то связи менять не нужно
-        if (!categoryToDelete.getItems().isEmpty()) {
-            return;
-        }
 
         List<Category> parents = categoryToDelete.getParents();
         List<Category> children = categoryToDelete.getChildren();
 
         for (int p = 0; p < parents.size(); p++) {
+            parents.get(p).getChildren().remove(categoryToDelete);
             for (int ch = 0; ch < children.size(); ch++) {
+                children.get(ch).getParents().remove(categoryToDelete);
                 parents.get(p).getChildren().add(children.get(ch));
-                children.get(ch).getParents().add(parents.get(p));
             }
         }
         categoryRepository.saveAll(parents);
-        categoryRepository.saveAll(children);
     }
 
 }

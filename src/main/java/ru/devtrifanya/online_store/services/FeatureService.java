@@ -67,6 +67,7 @@ public class FeatureService {
      * Обновление характеристики категории.
      */
     public Feature updateFeatureInfo(Feature updatedFeature) {
+        updatedFeature.setCategories(getFeature(updatedFeature.getId()).getCategories());
         return featureRepository.save(updatedFeature);
     }
 

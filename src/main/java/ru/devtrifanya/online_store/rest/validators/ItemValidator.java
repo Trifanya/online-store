@@ -15,6 +15,7 @@ import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.exceptions.UnavailableActionException;
+import ru.devtrifanya.online_store.rest.dto.requests.DeleteItemRequest;
 
 import java.util.Map;
 
@@ -25,20 +26,25 @@ public class ItemValidator {
     private final FeatureRepository featureRepository;
     private final CategoryRepository categoryRepository;
 
-    public void validateNewItem(AddOrUpdateItemRequest request) {
+    /**
+     * Валидация запроса на добавление нового товара.
+     */
+    public void performNewItemValidation(AddOrUpdateItemRequest request) {
         validateUniqueName(request.getItem().getName(), request.getItem().getId());
         validateCategoryIsFinal(request.getCategoryId());
         validateAllFeaturesSpecified(request.getCategoryId(), request.getItemFeatures());
         validateRelevantFeatures(request.getCategoryId(), request.getItemFeatures());
     }
 
-    public void validateUpdatedItem(AddOrUpdateItemRequest request) {
+    /**
+     * Валидация запроса на обновление информации о товаре.
+     */
+    public void performUpdatedItemValidation(AddOrUpdateItemRequest request) {
         validateUniqueName(request.getItem().getName(), request.getItem().getId());
         validateCategoryIsFinal(request.getCategoryId());
         validateAllFeaturesSpecified(request.getCategoryId(), request.getItemFeatures());
         validateRelevantFeatures(request.getCategoryId(), request.getItemFeatures());
     }
-
 
     /**
      * Проверка названия товара на уникальность.
@@ -57,7 +63,7 @@ public class ItemValidator {
      */
     public void validateCategoryIsFinal(int categoryId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
-        if (category.getChildren().isEmpty()) {
+        if (!category.getChildren().isEmpty()) {
             throw new UnavailableActionException("Нельзя добавить товар в промежуточную категорию.");
         }
     }
@@ -86,7 +92,7 @@ public class ItemValidator {
 
         for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : itemFeatures.entrySet()) {
             Feature feature = featureRepository.findById(itemFeature.getKey())
-                    .orElseThrow();
+                    .orElseThrow(() -> new NotFoundException("Характеристика с указанным id не найдена."));
             if (!category.getFeatures().contains(feature)) {
                 throw new UnavailableActionException("У товаров данной категории не может быть характеристики с указанным id.");
             }

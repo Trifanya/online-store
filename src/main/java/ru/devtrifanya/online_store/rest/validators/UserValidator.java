@@ -14,7 +14,11 @@ import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 public class UserValidator {
     private final UserRepository userRepository;
 
-    public void validate(UserDTO user, int userId) {
+    /**
+     * Валидация email пользователя.
+     * Если в БД уже есть пользователь с указанным email, то будет выброшено исключение.
+     */
+    public void performUpdatedUserValidation(UserDTO user, int userId) {
         User namesake = userRepository.findByEmail(user.getEmail()).orElse(null);
         if (namesake != null && namesake.getId() != userId) {
             throw new AlreadyExistException("Пользователь с указанным email уже зарегистрирован.");

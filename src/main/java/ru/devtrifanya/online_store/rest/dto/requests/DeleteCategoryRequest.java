@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
-public class DeleteReviewRequest {
-    @Positive(message = "id отзыва должен быть положительным")
-    private int reviewToDeleteId;
+public class DeleteCategoryRequest {
+    @Positive(message = "id категории должен быть положительным")
+    private int categoryToDeleteId;
 }

@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemImageDTO;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.DeleteItemRequest;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.ItemValidator;
 import ru.devtrifanya.online_store.services.ImageService;
@@ -34,7 +34,7 @@ public class ItemController {
      */
     @PostMapping("/newItem")
     public ResponseEntity<?> createNewItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
-        itemValidator.validateNewItem(request);
+        itemValidator.performNewItemValidation(request);
 
         // сохранение товара
         Item createdItem = itemService.createNewItem(
@@ -65,7 +65,7 @@ public class ItemController {
      */
     @PatchMapping("/{itemId}/updateItem")
     public ResponseEntity<?> updateItemInfo(@RequestBody @Valid AddOrUpdateItemRequest request) {
-        itemValidator.validateUpdatedItem(request);
+        itemValidator.performUpdatedItemValidation(request);
 
         // Обновление товара
         Item updatedItem = itemService.updateItemInfo(
@@ -94,9 +94,12 @@ public class ItemController {
      * Адрес: .../catalog/{categoryId}/{itemId}/deleteItem
      * Удаление товара, только для администратора.
      */
-    @DeleteMapping("/{itemId}/deleteItem")
-    public ResponseEntity<String> deleteItem(@PathVariable("itemId") int itemId) {
-        itemService.deleteItem(itemId);
+    @DeleteMapping({
+            "/deleteItem",
+            "/{itemId}/deleteItem"
+    })
+    public ResponseEntity<String> deleteItem(@RequestBody @Valid DeleteItemRequest request) {
+        itemService.deleteItem(request.getItemToDeleteId());
         return ResponseEntity.ok("Товар успешно удален.");
     }
 }

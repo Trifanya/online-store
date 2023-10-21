@@ -8,5 +8,4 @@ import ru.devtrifanya.online_store.rest.dto.entities_dto.FeatureDTO;
 public class AddFeatureRequest {
     private @Valid FeatureDTO feature;
 
-    private int categoryId;
 }

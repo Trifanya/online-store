@@ -15,25 +15,40 @@ import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 public class AuthenticationValidator {
     private final UserRepository userRepository;
 
-    public void validateSignUp(SignUpRequest request) {
+    /**
+     * Валидация запроса на регистрацию на сайте.
+     */
+    public void performSignUpValidation(SignUpRequest request) {
         validateUniqueEmail(request.getUser().getEmail());
         validatePasswordConfirmed(request.getUser().getPassword(), request.getPasswordConfirmation());
     }
 
-    public void validateUserIsExist(SignInRequest request) {
+    /**
+     * Валидация запроса на вход в аккаунт.
+     */
+    public void performSignInValidation(SignInRequest request) {
         String email = request.getEmail();
         if (userRepository.findByEmail(email).isEmpty()) {
             throw new NotFoundException("Пользователь с указанным email не найден.");
         }
     }
 
-    public void validateUniqueEmail(String email) {
+    /**
+     * Валидация email пользователя.
+     * Если в БД уже есть пользователь с указанным email, то будет выброшено исключение.
+     */
+    private void validateUniqueEmail(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new AlreadyExistException("Пользователь с указанным email уже зарегистрирован.");
         }
     }
 
-    public void validatePasswordConfirmed(String password, String passwordConfirmation) {
+    /**
+     * Валидация пароля пользователя.
+     * Если подтверждение пароля не совпадает с основным паролем, то будет выброшено
+     * исключение.
+     */
+    private void validatePasswordConfirmed(String password, String passwordConfirmation) {
         if (!password.equals(passwordConfirmation)) {
             throw new InvalidDataException("Пароли не совпадают.");
         }

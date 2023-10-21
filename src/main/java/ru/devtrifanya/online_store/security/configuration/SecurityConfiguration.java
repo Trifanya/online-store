@@ -47,28 +47,31 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(
-                                "/cart", "/catalog/{categoryId}/{itemId}/newReview",
-                                "/catalog/{categoryId}/{itemId}/newCartElement", "/cart/updateCartElement", "/cart/deleteCartElement"
-                        ).hasRole("USER")
-                        .requestMatchers(
-                                "/catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/{categoryId}/deleteCategory",
-                                "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/{itemId}/deleteItem",
-                                "/catalog/allFeatures","/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/updateFeature", "/catalog/{categoryId}/deleteFeature",
-                                "/catalog/{categoryId}/{itemId}/newReview", "/catalog/{categoryId}/{itemId}/deleteReview"
-                        ).hasRole("ADMIN")
-                        .requestMatchers(
-                                "/profile/updateUserInfo"
-                        ).hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(
-                                "/registration", "/authentication",
-                                "/catalog", "/catalog/{categoryId}", "/catalog/{categoryId}/{itemId}"
-                        ).permitAll())
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers(
+                                        "/cart", "/catalog/{categoryId}/{itemId}/newReview",
+                                        "/catalog/{categoryId}/newCartElement", "/catalog/{categoryId}/{itemId}/newCartElement", "/cart/updateCartElement", "/cart/deleteCartElement", "/cart/placeAnOrder"
+                                ).hasRole("USER")
+                                .requestMatchers(
+                                        "/catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/deleteCategory",
+                                        "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/deleteItem","/catalog/{categoryId}/{itemId}/deleteItem",
+                                        "/catalog/allFeatures/**", "/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/updateFeature", "/catalog/{categoryId}/deleteFeature",
+                                        "/catalog/{categoryId}/{itemId}/newReview", "/catalog/{categoryId}/{itemId}/deleteReview"
+                                ).hasRole("ADMIN")
+                                .requestMatchers(
+                                        "/profile", "/profile/updateUserInfo"
+                                ).hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(
+                                        "/registration", "/authentication",
+                                        "/catalog", "/catalog/{categoryId}", "/catalog/{categoryId}/{itemId}"
+                                ).permitAll())
+                .sessionManagement(
+                        sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(
+                        exceptionHandling -> exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

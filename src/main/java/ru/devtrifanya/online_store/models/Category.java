@@ -29,7 +29,7 @@ public class Category {
     )
     private List<Category> children;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "category_relation",
             joinColumns = @JoinColumn(name = "child_id"),
@@ -37,7 +37,7 @@ public class Category {
     )
     private List<Category> parents;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "category_feature",
             joinColumns = @JoinColumn(name = "category_id"),

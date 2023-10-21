@@ -35,7 +35,7 @@ public class ResponseContentController {
 
         response.setTopCategories(
                 categoryService.getRootCategories().stream()
-                        .map(category -> converter.convertToCategoryDTO(category))
+                        .map(converter::convertToCategoryDTO)
                         .collect(Collectors.toList())
         );
         response.setCartSize(
@@ -80,19 +80,19 @@ public class ResponseContentController {
 
         categoryItemsResponse.setCategoryFeatures(
                 currentCategory.getFeatures().stream()
-                        .map(feature -> converter.convertToFeatureDTO(feature))
+                        .map(converter::convertToFeatureDTO)
                         .collect(Collectors.toList())
         );
         categoryItemsResponse.setCategoryItems(
                 itemService.getFilteredItems(categoryId, allParams, pageNumber, itemsPerPage, sortBy, sortDir)
                         .stream()
-                        .map(item -> converter.convertToItemDTO(item))
+                        .map(converter::convertToItemDTO)
                         .collect(Collectors.toList())
         );
         categoryItemsResponse.setCurrentCategory(converter.convertToCategoryDTO(currentCategory));
         categoryItemsResponse.setTopCategories(
                 categoryService.getRootCategories().stream()
-                        .map(category -> converter.convertToCategoryDTO(category))
+                        .map(converter::convertToCategoryDTO)
                         .collect(Collectors.toList())
         );
         categoryItemsResponse.setCartSize(
@@ -105,24 +105,24 @@ public class ResponseContentController {
     @GetMapping("/catalog/{categoryId}/{itemId}")
     public ItemInfoResponse getItemPage(@PathVariable("itemId") int itemId,
                                         @AuthenticationPrincipal User user,
-                                        @RequestParam(name = "sortByStars", defaultValue = "0") String sortByStars) {
+                                        @RequestParam(name = "sortByStars", defaultValue = "none") String sortByStars) {
         ItemInfoResponse itemInfoResponse = new ItemInfoResponse();
         itemInfoResponse.setItem(
                 converter.convertToItemDTO(itemService.getItem(itemId))
         );
         itemInfoResponse.setItemFeatures(
                 itemFeatureService.getItemFeaturesByItemId(itemId).stream()
-                        .map(itemFeature -> converter.convertToItemFeatureDTO(itemFeature))
+                        .map(converter::convertToItemFeatureDTO)
                         .collect(Collectors.toList())
         );
         itemInfoResponse.setItemReviews(
-                reviewService.getReviewsByItemId(itemId, 0).stream()
-                        .map(review -> converter.convertToReviewDTO(review))
+                reviewService.getReviewsByItemId(itemId, sortByStars).stream()
+                        .map(converter::convertToReviewDTO)
                         .collect(Collectors.toList())
         );
         itemInfoResponse.setTopCategories(
                 categoryService.getRootCategories().stream()
-                        .map(category -> converter.convertToCategoryDTO(category))
+                        .map(converter::convertToCategoryDTO)
                         .collect(Collectors.toList())
         );
         itemInfoResponse.setCartSize(
@@ -139,7 +139,7 @@ public class ResponseContentController {
 
         cartInfoResponse.setUserCart(
                 userCart.stream()
-                        .map(cartElement -> converter.convertToCartElementDTO(cartElement))
+                        .map(converter::convertToCartElementDTO)
                         .collect(Collectors.toList())
         );
         cartInfoResponse.setItems(
@@ -149,10 +149,25 @@ public class ResponseContentController {
         );
         cartInfoResponse.setTopCategories(
                 categoryService.getRootCategories().stream()
-                        .map(category -> converter.convertToCategoryDTO(category))
+                        .map(converter::convertToCategoryDTO)
                         .collect(Collectors.toList())
         );
 
         return cartInfoResponse;
+    }
+
+    @GetMapping("/profile")
+    public UserProfileResponse getUserProfile(@AuthenticationPrincipal User currentUser) {
+        UserProfileResponse response = new UserProfileResponse();
+
+        response.setCartSize(0);
+        response.setUser(converter.convertToUserDTO(currentUser));
+        response.setRootCategories(
+                categoryService.getRootCategories().stream()
+                        .map(converter::convertToCategoryDTO)
+                        .collect(Collectors.toList())
+        );
+
+        return response;
     }
 }

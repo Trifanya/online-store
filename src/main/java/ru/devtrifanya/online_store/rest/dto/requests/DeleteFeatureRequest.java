@@ -1,10 +1,11 @@
 package ru.devtrifanya.online_store.rest.dto.requests;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
 public class DeleteFeatureRequest {
-    @Min(value = 1, message = "id характеристики должен быть не меньше 1")
+    @Positive(message = "id характеристики должен быть положительным")
     private int featureToDeleteId;
 }

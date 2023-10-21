@@ -28,7 +28,7 @@ public class UserController {
     @PatchMapping("/updateUserInfo")
     public ResponseEntity<?> updateUserInfo(@RequestBody @Valid UpdateUserRequest request,
                                             @AuthenticationPrincipal User user) {
-        userValidator.validate(request.getUser(), user.getId());
+        userValidator.performUpdatedUserValidation(request.getUser(), user.getId());
 
         userService.updateUserInfo(user, converter.convertToUser(request.getUser()));
 
