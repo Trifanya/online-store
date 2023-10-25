@@ -25,9 +25,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с указанным id не найден."));
     }
 
-    public User updateUserInfo(User oldUser, User updatedUser) {
-        updatedUser.setId(oldUser.getId());
-        updatedUser.setRole(oldUser.getRole());
+    public User updateUserInfo(User userToUpdate, User updatedUser) {
+        updatedUser.setId(userToUpdate.getId());
+        updatedUser.setRole(userToUpdate.getRole());
 
         return userRepository.save(updatedUser);
     }

@@ -1,12 +1,16 @@
 package ru.devtrifanya.online_store.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "image_for_item")
 public class ItemImage {
     @Id
@@ -24,4 +28,9 @@ public class ItemImage {
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     private List<Item> items;
+
+    public ItemImage(int id, String url) {
+        this.id = id;
+        this.url = url;
+    }
 }

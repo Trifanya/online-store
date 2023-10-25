@@ -2,12 +2,14 @@ package ru.devtrifanya.online_store.models;
 
 import lombok.Data;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "category")
 public class Category {
     @Id
@@ -45,16 +47,21 @@ public class Category {
     )
     private List<Feature> features;
 
+    public Category(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return id == category.id;
+        return id == category.id && Objects.equals(name, category.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, name);
     }
 }

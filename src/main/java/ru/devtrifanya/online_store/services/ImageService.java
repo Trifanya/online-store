@@ -9,6 +9,7 @@ import ru.devtrifanya.online_store.models.ItemImage;
 import ru.devtrifanya.online_store.repositories.ItemImageRepository;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class ImageService {
@@ -31,12 +32,8 @@ public class ImageService {
             image.getItems().add(item);
             return itemImageRepository.save(image);
         } else { // если изображения с указанным url нет в БД
-            itemImageToSave.setItems(Collections.singletonList(item));
+            itemImageToSave.setItems(List.of(item));
             return itemImageRepository.save(itemImageToSave);
         }
-    }
-
-    public void deleteImage(int imageId) {
-        itemImageRepository.deleteById(imageId);
     }
 }

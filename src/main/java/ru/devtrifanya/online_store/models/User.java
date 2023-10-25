@@ -1,9 +1,11 @@
 package ru.devtrifanya.online_store.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import jakarta.persistence.*;
 
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +15,8 @@ import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "os_user")
 public class User implements UserDetails {
     @Id
@@ -41,6 +45,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<CartElement> cartElements;
 
+    public User(int id, String name, String surname, String email, String role) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

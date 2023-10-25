@@ -31,24 +31,28 @@ public class CartElementService {
     }
 
     /**
-     * Получение корзины (всех элементов корзины) пользователя по id пользователя.
-     * Метод получает на вход id пользователя, вызывает метод репозитория для поиска
-     * элементов корзины по этому id, и возвращает найденный список.
+     * Получение размера корзины пользователя по его id.
      */
-    public List<CartElement> getCartElementsByUserId(int userId) {
-        return cartElementRepository.findAllByUserId(userId);
-    }
-
     public int getCartSizeByUserId(int userId) {
         return cartElementRepository.countAllByUserId(userId);
     }
 
     /**
+     * Получение элемента корзины по его id.
+     */
+    public CartElement getCartElement(int cartElementId) {
+        return cartElementRepository.findById(cartElementId)
+                .orElseThrow(() -> new NotFoundException("Элемент корзины с указанным id не найден."));
+    }
+    /**
+     * Получение корзины (всех элементов корзины) пользователя по id пользователя.
+     */
+    public List<CartElement> getCartElementsByUserId(int userId) {
+        return cartElementRepository.findAllByUserId(userId);
+    }
+
+    /**
      * Добавление товара в корзину текущего пользователя.
-     * Метод получает на вход элемент корзины, у которого проинициализировано только поле
-     * count, инициализирует у сохраняемого элемента поля user и item, затем вызывает
-     * метод репозитория для сохранения этого элемента в БД и возвращает сохраненный
-     * элемент корзины.
      */
     @Transactional
     public CartElement createNewCartElement(CartElement elementToSave, int userId, int itemId) {
@@ -65,20 +69,15 @@ public class CartElementService {
      * Изменение количества единиц конкретного товара в корзине пользователя.
      */
     @Transactional
-    public CartElement updateCartElement(CartElement elementToUpdate) {
-        CartElement oldCartElement = cartElementRepository.findById(elementToUpdate.getId())
-                .orElseThrow(() -> new NotFoundException("Элемент корзины с указанным id не найден."));
-
-        elementToUpdate.setUser(oldCartElement.getUser());
-        elementToUpdate.setItem(oldCartElement.getItem());
+    public CartElement updateCartElement(CartElement updatedElement) {
+        CartElement elementToUpdate = getCartElement(updatedElement.getId());
+        elementToUpdate.setItemQuantity(updatedElement.getItemQuantity());
 
         return cartElementRepository.save(elementToUpdate);
     }
 
     /**
      * Удаление элемента корзины.
-     * Метод получает на вход id элемента корзины, который нужно удалить, затем вызывает
-     * метод репозитория для его удаления.
      */
     @Transactional
     public void deleteCartElement(int cartElementId) {

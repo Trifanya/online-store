@@ -66,12 +66,12 @@ public class ItemService {
     /**
      * Уменьшение количества товара при его покупке.
      */
-    public void reduceItemQuantity(int itemId, int itemToBuyQuantity) {
+    public Item reduceItemQuantity(int itemId, int itemToBuyQuantity) {
         Item item = getItem(itemId);
 
         item.setQuantity(item.getQuantity() - itemToBuyQuantity);
 
-        itemRepository.save(item);
+        return itemRepository.save(item);
     }
 
     /**
@@ -116,7 +116,7 @@ public class ItemService {
     /**
      * Вычисление нового рейтинга.
      */
-    public double calculateNewRating(double oldRating, int reviewsQuantity, double newReviewRating) {
+    private double calculateNewRating(double oldRating, int reviewsQuantity, double newReviewRating) {
         return (oldRating * reviewsQuantity + newReviewRating) / (reviewsQuantity + 1);
     }
 

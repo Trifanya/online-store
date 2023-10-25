@@ -1,13 +1,17 @@
 package ru.devtrifanya.online_store.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "review")
 public class Review {
     @Id
@@ -35,4 +39,9 @@ public class Review {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    public Review(int id, int stars, String comment) {
+        this.id = id;
+        this.stars = stars;
+        this.comment = comment;
+    }
 }

@@ -2,9 +2,11 @@ package ru.devtrifanya.online_store.models;
 
 import lombok.Data;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "itemFeature")
 public class ItemFeature {
     @Id
@@ -26,4 +28,8 @@ public class ItemFeature {
     @JoinColumn(name = "feature_id", referencedColumnName = "id")
     private Feature feature;
 
+    public ItemFeature(int id, String stringValue) {
+        this.id = id;
+        this.stringValue = stringValue;
+    }
 }

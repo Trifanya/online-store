@@ -53,7 +53,7 @@ public class ReviewService {
     }
 
     /**
-     * Добавление в отзыва о товаре.
+     * Добавление отзыва о товаре.
      */
     @Transactional
     public Review createNewReview(Review reviewToSave, int itemId, int authorId) {
@@ -68,7 +68,7 @@ public class ReviewService {
     }
 
     /**
-     * Удаление из отзыва о товаре.
+     * Удаление отзыва о товаре.
      */
     public void deleteReview(int reviewId) {
         reviewRepository.deleteById(reviewId);

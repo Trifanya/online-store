@@ -67,9 +67,8 @@ public class ItemSpecificationConstructor {
     }
 
     public static Specification<Item> itemManufacturerInSet(Set<String> manufacturers) {
-        return ((root, query, criteriaBuilder) ->
-                criteriaBuilder.in(root.get("manufacturer")).value(manufacturers)
-        );
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("manufacturer")).value(manufacturers);
     }
 
     public static Specification<Item> itemQuantityIsNotNull() {
