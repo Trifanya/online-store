@@ -154,7 +154,7 @@ public class FeatureServiceTest {
                 .when(featureRepoMock).save(any(Feature.class));
 
         // Выполнение тестируемого метода
-        Feature resultFeature = testingService.updateFeatureInfo(this.updatedFeature);
+        Feature resultFeature = testingService.updateFeature(this.updatedFeature);
         // Проверка совпадения ожидаемого результата с реальным
         Mockito.verify(featureRepoMock).findById(updatedFeatureId);
         Mockito.verify(featureRepoMock).save(updatedFeature);

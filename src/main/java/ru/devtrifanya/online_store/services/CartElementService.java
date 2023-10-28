@@ -1,21 +1,17 @@
 package ru.devtrifanya.online_store.services;
 
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.devtrifanya.online_store.models.CartElement;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.User;
-import ru.devtrifanya.online_store.repositories.CartElementRepository;
+import ru.devtrifanya.online_store.models.CartElement;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.repositories.CartElementRepository;
 
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
-@Data
 public class CartElementService {
     private final UserService userService;
     private final ItemService itemService;
@@ -31,7 +27,7 @@ public class CartElementService {
     }
 
     /**
-     * Получение размера корзины пользователя по его id.
+     * Получение размера корзины по id пользователя.
      */
     public int getCartSizeByUserId(int userId) {
         return cartElementRepository.countAllByUserId(userId);
@@ -54,7 +50,6 @@ public class CartElementService {
     /**
      * Добавление товара в корзину текущего пользователя.
      */
-    @Transactional
     public CartElement createNewCartElement(CartElement elementToSave, int userId, int itemId) {
         User user = userService.getUser(userId);
         Item item = itemService.getItem(itemId);
@@ -68,7 +63,6 @@ public class CartElementService {
     /**
      * Изменение количества единиц конкретного товара в корзине пользователя.
      */
-    @Transactional
     public CartElement updateCartElement(CartElement updatedElement) {
         CartElement elementToUpdate = getCartElement(updatedElement.getId());
         elementToUpdate.setItemQuantity(updatedElement.getItemQuantity());
@@ -79,13 +73,7 @@ public class CartElementService {
     /**
      * Удаление элемента корзины.
      */
-    @Transactional
     public void deleteCartElement(int cartElementId) {
         cartElementRepository.deleteById(cartElementId);
     }
-
-
-
-
-
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import jakarta.persistence.*;
 
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "os_user")
+@Accessors(chain = true)
 public class User implements UserDetails {
     @Id
     @Column(name = "id")

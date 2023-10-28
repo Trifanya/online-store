@@ -36,7 +36,7 @@ public class CategoryService {
     }
 
     /**
-     * Получение корневых категорий.
+     * Получение списка корневых категорий.
      */
     public List<Category> getRootCategories() {
         return categoryRepository.findRootCategories();
@@ -59,8 +59,11 @@ public class CategoryService {
         return categoryRepository.save(categoryToSave);
     }
 
+    /**
+     * Обновление информации о категории.
+     */
     @Transactional
-    public Category updateCategoryInfo(Category updatedCategory, int[] featureIds, int prevParentId, int newParentId) {
+    public Category updateCategory(Category updatedCategory, int[] featureIds, int prevParentId, int newParentId) {
         Category categoryToUpdate = getCategory(updatedCategory.getId());
 
         updatedCategory.setChildren(categoryToUpdate.getChildren());
@@ -68,7 +71,6 @@ public class CategoryService {
 
         // Назначение характеристик обновляемой категории
         updatedCategory.setFeatures(new ArrayList<>());
-
         for (int i = 0; i < featureIds.length; i++) {
             Feature feature = featureService.getFeature(featureIds[i]);
             updatedCategory.getFeatures().add(feature);
@@ -81,16 +83,15 @@ public class CategoryService {
         return categoryRepository.save(updatedCategory);
     }
 
+    /**
+     * Обновление связей между категориями.
+     */
     private Category updateRelationsOfReplacingCategory(Category updatedCategory, int prevParentId, int newParentId) {
         Category prevParent = getCategory(prevParentId);
         Category newParent = getCategory(newParentId);
 
         updatedCategory.getParents().remove(prevParent);
-        //prevParent.getChildren().remove(updatedCategory);
         updatedCategory.getParents().add(newParent);
-        //newParent.getChildren().add(updatedCategory);
-
-        //categoryRepository.saveAll(List.of(prevParent, newParent));
 
         return updatedCategory;
     }
@@ -101,33 +102,26 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(int categoryId) {
         if (!getCategory(categoryId).getChildren().isEmpty()) {
-            updateRelationsOfRemovingCategory(categoryId);
+            updateRelationsOfDeletingCategory(categoryId);
         }
         categoryRepository.deleteById(categoryId);
     }
 
     /**
      * Изменение связей удаляемой категории.
-     * Каждому родительской категории удаляемой категории добавляется связь с каждой
+     * Каждой родительской категории удаляемой категории добавляется связь с каждой
      * дочерней категорией удаляемой категории.
      */
-    //@Transactional
-    private void updateRelationsOfRemovingCategory(int categoryToDeleteId) {
+    private void updateRelationsOfDeletingCategory(int categoryToDeleteId) {
         Category categoryToDelete = getCategory(categoryToDeleteId);
 
         List<Category> parents = categoryToDelete.getParents();
         List<Category> children = categoryToDelete.getChildren();
 
-        for (int p = 0; p < parents.size(); p++) {
-            parents.get(p).getChildren().remove(categoryToDelete);
-            for (int ch = 0; ch < children.size(); ch++) {
-                //children.get(ch).getParents().remove(categoryToDelete);
-                parents.get(p).getChildren().add(children.get(ch));
-                //children.get(ch).getParents().add(parents.get(p));
-            }
-        }
+        parents.forEach(parent -> parent.getChildren().remove(categoryToDelete));
+        parents.forEach(parent -> parent.getChildren().addAll(children));
+
         categoryRepository.saveAll(parents);
-        //categoryRepository.saveAll(children);
     }
 
 }

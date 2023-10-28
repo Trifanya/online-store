@@ -8,7 +8,6 @@ import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.ItemImage;
 import ru.devtrifanya.online_store.repositories.ItemImageRepository;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,6 +23,9 @@ public class ImageService {
         this.itemImageRepository = itemImageRepository;
     }
 
+    /**
+     * Добавление нового изображения товара, если изображения с таким url еще нет в БД.
+     */
     public ItemImage createNewImageIfNotExist(ItemImage itemImageToSave, int itemId) {
         Item item = itemService.getItem(itemId);
         ItemImage image = itemImageRepository.findByUrl(itemImageToSave.getUrl()).orElse(null);

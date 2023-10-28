@@ -149,7 +149,7 @@ public class CategoryServiceTest {
         updateCategoryInfo_determineBehaviourOfMocks();
 
         // Выполнение тестируемого метода
-        Category resultCategory = testingService.updateCategoryInfo(
+        Category resultCategory = testingService.updateCategory(
                 updatedCategory, featureIDs, parentId, newParentId
         );
         // Проверка соответствия ожидаемых результатов с реальными
@@ -164,7 +164,7 @@ public class CategoryServiceTest {
         updateCategoryInfo_determineBehaviourOfMocks();
 
         // Выполнение тестируемого метода
-        Category resultCategory = testingService.updateCategoryInfo(
+        Category resultCategory = testingService.updateCategory(
                 updatedCategory, featureIDs, parentId, parentId
         );
         // Проверка соответствия ожидаемых результатов с реальными
@@ -178,7 +178,7 @@ public class CategoryServiceTest {
         updateCategoryInfo_determineBehaviourOfMocks();
 
         // Выполнение тестируемого метода
-        Category resultCategory = testingService.updateCategoryInfo(
+        Category resultCategory = testingService.updateCategory(
                 updatedCategory, featureIDs, parentId, parentId
         );
         // Проверка совпадения ожидаемых результатов с реальными
@@ -192,7 +192,7 @@ public class CategoryServiceTest {
         updateCategoryInfo_determineBehaviourOfMocks();
 
         // Выполнение тестируемого метода
-        Category resultCategory = testingService.updateCategoryInfo(
+        Category resultCategory = testingService.updateCategory(
                 updatedCategory, featureIDs, parentId, parentId
         );
         // Проверка совпадения ожидаемых результатов с реальными
@@ -235,7 +235,7 @@ public class CategoryServiceTest {
         Mockito.verify(categoryRepositoryMock).saveAll(any());
     }
 
-    public void createNewCategory_determineBehaviourOfMocks() {
+    private void createNewCategory_determineBehaviourOfMocks() {
         Mockito.when(categoryRepositoryMock.findById(parentId))
                 .thenReturn(Optional.of(parent));
 
@@ -255,7 +255,7 @@ public class CategoryServiceTest {
                 }).when(categoryRepositoryMock).save(any(Category.class));
     }
 
-    public void updateCategoryInfo_determineBehaviourOfMocks() {
+    private void updateCategoryInfo_determineBehaviourOfMocks() {
         Mockito.doAnswer(
                 invocationOnMock -> {
                     int id = invocationOnMock.getArgument(0);

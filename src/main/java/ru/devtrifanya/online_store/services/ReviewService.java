@@ -41,7 +41,7 @@ public class ReviewService {
      * Получение из списка всех отзывов о товаре.
      */
     public List<Review> getReviewsByItemId(int itemId, String sortByStars) {
-        List<Review> reviews = null;
+        List<Review> reviews;
         if (sortByStars.equalsIgnoreCase("desc")) {
             reviews = reviewRepository.findByItemIdOrderByStarsDesc(itemId); // сначала высокие оценки
         } else if (sortByStars.equalsIgnoreCase("asc")) {

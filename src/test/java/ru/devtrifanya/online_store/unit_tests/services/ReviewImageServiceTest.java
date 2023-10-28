@@ -36,6 +36,7 @@ public class ReviewImageServiceTest {
 
     @Test
     public void createNewReviewImage_shouldAssignId() {
+        System.out.println(++reviewId);
         // Определение поведения mock-объектов
         createNewReviewImage_determineBehaviorOfMocks();
 
@@ -48,6 +49,7 @@ public class ReviewImageServiceTest {
 
     @Test
     public void createNewReviewImage_shouldAssignReview() {
+        System.out.println(reviewId);
         // Определение поведения mock-объектов
         createNewReviewImage_determineBehaviorOfMocks();
 

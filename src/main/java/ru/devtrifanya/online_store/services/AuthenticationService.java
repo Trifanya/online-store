@@ -1,6 +1,6 @@
 package ru.devtrifanya.online_store.services;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,8 +14,7 @@ import ru.devtrifanya.online_store.rest.dto.requests.SignInRequest;
 import ru.devtrifanya.online_store.security.jwt.JWTUtils;
 
 @Service
-@Transactional(readOnly = true)
-@Data
+@RequiredArgsConstructor
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -41,7 +40,7 @@ public class AuthenticationService {
      * Далее из результата аутентификации извлекается Principal (экземпляр класса User)
      * и передается в метод, генерирующий JWT для этого класса.
      */
-    public String getJWT(SignInRequest signInRequest) throws BadCredentialsException {
+    public String getJWT(SignInRequest signInRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

@@ -59,7 +59,7 @@ public class CategoryController {
         categoryValidator.performUpdatedCategoryValidation(request);
 
         // Апдейт информации о категории
-        Category updatedCategory = categoryService.updateCategoryInfo(
+        Category updatedCategory = categoryService.updateCategory(
                 converter.convertToCategory(request.getCategory()),
                 request.getExistingFeaturesId(),
                 request.getPrevParentId(),

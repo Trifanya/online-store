@@ -35,7 +35,7 @@ public class FeatureController {
     public ResponseEntity<?> updateFeatureInfo(@RequestBody @Valid AddFeatureRequest request) {
         validator.performUpdatedFeatureValidation(request.getFeature());
 
-        featureService.updateFeatureInfo(
+        featureService.updateFeature(
                 converter.convertToFeature(request.getFeature())
         );
 

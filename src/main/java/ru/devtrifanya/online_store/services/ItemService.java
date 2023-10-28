@@ -49,6 +49,7 @@ public class ItemService {
             filters.remove(paramName);
         }
 
+        // Формирование объекта с фильтрами
         Specification<Item> itemSpecification = specificationConstructor.createItemSpecification(
                 categoryService.getCategory(categoryId),
                 filters

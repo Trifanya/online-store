@@ -22,7 +22,7 @@ public class ReviewImageService {
     }
 
     /**
-     * Добавление в изображения из отзыва.
+     * Добавление изображения из отзыва.
      */
     public ReviewImage createNewReviewImage(ReviewImage imageToSave, int reviewId) {
         Review review = reviewService.getReview(reviewId);

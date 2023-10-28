@@ -9,8 +9,6 @@ import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -55,7 +53,7 @@ public class FeatureService {
     public Feature createNewFeature(Feature featureToSave, int categoryId) {
         Category category = categoryService.getCategory(categoryId);
 
-        featureToSave.setCategories(Collections.singletonList(category));
+        featureToSave.setCategories(List.of(category));
 
         return featureRepository.save(featureToSave);
     }
@@ -63,9 +61,10 @@ public class FeatureService {
     /**
      * Обновление характеристики категории.
      */
-    public Feature updateFeatureInfo(Feature updatedFeature) {
-        List<Category> categories = getFeature(updatedFeature.getId()).getCategories();
-        updatedFeature.setCategories(categories);
+    public Feature updateFeature(Feature updatedFeature) {
+        Feature featureToUpdate = getFeature(updatedFeature.getId());
+        updatedFeature.setCategories(featureToUpdate.getCategories());
+
         return featureRepository.save(updatedFeature);
     }
 
