@@ -3,13 +3,14 @@ package ru.devtrifanya.online_store.models;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.Objects;
 
 @Data
 @Entity
-@NoArgsConstructor
+@Accessors(chain = true)
 @Table(name = "category")
 public class Category {
     @Id
@@ -46,11 +47,6 @@ public class Category {
             inverseJoinColumns = @JoinColumn(name = "feature_id")
     )
     private List<Feature> features;
-
-    public Category(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object o) {

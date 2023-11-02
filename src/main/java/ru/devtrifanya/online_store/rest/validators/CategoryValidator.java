@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import ru.devtrifanya.online_store.exceptions.UnavailableActionException;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CategoryDTO;
+import ru.devtrifanya.online_store.exceptions.UnavailableActionException;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
 
 @Component

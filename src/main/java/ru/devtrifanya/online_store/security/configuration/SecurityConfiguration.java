@@ -1,8 +1,8 @@
 package ru.devtrifanya.online_store.security.configuration;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,10 +19,15 @@ import ru.devtrifanya.online_store.services.UserService;
 import ru.devtrifanya.online_store.security.jwt.JwtRequestFilter;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfiguration {
     private final UserService userService;
     private final JwtRequestFilter jwtRequestFilter;
+
+    @Autowired
+    public SecurityConfiguration(@Lazy UserService userService, JwtRequestFilter jwtRequestFilter) {
+        this.userService = userService;
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -50,21 +55,18 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 .requestMatchers(
-                                        "/cart", "/catalog/{categoryId}/{itemId}/newReview",
-                                        "/catalog/{categoryId}/newCartElement", "/catalog/{categoryId}/{itemId}/newCartElement", "/cart/updateCartElement", "/cart/deleteCartElement", "/cart/placeAnOrder"
+                                        "/cart/**", "/reviews/newReview"
                                 ).hasRole("USER")
                                 .requestMatchers(
-                                        "/catalog/{categoryId}/newCategory", "/catalog/{categoryId}/updateCategory", "/catalog/deleteCategory",
-                                        "/catalog/{categoryId}/newItem", "/catalog/{categoryId}/{itemId}/updateItem", "/catalog/{categoryId}/deleteItem","/catalog/{categoryId}/{itemId}/deleteItem",
-                                        "/catalog/allFeatures/**", "/catalog/{categoryId}/newFeature", "/catalog/{categoryId}/updateFeature", "/catalog/{categoryId}/deleteFeature",
-                                        "/catalog/{categoryId}/{itemId}/newReview", "/catalog/{categoryId}/{itemId}/deleteReview"
+                                        "/categories/newCategory", "/categories/updateCategory", "/categories/{categoryId}/deleteCategory",
+                                        "/items/newItem", "/items/updateItem", "/items/{itemId}/deleteItem",
+                                        "/features/**", "/reviews/{reviewId}/deleteReview"
                                 ).hasRole("ADMIN")
                                 .requestMatchers(
-                                        "/profile", "/profile/updateUserInfo"
+                                        "/profile/**"
                                 ).hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(
-                                        "/registration", "/authentication",
-                                        "/catalog", "/catalog/{categoryId}", "/catalog/{categoryId}/{itemId}"
+                                        "/registration","/authentication", "/main", "/categories/{categoryId}", "/items/{itemId}"
                                 ).permitAll())
                 .sessionManagement(
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

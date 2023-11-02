@@ -3,6 +3,7 @@ databaseChangeLog:
       id: categoryFeatureTableEnrichment
       author: Nikita Trifonov
       changes:
+# Характеристики категории "Все смартфоны"
         - insert:
             tableName: category_feature
             columns:
@@ -20,15 +21,6 @@ databaseChangeLog:
                   value: 3
               - column:
                   name: feature_id
-                  value: 2
-        - insert:
-            tableName: category_feature
-            columns:
-              - column:
-                  name: category_id
-                  value: 3
-              - column:
-                  name: feature_id
                   value: 3
         - insert:
             tableName: category_feature
@@ -38,7 +30,9 @@ databaseChangeLog:
                   value: 3
               - column:
                   name: feature_id
-                  value: 10
+                  value: 4
+
+# Характеристики категории "Внешние аккумуляторы"
         - insert:
             tableName: category_feature
             columns:
@@ -47,22 +41,24 @@ databaseChangeLog:
                   value: 7
               - column:
                   name: feature_id
-                  value: 4
+                  value: 2
         - insert:
             tableName: category_feature
             columns:
               - column:
                   name: category_id
-                  value: 8
+                  value: 7
               - column:
                   name: feature_id
                   value: 5
+
+# Характеристики категории "Кабели"
         - insert:
             tableName: category_feature
             columns:
               - column:
                   name: category_id
-                  value: 8
+                  value: 9
               - column:
                   name: feature_id
                   value: 6
@@ -71,7 +67,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: category_id
-                  value: 8
+                  value: 9
               - column:
                   name: feature_id
                   value: 7
@@ -84,12 +80,33 @@ databaseChangeLog:
               - column:
                   name: feature_id
                   value: 8
+
+# Характеристики категории "Сетевые зарядные устройства"
         - insert:
             tableName: category_feature
             columns:
               - column:
                   name: category_id
-                  value: 9
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 5
+        - insert:
+            tableName: category_feature
+            columns:
+              - column:
+                  name: category_id
+                  value: 10
               - column:
                   name: feature_id
                   value: 9
+        - insert:
+            tableName: category_feature
+            columns:
+              - column:
+                  name: category_id
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 10
+

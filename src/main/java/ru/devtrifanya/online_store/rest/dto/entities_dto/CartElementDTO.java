@@ -12,5 +12,5 @@ public class CartElementDTO {
     private int itemId;
 
     @Min(value = 1, message = "В корзине не может быть меньше одного товара")
-    private int itemCount;
+    private int quantity;
 }

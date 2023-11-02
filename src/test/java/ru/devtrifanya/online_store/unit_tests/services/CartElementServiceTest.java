@@ -20,197 +20,207 @@ import ru.devtrifanya.online_store.repositories.CartElementRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
 public class CartElementServiceTest {
+
+    private static final int USER_ID = 1;
+    private static final int ITEM_ID = 1;
+    private static final int CART_ELEMENT_ID = 1;
+    private static final int CART_SIZE = 3;
+    private static final int ITEM_QUANTITY = 2;
+
     @Mock
-    private UserService userService;
+    private UserService userServiceMock;
     @Mock
-    private ItemService itemService;
+    private ItemService itemServiceMock;
     @Mock
-    private CartElementRepository cartElementRepository;
+    private CartElementRepository cartElementRepoMock;
 
     @InjectMocks
-    private CartElementService cartElementService;
-
-    private int userId = 1;
-    private int itemId = 1;
-
-    private int cartElementId = 1;
-    private int savedCartElementId = 1;
-
-    private int cartSize = 3;
-
-    private User foundUser = new User(userId, "name", "surname", "email@mail.ru", "ROLE_USER");
-    private Item foundItem = new Item(itemId, "found", "m1", 100, 1, "d1", 1);
-
-    private CartElement cartElementToSave = new CartElement(0, 2);
-    private CartElement updatedCartElement = new CartElement(cartElementId, 3);
-    private CartElement foundCartElement = new CartElement(cartElementId, 3, foundUser, foundItem);
-
-
-    private List<CartElement> cartElements = List.of(
-            new CartElement(10, 10),
-            new CartElement(11, 11),
-            new CartElement(12, 12)
-    );
+    private CartElementService testingService;
 
     @Test
     public void getCartSizeByUserId_shouldReturnCorrectSize() {
-        // Определение поведения mock-объектов
-        Mockito.when(cartElementRepository.countAllByUserId(userId))
-                .thenReturn(cartSize);
+        // Given
+        mockCountAllByUserId();
 
-        // Выполнение тестируемого метода
-        int resultCartSize = cartElementService.getCartSizeByUserId(userId);
+        // When
+        int resultCartSize = testingService.getCartSizeByUserId(USER_ID);
 
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(cartElementRepository).countAllByUserId(userId);
-        Assertions.assertEquals(cartSize, resultCartSize);
+        // Then
+        Mockito.verify(cartElementRepoMock).countAllByUserId(USER_ID);
+        Assertions.assertEquals(CART_SIZE, resultCartSize);
     }
 
     @Test
     public void getCartElement_cartElementIsExist_shouldReturnCartElement() {
-        // Определение поведения mock-объектов
-        Mockito.when(cartElementRepository.findById(cartElementId))
-                .thenReturn(Optional.of(foundCartElement));
+        // Given
+        mockFindById_exist();
 
-        // Выполнение тестируемого метода
-        CartElement resultElement = cartElementService.getCartElement(cartElementId);
+        // When
+        CartElement resultElement = testingService.getCartElement(CART_ELEMENT_ID);
 
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(cartElementRepository).findById(cartElementId);
-        Assertions.assertEquals(foundCartElement, resultElement);
+        // Then
+        Mockito.verify(cartElementRepoMock).findById(CART_ELEMENT_ID);
+        Assertions.assertEquals(getCartElement(CART_ELEMENT_ID, USER_ID, ITEM_ID), resultElement);
     }
 
     @Test
     public void getCartElement_cartElementIsNotExist_shouldThrowException() {
-        // Определение поведения mock-объектов
-        Mockito.when(cartElementRepository.findById(cartElementId))
-                .thenReturn(Optional.empty());
+        // Given
+        mockFindById_notExist();
 
-        // Выполнение тестируемого метода и проверка совпадения ожидаемых результатов с реальными
-        Assertions.assertThrows(
-                NotFoundException.class,
-                () -> cartElementService.getCartElement(cartElementId)
-        );
-        Mockito.verify(cartElementRepository).findById(cartElementId);
+        // When // Then
+        Assertions.assertThrows(NotFoundException.class, () -> testingService.getCartElement(CART_ELEMENT_ID));
     }
 
     @Test
     public void getCartElementsByUserId() {
-        // Определение поведения mock-объектов
-        Mockito.when(cartElementRepository.findAllByUserId(userId))
-                .thenReturn(cartElements);
+        // Given
+        mockFindAllByUserId();
 
-        // Выполнение тестируемого метода
-        List<CartElement> resultList = cartElementService.getCartElementsByUserId(userId);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(cartElementRepository).findAllByUserId(userId);
-        Assertions.assertIterableEquals(cartElements, resultList);
+        // When
+        List<CartElement> resultList = testingService.getCartElementsByUserId(USER_ID);
+
+        // Then
+        Mockito.verify(cartElementRepoMock).findAllByUserId(USER_ID);
+        Assertions.assertIterableEquals(getCartElements(), resultList);
     }
 
     @Test
-    public void createNewCartElement_shouldAssignId() {
-        // Определение поведения mock-объектов
-        createNewCartElement_determineBehaviorOfMocks();
+    public void createNewCartElement_shouldAssignIdUserAndItem() {
+        // Given
+        CartElement cartElementToSave = getCartElement(0);
+        mockGetUser();
+        mockGetItem();
+        mockSaveNew();
 
-        // Выполнение тестируемого метода
-        CartElement resultCartElement = cartElementService.createNewCartElement(cartElementToSave, userId, itemId);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(cartElementRepository).save(cartElementToSave);
+        // When
+        CartElement resultCartElement = testingService.createNewCartElement(cartElementToSave, USER_ID, ITEM_ID);
+
+        // Then
+        Mockito.verify(cartElementRepoMock).save(cartElementToSave);
+        Mockito.verify(userServiceMock).getUser(USER_ID);
+        Mockito.verify(itemServiceMock).getItem(ITEM_ID);
         Assertions.assertNotNull(resultCartElement.getId());
+        Assertions.assertEquals(getUser(USER_ID), resultCartElement.getUser());
+        Assertions.assertEquals(getItem(ITEM_ID), resultCartElement.getItem());
     }
 
-    @Test
-    public void createNewCartElement_shouldAssignUser() {
-        // Определение поведения mock-объектов
-        createNewCartElement_determineBehaviorOfMocks();
-
-        // Выполнение тестируемого метода
-        CartElement resultCartElement = cartElementService.createNewCartElement(cartElementToSave, userId, itemId);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(userService).getUser(userId);
-        Assertions.assertEquals(foundUser, resultCartElement.getUser());
-    }
 
     @Test
-    public void createNewCartElement_shouldAssignItem() {
-        // Определение поведения mock-объектов
-        createNewCartElement_determineBehaviorOfMocks();
+    public void updateCartElement_shouldAssignNewQuantityOnly() {
+        // Given
+        CartElement updatedCartElement = getCartElement(CART_ELEMENT_ID);
+        mockFindById_exist();
+        mockSaveUpdated();
 
-        // Выполнение тестируемого метода
-        CartElement resultCartElement = cartElementService.createNewCartElement(cartElementToSave, userId, itemId);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(itemService).getItem(itemId);
-        Assertions.assertEquals(foundItem, resultCartElement.getItem());
-    }
+        // When
+        CartElement resultElement = testingService.updateCartElement(updatedCartElement);
 
-    @Test
-    public void updateCartElement_shouldAssignNewQuantity() {
-        // Определение поведения mock-объектов
-        updateCartElement_determineBehaviorOfMocks();
+        // Then
+        Mockito.verify(cartElementRepoMock).findById(CART_ELEMENT_ID);
+        Mockito.verify(cartElementRepoMock).save(any(CartElement.class));
+        Assertions.assertEquals(updatedCartElement.getQuantity(), resultElement.getQuantity());
+        Assertions.assertEquals(getUser(USER_ID), resultElement.getUser());
+        Assertions.assertEquals(getItem(ITEM_ID), resultElement.getItem());
 
-        // Выполнение тестируемого метода
-        CartElement resultElement = cartElementService.updateCartElement(updatedCartElement);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(cartElementRepository).findById(cartElementId);
-        Assertions.assertEquals(updatedCartElement.getItemQuantity(), resultElement.getItemQuantity());
-    }
 
-    @Test
-    public void updateCartElement_shouldNotChangeUser() {
-        // Определение поведения mock-объектов
-        updateCartElement_determineBehaviorOfMocks();
-
-        // Выполнение тестируемого метода
-        CartElement resultElement = cartElementService.updateCartElement(updatedCartElement);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(cartElementRepository).findById(cartElementId);
-        Assertions.assertEquals(foundCartElement.getUser(), resultElement.getUser());
-    }
-
-    @Test
-    public void updateCartElement_shouldNotChangeItem() {
-        // Определение поведения mock-объектов
-        updateCartElement_determineBehaviorOfMocks();
-
-        // Выполнение тестируемого метода
-        CartElement resultElement = cartElementService.updateCartElement(updatedCartElement);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(cartElementRepository).findById(cartElementId);
-        Assertions.assertEquals(foundCartElement.getItem(), resultElement.getItem());
     }
 
     @Test
     public void deleteCartElement_shouldInvokeDeleteById() {
-        // Выполнение тестируемого метода
-        cartElementService.deleteCartElement(cartElementId);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(cartElementRepository).deleteById(cartElementId);
+        // When
+        testingService.deleteCartElement(CART_ELEMENT_ID);
+
+        // Then
+        Mockito.verify(cartElementRepoMock).deleteById(CART_ELEMENT_ID);
     }
 
 
+    // Определение поведения mock-объектов.
 
-    public void createNewCartElement_determineBehaviorOfMocks() {
-        Mockito.when(userService.getUser(userId))
-                .thenReturn(foundUser);
-        Mockito.when(itemService.getItem(itemId))
-                .thenReturn(foundItem);
+    private void mockCountAllByUserId() {
+        Mockito.when(cartElementRepoMock.countAllByUserId(USER_ID))
+                .thenReturn(CART_SIZE);
+    }
+
+    private void mockFindById_exist() {
+        Mockito.doAnswer(invocationOnMock -> Optional.of(getCartElement(invocationOnMock.getArgument(0), USER_ID, ITEM_ID)))
+                .when(cartElementRepoMock).findById(anyInt());
+    }
+
+    private void mockFindById_notExist() {
+        Mockito.when(cartElementRepoMock.findById(anyInt()))
+                .thenReturn(Optional.empty());
+    }
+
+    private void mockFindAllByUserId() {
+        Mockito.when(cartElementRepoMock.findAllByUserId(USER_ID))
+                .thenReturn(getCartElements());
+    }
+
+    private void mockSaveNew() {
         Mockito.doAnswer(
                 invocationOnMock -> {
                     CartElement cartElement = invocationOnMock.getArgument(0);
-                    cartElement.setId(savedCartElementId);
+                    cartElement.setId(CART_ELEMENT_ID);
                     return cartElement;
-                }).when(cartElementRepository).save(any(CartElement.class));
+                }).when(cartElementRepoMock).save(any(CartElement.class));
     }
 
-    public void updateCartElement_determineBehaviorOfMocks() {
-        Mockito.when(cartElementRepository.findById(cartElementId))
-                .thenReturn(Optional.of(foundCartElement));
+    private void mockSaveUpdated() {
         Mockito.doAnswer(invocationOnMock -> invocationOnMock.getArgument(0))
-                .when(cartElementRepository).save(any(CartElement.class));
+                .when(cartElementRepoMock).save(any(CartElement.class));
+    }
+
+    private void mockGetUser() {
+        Mockito.doAnswer(invocationOnMock -> getUser(invocationOnMock.getArgument(0)))
+                .when(userServiceMock).getUser(anyInt());
+    }
+
+    private void mockGetItem() {
+        Mockito.doAnswer(invocationOnMock -> getItem(invocationOnMock.getArgument(0)))
+                .when(itemServiceMock).getItem(anyInt());
+    }
+
+
+    // Вспомогательные методы.
+
+    private CartElement getCartElement(int elementId) {
+        return new CartElement()
+                .setId(elementId)
+                .setQuantity(ITEM_QUANTITY);
+    }
+
+    private CartElement getCartElement(int elementId, int userId, int itemId) {
+        return new CartElement()
+                .setId(elementId)
+                .setQuantity(ITEM_QUANTITY)
+                .setUser(getUser(userId))
+                .setItem(getItem(itemId));
+    }
+
+    private User getUser(int userId) {
+        return new User()
+                .setId(userId);
+    }
+
+    private Item getItem(int itemId) {
+        return new Item()
+                .setId(itemId);
+    }
+
+    private List<CartElement> getCartElements() {
+        return new ArrayList<>(List.of(
+                new CartElement().setId(11),
+                new CartElement().setId(12),
+                new CartElement().setId(13)
+        ));
     }
 }

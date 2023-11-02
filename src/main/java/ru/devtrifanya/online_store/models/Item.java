@@ -3,13 +3,14 @@ package ru.devtrifanya.online_store.models;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
 @Entity
-@NoArgsConstructor
 @Table(name = "item")
+@Accessors(chain = true)
 public class Item {
     @Id
     @Column(name = "id")
@@ -54,14 +55,4 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
     private List<ItemImage> itemImages;
-
-    public Item(int id, String name, String manufacturer, double price, int quantity, String description, double rating) {
-        this.id = id;
-        this.name = name;
-        this.manufacturer = manufacturer;
-        this.price = price;
-        this.quantity = quantity;
-        this.description = description;
-        this.rating = rating;
-    }
 }

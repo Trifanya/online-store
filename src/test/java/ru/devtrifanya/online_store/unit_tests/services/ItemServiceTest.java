@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.models.Review;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
@@ -23,302 +22,258 @@ import ru.devtrifanya.online_store.services.specifications.ItemSpecificationCons
 
 import java.util.*;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 
 @Data
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTest {
+
+    private static final int ITEM_ID = 1;
+    private static final int UPDATED_ITEM_ID = 2;
+    private static final int CATEGORY_ID = 1;
+    private static final int PAGE_NUMBER = 0;
+    private static final int ITEMS_PER_PAGE = 3;
+    private static final int NEW_REVIEW_RATING = 5;
+    private static final int ITEM_QUANTITY = 5;
+    private static final int ITEM_TO_BUY_QUANTITY = 3;
+
+    private static final double DEFAULT_RATING = 0;
+
+    private static final String SORT_BY = "id";
+    private static final String SORT_DIR_ASC = "ASC";
+    private static final String SORT_DIR_DESC = "DESC";
+    private static final String SORT_DIR_NONE = "NONE";
+
     @Mock
-    private CategoryService categoryService;
+    private CategoryService categoryServiceMock;
     @Mock
-    private ItemSpecificationConstructor specificationConstructor;
+    private ItemSpecificationConstructor sConstructorMock;
     @Mock
-    private ItemRepository itemRepository;
+    private ItemRepository itemRepoMock;
 
     @InjectMocks
-    private ItemService itemService;
-
-    private int itemId = 1;
-    private int updatedItemId = 1;
-    private int itemToDeleteId = 1;
-
-    private int categoryId = 1;
-
-    private int pageNumber = 0;
-    private int itemsPerPage = 3;
-    private int newReviewRating = 5;
-    private int itemToBuyQuantity = 3;
-
-    private String sortBy = "id";
-    private String sortDir = "ASC";
-
-    private Item item = new Item(itemId, "found", "m1", 100, 1, "d1", 1);
-    private Item itemToSave = new Item(0, "new", "m2", 200, 2, "d2", 2);
-    private Item updatedItem = new Item(updatedItemId, "updated", "m3", 300, 3, "d3", 3);
-
-    private Category foundCategory = new Category(categoryId, "found");
-
-    private List<Item> items = List.of(
-            new Item(10, "item10", "m10", 1000, 10, "d10", 4),
-            new Item(11, "item11", "m11", 1100, 11, "d11", 5)
-    );
-
-    private Map<String, String> filters = Map.of(
-                    "pageNumber", "pageNumberValue",
-                    "itemsPerPage", "itemsPerPageValue",
-                    "sortBy", "sortByValue",
-                    "sortDir", "sortDirValue",
-                    "someKey", "someValue"
-    );
+    private ItemService testingService;
 
     @Test
     public void getItem_itemIsExist_shouldReturnItem() {
-        // Определение поведения mock-объектов
-        Mockito.when(itemRepository.findById(itemId))
-                .thenReturn(Optional.of(item));
+        // Given
+        mockFindById_exist();
 
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.getItem(itemId);
+        // When
+        Item resultItem = testingService.getItem(ITEM_ID);
 
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(itemRepository).findById(itemId);
-        Assertions.assertEquals(item, resultItem);
+        // Then
+        Mockito.verify(itemRepoMock).findById(ITEM_ID);
+        Assertions.assertEquals(getItem(ITEM_ID, DEFAULT_RATING, CATEGORY_ID), resultItem);
     }
 
     @Test
     public void getItem_itemIsNotExist() {
-        // Определение поведения mock-объектов
-        Mockito.when(itemRepository.findById(itemId))
-                .thenReturn(Optional.empty());
+        // Given
+        mockFindById_notExist();
 
-        // Выполнение тестируемого метода и проверка совпадения ожидаемых вызовов методов с реальными
-        Assertions.assertThrows(
-                NotFoundException.class,
-                () -> itemService.getItem(itemId)
-        );
-        Mockito.verify(itemRepository).findById(itemId);
+        // When // Then
+        Assertions.assertThrows(NotFoundException.class, () -> testingService.getItem(ITEM_ID));
     }
 
     @Test
     public void getFilteredItems_shouldPassCorrectFiltersToSpecificationConstructor() {
-        // Ожидаемые результаты
-        Map<String, String> expectedFilters = new HashMap<>();
-        expectedFilters.put("someKey", filters.get("someKey"));
+        // Given
+        Map<String, String> expectedFilters = Map.of("someKey", "someValue");
+        mockGetCategory();
+        mockFindAll();
 
-        // Определение поведения mock-объектов
-        getFilteredItems_determineBehaviourOfMocks();
-
-        // Выполнение тестируемого метода
-        List<Item> resultItems = itemService.getFilteredItems(
-                categoryId, new HashMap<>(filters), pageNumber, itemsPerPage, sortBy, sortDir
+        // When
+        List<Item> resultItems = testingService.getFilteredItems(
+                CATEGORY_ID, getFilters(), PAGE_NUMBER, ITEMS_PER_PAGE, SORT_BY, SORT_DIR_ASC
         );
 
-        ArgumentCaptor<Map<String, String>> filtersCaptor = ArgumentCaptor.forClass(HashMap.class);
-
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(categoryService).getCategory(categoryId);
-        Mockito.verify(specificationConstructor).createItemSpecification(eq(foundCategory), filtersCaptor.capture());
-        Assertions.assertIterableEquals(expectedFilters.entrySet(), filtersCaptor.getValue().entrySet());
+        // Then
+        Mockito.verify(categoryServiceMock).getCategory(CATEGORY_ID);
+        Mockito.verify(sConstructorMock).createItemSpecification(getCategory(CATEGORY_ID), expectedFilters);
     }
 
     @Test
     public void getFilteredItems_shouldReturnListOfItems() {
-        Specification<Item> itemSpecification = null;
+        // Given
+        mockGetCategory();
+        mockFindAll();
 
-        // Определение поведения mock-объектов
-        getFilteredItems_determineBehaviourOfMocks();
-
-        // Выполнение тестируемого метода
-        List<Item> resultItems = itemService.getFilteredItems(
-                categoryId, new HashMap<>(filters), pageNumber, itemsPerPage, sortBy, sortDir
+        // When
+        List<Item> resultItems = testingService.getFilteredItems(
+                CATEGORY_ID, getFilters(), PAGE_NUMBER, ITEMS_PER_PAGE, SORT_BY, SORT_DIR_ASC
         );
 
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(itemRepository).findAll(
-                itemSpecification,
+        // Then
+        Mockito.verify(itemRepoMock).findAll(
+                (Specification<Item>) null,
                 PageRequest.of(
-                        pageNumber,
-                        itemsPerPage,
-                        Sort.by(Sort.Direction.valueOf(sortDir), sortBy)
+                        PAGE_NUMBER,
+                        ITEMS_PER_PAGE,
+                        Sort.by(Sort.Direction.valueOf(SORT_DIR_ASC), SORT_BY)
                 ));
-        Assertions.assertIterableEquals(items, resultItems);
+        Assertions.assertIterableEquals(getItems(), resultItems);
     }
 
     @Test
     public void reduceItemQuantity() {
-        // Ожидаемые результаты
-        int expectedQuantity = item.getQuantity() - itemToBuyQuantity;
+        // Given
+        mockFindById_exist();
+        mockSaveUpdated();
 
-        // Определения поведения mock-объектов
-        Mockito.when(itemRepository.findById(itemId))
-                .thenReturn(Optional.of(item));
-        Mockito.when(itemRepository.save(item))
-                .thenReturn(item);
+        // When
+        Item resultItem = testingService.reduceItemQuantity(ITEM_ID, ITEM_TO_BUY_QUANTITY);
 
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.reduceItemQuantity(itemId, itemToBuyQuantity);
-
-        // Проверка совпадения ожидаемых вызовов методов с реальными
-        Mockito.verify(itemRepository).findById(itemId);
-        Mockito.verify(itemRepository).save(item);
-        // Проверка совпадения ожидаемого результата с реальным
-        Assertions.assertEquals(expectedQuantity, resultItem.getQuantity());
+        // Then
+        Mockito.verify(itemRepoMock).findById(ITEM_ID);
+        Mockito.verify(itemRepoMock).save(any(Item.class));
+        Assertions.assertEquals(ITEM_QUANTITY - ITEM_TO_BUY_QUANTITY, resultItem.getQuantity());
     }
 
     @Test
-    public void createNewItem_shouldAssignId() {
-        // Определение поведения mock-объектов
-        createNewItem_determineBehaviourOfMocks();
+    public void createNewItem_shouldAssignIdAndZeroRatingAndCategory() {
+        // Given
+        Item itemToSave = getItem(ITEM_ID);
+        mockGetCategory();
+        mockSaveNew();
 
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.createNewItem(itemToSave, categoryId);
+        // When
+        Item resultItem = testingService.createNewItem(itemToSave, CATEGORY_ID);
 
-        // Проверка совпадения ожидаемых вызовов методов с реальными
-        Mockito.verify(categoryService).getCategory(categoryId);
-        Mockito.verify(itemRepository).save(itemToSave);
-        // Проверка совпадения ожидаемых результатов с реальными
+        // Then
+        Mockito.verify(categoryServiceMock).getCategory(CATEGORY_ID);
+        Mockito.verify(itemRepoMock).save(itemToSave);
         Assertions.assertNotNull(resultItem.getId());
-        Assertions.assertTrue(resultItem.getRating() == 0);
-        Assertions.assertEquals(foundCategory, resultItem.getCategory());
+        Assertions.assertEquals(DEFAULT_RATING, resultItem.getRating());
+        Assertions.assertEquals(getCategory(CATEGORY_ID), resultItem.getCategory());
     }
 
     @Test
-    public void createNewItem_shouldAssignCategory() {
-        // Определение поведения mock-объектов
-        createNewItem_determineBehaviourOfMocks();
+    public void updateItem_shouldAssignCategoryAndNotChangeRating() {
+        // Given
+        Item updatedItem = getItem(UPDATED_ITEM_ID);
+        mockFindById_exist();
+        mockGetCategory();
+        mockSaveUpdated();
 
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.createNewItem(itemToSave, categoryId);
+        // When
+        Item resultItem = testingService.updateItem(updatedItem, CATEGORY_ID);
 
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(categoryService).getCategory(categoryId);
-        Assertions.assertEquals(foundCategory, resultItem.getCategory());
-    }
-
-    @Test
-    public void createNewItem_shouldAssignZeroRating() {
-        // Определение поведения mock-объектов
-        createNewItem_determineBehaviourOfMocks();
-
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.createNewItem(itemToSave, categoryId);
-
-        // Проверка совпадения ожидаемых результатов с реальными
-        Assertions.assertTrue(resultItem.getRating() == 0);
-    }
-
-    @Test
-    public void updateItemInfo_shouldNotChangeRating() {
-        // Определение поведения mock-объектов
-        updateItemInfo_determineBehaviourOfMocks();
-
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.updateItemInfo(updatedItem, categoryId);
-
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(itemRepository).findById(updatedItemId);
-        Assertions.assertEquals(item.getRating(), resultItem.getRating());
-    }
-
-    @Test
-    public void updateItemInfo_shouldAssignCategory() {
-        // Определение поведения mock-объектов
-        updateItemInfo_determineBehaviourOfMocks();
-
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.updateItemInfo(updatedItem, categoryId);
-
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(categoryService).getCategory(categoryId);
-        Assertions.assertNotNull(resultItem.getId());
-        Assertions.assertEquals(foundCategory, resultItem.getCategory());
-    }
-
-    @Test
-    public void updateItemInfo_shouldSaveUpdatedItem() {
-        // Определение поведения mock-объектов
-        updateItemInfo_determineBehaviourOfMocks();
-
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.updateItemInfo(updatedItem, categoryId);
-
-        // Проверка совпадения ожидаемых результатов с реальными
-        Mockito.verify(itemRepository).save(updatedItem);
+        // Then
+        Mockito.verify(itemRepoMock).findById(UPDATED_ITEM_ID);
+        Mockito.verify(categoryServiceMock).getCategory(CATEGORY_ID);
+        Mockito.verify(itemRepoMock).save(updatedItem);
+        Assertions.assertEquals(DEFAULT_RATING, resultItem.getRating());
+        Assertions.assertEquals(getCategory(CATEGORY_ID), resultItem.getCategory());
     }
 
     @Test
     public void updateItemRating_shouldRecalculateRatingAndSaveUpdatedItem() {
-        Item item = new Item();
-        item.setId(itemId);
-        item.setRating(1);
-        item.setReviews(List.of(new Review(1, 1, "comment")));
+        // Given
+        mockFindById_exist();
+        mockSaveUpdated();
 
-        double expectedRating = 3.0;
+        // When
+        Item resultItem = testingService.updateItemRating(ITEM_ID, NEW_REVIEW_RATING);
 
-        // Определение поведения mock-объектов
-        Mockito.when(itemRepository.findById(itemId))
-                .thenReturn(Optional.of(item));
-        Mockito.doAnswer(invocationOnMock -> invocationOnMock.getArgument(0))
-                .when(itemRepository).save(any(Item.class));
-
-        // Выполнение тестируемого метода
-        Item resultItem = itemService.updateItemRating(itemId, newReviewRating);
-
-        // Проверка совпадения ожидаемых вызовов методов с реальными
-        Mockito.verify(itemRepository).findById(itemId);
-        Mockito.verify(itemRepository).save(any(Item.class));
-        Assertions.assertEquals(expectedRating, resultItem.getRating());
+        // Then
+        Mockito.verify(itemRepoMock).findById(ITEM_ID);
+        Mockito.verify(itemRepoMock).save(any(Item.class));
+        Assertions.assertEquals(NEW_REVIEW_RATING, resultItem.getRating());
     }
 
     @Test
     public void deleteItem() {
-        // Выполнение тестируемого метода
-        itemService.deleteItem(itemToDeleteId);
+        // When
+        testingService.deleteItem(ITEM_ID);
 
-        // Проверка совпадения ожидаемых вызовов методов с реальными
-        Mockito.verify(itemRepository).deleteById(itemToDeleteId);
+        // Then
+        Mockito.verify(itemRepoMock).deleteById(ITEM_ID);
     }
 
 
+    // Определение поведения mock-объектов.
 
-    public void getFilteredItems_determineBehaviourOfMocks() {
-        Specification<Item> itemSpecification = null;
+    private void mockFindById_exist() {
+        Mockito.doAnswer(
+                invocationOnMock -> Optional.of(
+                        getItem(invocationOnMock.getArgument(0), DEFAULT_RATING, CATEGORY_ID)
+                )).when(itemRepoMock).findById(anyInt());
+    }
 
-        Mockito.when(categoryService.getCategory(categoryId))
-                .thenReturn(foundCategory);
+    private void mockFindById_notExist() {
+         Mockito.when(itemRepoMock.findById(anyInt()))
+                 .thenReturn(Optional.empty());
+    }
 
-        Mockito.when(specificationConstructor.createItemSpecification(eq(foundCategory), any(HashMap.class)))
-                .thenReturn(itemSpecification);
-
-        Mockito.when(itemRepository.findAll(
-                itemSpecification,
+    private void mockFindAll() {
+        Mockito.when(itemRepoMock.findAll(
+                (Specification<Item>) null,
                 PageRequest.of(
-                        pageNumber,
-                        itemsPerPage,
-                        Sort.by(Sort.Direction.valueOf(sortDir), sortBy)
-                ))).thenReturn(new PageImpl<>(items));
+                        PAGE_NUMBER,
+                        ITEMS_PER_PAGE,
+                        Sort.by(Sort.Direction.valueOf(SORT_DIR_ASC), SORT_BY)
+                ))).thenReturn(new PageImpl<>(getItems()));
     }
 
-    public void createNewItem_determineBehaviourOfMocks() {
-        Mockito.when(categoryService.getCategory(categoryId))
-                .thenReturn(foundCategory);
+    private void mockSaveNew() {
         Mockito.doAnswer(
                 invocationOnMock -> {
                     Item item = invocationOnMock.getArgument(0);
-                    item.setId(1);
+                    item.setId(ITEM_ID);
                     return item;
-                }
-        ).when(itemRepository).save(itemToSave);
+                }).when(itemRepoMock).save(any(Item.class));
     }
 
-    public void updateItemInfo_determineBehaviourOfMocks() {
-        Mockito.when(itemRepository.findById(updatedItemId))
-                .thenReturn(Optional.of(item));
-        Mockito.when(categoryService.getCategory(categoryId))
-                .thenReturn(foundCategory);
-        Mockito.when(itemRepository.save(updatedItem))
-                .thenReturn(updatedItem);
+    private void mockSaveUpdated() {
+        Mockito.doAnswer(invocationOnMock -> invocationOnMock.getArgument(0))
+                .when(itemRepoMock).save(any(Item.class));
+    }
+
+    private void mockGetCategory() {
+        Mockito.doAnswer(invocationOnMock -> getCategory(invocationOnMock.getArgument(0)))
+                .when(categoryServiceMock).getCategory(CATEGORY_ID);
+    }
+
+
+    // Вспомогательные методы.
+
+    private Item getItem(int itemId) {
+        return new Item()
+                .setId(itemId)
+                .setQuantity(ITEM_QUANTITY);
+    }
+
+    private Item getItem(int itemId, double rating, int categoryId) {
+        return new Item()
+                .setId(itemId)
+                .setQuantity(ITEM_QUANTITY)
+                .setRating(rating)
+                .setCategory(getCategory(categoryId))
+                .setReviews(new ArrayList<>());
+    }
+
+    private Category getCategory(int categoryId) {
+        return new Category()
+                .setId(categoryId);
+    }
+
+    private List<Item> getItems() {
+        return List.of(
+                new Item().setId(11),
+                new Item().setId(12),
+                new Item().setId(13)
+        );
+    }
+
+    private Map<String, String> getFilters() {
+        return new HashMap<>(Map.of(
+                "pageNumber", "pageNumberValue",
+                "itemsPerPage", "itemsPerPageValue",
+                "sortBy", "sortByValue",
+                "sortDir", "sortDirValue",
+                "someKey", "someValue"
+        ));
     }
 }
 

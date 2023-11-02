@@ -1,0 +1,9 @@
+services:
+  db_pg_16:
+    image: postgres:16rc1
+    environment:
+      POSTGRES_DB: online_shop_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Goalie_climber62
+    ports:
+      - 5432

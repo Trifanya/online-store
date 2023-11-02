@@ -6,13 +6,12 @@ import org.springframework.stereotype.Component;
 
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
-import ru.devtrifanya.online_store.repositories.CartElementRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.exceptions.OutOfStockException;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
+import ru.devtrifanya.online_store.repositories.CartElementRepository;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.PlaceAnOrderRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteFromCartRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCartElementRequest;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class CartValidator {
      * Валидация запроса на изменение количества товаров в корзине.
      */
     public void performUpdatedElementValidation(AddOrUpdateCartElementRequest request) {
-        validateItemQuantity(request.getCartElement().getItemId(), request.getCartElement().getItemCount());
+        validateItemQuantity(request.getCartElement().getItemId(), request.getCartElement().getQuantity());
     }
 
     /**
@@ -42,13 +41,6 @@ public class CartValidator {
      */
     public void performOrderValidation(PlaceAnOrderRequest request) {
         validateEnoughQuantity(request.getCartContent());
-    }
-
-    /**
-     * Валидация запроса на удаление товара из корзины.
-     */
-    public void performDeleteFromCartValidation(DeleteFromCartRequest request) {
-        validateNotExist(request.getCartElementToDeleteId());
     }
 
     /**
@@ -88,7 +80,7 @@ public class CartValidator {
                     .orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));
             if (item.getQuantity() == 0) {
                 throw new OutOfStockException("Товара нет в наличии.");
-            } else if (item.getQuantity() < cartElement.getItemCount()) {
+            } else if (item.getQuantity() < cartElement.getQuantity()) {
                 throw new OutOfStockException("Недостаточно товара в наличии.");
             }
         }

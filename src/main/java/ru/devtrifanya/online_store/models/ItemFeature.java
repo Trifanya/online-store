@@ -3,11 +3,12 @@ package ru.devtrifanya.online_store.models;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
 @Entity
-@NoArgsConstructor
-@Table(name = "itemFeature")
+@Accessors(chain = true)
+@Table(name = "item_feature")
 public class ItemFeature {
     @Id
     @Column(name = "id")
@@ -27,9 +28,4 @@ public class ItemFeature {
     @ManyToOne
     @JoinColumn(name = "feature_id", referencedColumnName = "id")
     private Feature feature;
-
-    public ItemFeature(int id, String stringValue) {
-        this.id = id;
-        this.stringValue = stringValue;
-    }
 }

@@ -3,20 +3,21 @@ package ru.devtrifanya.online_store.rest.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import ru.devtrifanya.online_store.models.User;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteFromCartRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.PlaceAnOrderRequest;
-import ru.devtrifanya.online_store.services.CartElementService;
-import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCartElementRequest;
-import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.validators.CartValidator;
 import ru.devtrifanya.online_store.services.ItemService;
+import ru.devtrifanya.online_store.services.CartElementService;
+import ru.devtrifanya.online_store.rest.validators.CartValidator;
+import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
+import ru.devtrifanya.online_store.rest.dto.requests.PlaceAnOrderRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCartElementRequest;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/cart")
 public class CartController {
     private final ItemService itemService;
     private final CartElementService cartElementService;
@@ -29,26 +30,24 @@ public class CartController {
      * Адрес: .../cart/placeAnOrder
      * Оформление заказа, только для пользователя.
      */
-    @PostMapping("/cart/placeAnOrder")
+    @PostMapping("/placeAnOrder")
     public ResponseEntity<?> placeAnOrder(@RequestBody @Valid PlaceAnOrderRequest request) {
         cartValidator.performOrderValidation(request);
 
-        for (CartElementDTO cartElement : request.getCartContent()) {
-            itemService.reduceItemQuantity(cartElement.getItemId(), cartElement.getItemCount()); // уменьшение количества купленного товара
-            cartElementService.deleteCartElement(cartElement.getId()); // удаление купленного товара из корзины
-        }
+        request.getCartContent().stream()
+                .forEach(cartElementDTO -> {
+                    itemService.reduceItemQuantity(cartElementDTO.getItemId(), cartElementDTO.getQuantity());
+                    cartElementService.deleteCartElement(cartElementDTO.getId());
+                });
 
         return ResponseEntity.ok("Заказ успешно оформлен.");
     }
 
     /**
-     * Адрес: .../catalog/{categoryId}/itemId}/newCartElement
+     * Адрес: .../cart/newCartElement
      * Добавление товара в корзину, только для пользователя.
      */
-    @PostMapping({
-            "/catalog/{categoryId}/newCartElement",
-            "/catalog/{categoryId}/{itemId}/newCartElement"
-    })
+    @PostMapping("/newCartElement")
     public ResponseEntity<?> createNewCartElement(@RequestBody @Valid AddOrUpdateCartElementRequest request,
                                                   @AuthenticationPrincipal User user) {
         cartValidator.performNewElementValidation(request, user.getId());
@@ -66,26 +65,22 @@ public class CartController {
      * Адрес: .../cart/updateCartElement
      * Изменение количества товара в корзине, только для пользователя.
      */
-    @PatchMapping("/cart/updateCartElement")
+    @PatchMapping("/updateCartElement")
     public ResponseEntity<?> updateCartElement(@RequestBody @Valid AddOrUpdateCartElementRequest request) {
         cartValidator.performUpdatedElementValidation(request);
 
-        cartElementService.updateCartElement(
-                converter.convertToCartElement(request.getCartElement())
-        );
+        cartElementService.updateCartElement(converter.convertToCartElement(request.getCartElement()));
 
         return ResponseEntity.ok("Количество товара в корзине успешно изменено.");
     }
 
     /**
-     * Адрес: .../cart/deleteCartElement
+     * Адрес: .../cart/{cartElementId}/deleteCartElement
      * Удаление товара из корзины, только для пользователей.
      */
-    @DeleteMapping("/cart/deleteCartElement")
-    public ResponseEntity<String> deleteCartElement(@RequestBody DeleteFromCartRequest request) {
-        cartValidator.performDeleteFromCartValidation(request);
-
-        cartElementService.deleteCartElement(request.getCartElementToDeleteId());
+    @DeleteMapping("/{cartElementId}/deleteCartElement")
+    public ResponseEntity<String> deleteCartElement(@PathVariable("cartElementId") int cartElementToDeleteId) {
+        cartElementService.deleteCartElement(cartElementToDeleteId);
 
         return ResponseEntity.ok("Товар успешно удален из корзины.");
     }

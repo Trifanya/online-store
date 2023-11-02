@@ -4,32 +4,30 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import ru.devtrifanya.online_store.models.Category;
-import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteCategoryRequest;
+import ru.devtrifanya.online_store.services.FeatureService;
+import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.CategoryValidator;
-import ru.devtrifanya.online_store.rest.validators.FeatureValidator;
-import ru.devtrifanya.online_store.services.CategoryService;
-import ru.devtrifanya.online_store.services.FeatureService;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/catalog")
+@RequestMapping("/categories")
 public class CategoryController {
     private final FeatureService featureService;
     private final CategoryService categoryService;
 
-    private final FeatureValidator featureValidator;
     private final CategoryValidator categoryValidator;
 
     private final MainClassConverter converter;
 
     /**
-     * Адрес: .../catalog/{categoryId}/newCategory
+     * Адрес: .../categories/newCategory
      * Добавление новой категории товаров, только для администратора.
      */
-    @PostMapping("/{categoryId}/newCategory")
+    @PostMapping("/newCategory")
     public ResponseEntity<?> createNewCategory(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
         categoryValidator.performNewCategoryValidation(request);
 
@@ -51,10 +49,10 @@ public class CategoryController {
     }
 
     /**
-     * Адрес: .../catalog/{categoryId}/updateCategory
-     * Обновление информации о категории товаров, только для администратора.
+     * Адрес: .../categories/updateCategory
+     * Обновление категории товаров, только для администратора.
      */
-    @PatchMapping("/{categoryId}/updateCategory")
+    @PatchMapping("/updateCategory")
     public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
         categoryValidator.performUpdatedCategoryValidation(request);
 
@@ -76,12 +74,12 @@ public class CategoryController {
     }
 
     /**
-     * Адрес: .../catalog/deleteCategory
+     * Адрес: .../categories/{categoryId}/deleteCategory
      * Удаление категории товаров, только для администратора.
      */
-    @DeleteMapping("/deleteCategory")
-    public ResponseEntity<String> deleteCategory(@RequestBody @Valid DeleteCategoryRequest request) {
-        categoryService.deleteCategory(request.getCategoryToDeleteId());
+    @DeleteMapping("/{categoryId}/deleteCategory")
+    public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") int categoryToDeleteId) {
+        categoryService.deleteCategory(categoryToDeleteId);
         return ResponseEntity.ok("Категория успешно удалена.");
     }
 }

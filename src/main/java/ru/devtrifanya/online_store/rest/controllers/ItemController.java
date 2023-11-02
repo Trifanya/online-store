@@ -4,44 +4,44 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
-import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteItemRequest;
-import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.validators.ItemValidator;
+import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.services.ImageService;
 import ru.devtrifanya.online_store.services.ItemFeatureService;
-import ru.devtrifanya.online_store.services.ItemService;
+import ru.devtrifanya.online_store.rest.validators.ItemValidator;
+import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
 
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/catalog/{categoryId}")
+@RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
-    private final ItemFeatureService itemFeatureService;
     private final ImageService imageService;
+    private final ItemFeatureService itemFeatureService;
 
     private final ItemValidator itemValidator;
 
     private final MainClassConverter converter;
 
     /**
-     * Адрес: .../catalog/{categoryId}/newItem
+     * Адрес: .../items/newItem
      * Добавление нового товара, только для администратора.
      */
     @PostMapping("/newItem")
     public ResponseEntity<?> createNewItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
         itemValidator.performNewItemValidation(request);
 
-        // сохранение товара
+        // Сохранение товара
         Item createdItem = itemService.createNewItem(
                 converter.convertToItem(request.getItem()),
                 request.getCategoryId()
         );
-        // сохранение характеристик товара
+        // Сохранение характеристик товара
         for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
             itemFeatureService.createOrUpdateItemFeature(
                     converter.convertToItemFeature(itemFeature.getValue()),
@@ -49,7 +49,7 @@ public class ItemController {
                     itemFeature.getKey()
             );
         }
-        // сохранение изображений товара
+        // Сохранение изображений товара
         request.getItemImages().forEach(
                 image -> imageService.createNewImageIfNotExist(
                         converter.convertToImage(image),
@@ -60,15 +60,15 @@ public class ItemController {
     }
 
     /**
-     * Адрес: .../catalog/{categoryId}/{itemId}/updateItem
+     * Адрес: .../items/updateItem
      * Обновление информации о товаре, только для администратора.
      */
-    @PatchMapping("/{itemId}/updateItem")
-    public ResponseEntity<?> updateItemInfo(@RequestBody @Valid AddOrUpdateItemRequest request) {
+    @PatchMapping("/updateItem")
+    public ResponseEntity<?> updateItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
         itemValidator.performUpdatedItemValidation(request);
 
         // Обновление товара
-        Item updatedItem = itemService.updateItemInfo(
+        Item updatedItem = itemService.updateItem(
                 converter.convertToItem(request.getItem()),
                 request.getCategoryId()
         );
@@ -91,15 +91,12 @@ public class ItemController {
     }
 
     /**
-     * Адрес: .../catalog/{categoryId}/{itemId}/deleteItem
+     * Адрес: .../items/{itemId}/deleteItem
      * Удаление товара, только для администратора.
      */
-    @DeleteMapping({
-            "/deleteItem",
-            "/{itemId}/deleteItem"
-    })
-    public ResponseEntity<String> deleteItem(@RequestBody @Valid DeleteItemRequest request) {
-        itemService.deleteItem(request.getItemToDeleteId());
+    @DeleteMapping("/{itemId}/deleteItem")
+    public ResponseEntity<String> deleteItem(@PathVariable("itemId") int itemToDeleteId) {
+        itemService.deleteItem(itemToDeleteId);
         return ResponseEntity.ok("Товар успешно удален.");
     }
 }

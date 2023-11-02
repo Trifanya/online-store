@@ -5,9 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
-@AllArgsConstructor
+@Accessors(chain = true)
 public class SignInRequest {
     @Email(message = "Необходимо указать корректный email.")
     @NotBlank(message = "Для входа в аккаунт необходимо ввести email.")

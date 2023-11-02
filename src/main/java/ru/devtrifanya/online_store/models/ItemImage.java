@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "image_for_item")
+@Accessors(chain = true)
 public class ItemImage {
     @Id
     @Column(name = "id")
@@ -28,9 +28,4 @@ public class ItemImage {
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     private List<Item> items;
-
-    public ItemImage(int id, String url) {
-        this.id = id;
-        this.url = url;
-    }
 }

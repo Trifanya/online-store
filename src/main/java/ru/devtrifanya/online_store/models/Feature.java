@@ -3,13 +3,14 @@ package ru.devtrifanya.online_store.models;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
 @Entity
-@NoArgsConstructor
 @Table(name = "feature")
+@Accessors(chain = true)
 public class Feature {
     @Id
     @Column(name = "id")
@@ -35,11 +36,4 @@ public class Feature {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
-
-    public Feature(int id, String name, String requestParamName, String unit) {
-        this.id = id;
-        this.name = name;
-        this.requestParamName = requestParamName;
-        this.unit = unit;
-    }
 }

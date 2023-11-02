@@ -84,7 +84,7 @@ public class CategoryService {
     }
 
     /**
-     * Обновление связей между категориями.
+     * Обновление связей между категориями при перемещении категории в дереве.
      */
     private Category updateRelationsOfReplacingCategory(Category updatedCategory, int prevParentId, int newParentId) {
         Category prevParent = getCategory(prevParentId);

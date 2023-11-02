@@ -10,8 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.models.Review;
 import ru.devtrifanya.online_store.models.User;
+import ru.devtrifanya.online_store.models.Review;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.services.UserService;
 import ru.devtrifanya.online_store.services.ReviewService;
@@ -20,169 +20,223 @@ import ru.devtrifanya.online_store.repositories.ReviewRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
+
+    private static final int ITEM_ID = 1;
+    private static final int USER_ID = 1;
+    private static final int REVIEW_ID = 1;
+    private static final int SAVED_REVIEW_ID = 2;
+
+    private static final int SOSO_RATING = 3;
+    private static final int GOOD_RATING = 4;
+    private static final int PERFECT_RATING = 5;
+
+    private static final String SORT_BY_STARS_ASC = "asc";
+    private static final String SORT_BY_STARS_DESC = "desc";
+    private static final String SORT_BY_STARS_NONE = "none";
+
     @Mock
     private ItemService itemServiceMock;
     @Mock
     private UserService userServiceMock;
     @Mock
-    private ReviewRepository reviewRepositoryMock;
+    private ReviewRepository reviewRepoMock;
 
     @InjectMocks
     private ReviewService testingService;
 
-    private int itemId = 1;
-    private int authorId = 1;
-
-    private int reviewId = 1;
-    private int savedReviewId = 2;
-
-    private final String SORT_BY_STARS_ASC = "asc";
-    private final String SORT_BY_STARS_DESC = "desc";
-    private final String SORT_BY_STARS_NONE = "none";
-
-    private Review foundReview = new Review(reviewId, 1, "c1");
-    private Review reviewToSave = new Review(0, 5, "c2");
-
-    private Item foundItem = new Item(itemId, "found", "m1", 100, 1, "d1", 1.0);
-    private User foundAuthor = new User(authorId, "name", "surname", "email", "ROLE_USER");
-
-    private List<Review> unsortedReviews = new ArrayList<>(
-            List.of(
-                    new Review(11, 1, "c11"),
-                    new Review(12, 3, "c12"),
-                    new Review(13, 2, "c13")
-            ));
-    private List<Review> sortedReviewsAsc = new ArrayList<>(
-            List.of(
-                    new Review(11, 1, "c11"),
-                    new Review(12, 2, "c12"),
-                    new Review(13, 3, "c13")
-            ));
-    private List<Review> sortedReviewsDesc = new ArrayList<>(
-            List.of(
-                    new Review(11, 3, "c11"),
-                    new Review(12, 2, "c12"),
-                    new Review(13, 1, "c13")
-            ));
-
     @Test
     public void getReview_reviewIsExist_shouldReturnReview() {
-        Mockito.when(reviewRepositoryMock.findById(reviewId))
-                .thenReturn(Optional.of(foundReview));
+        // Given
+        mockFindById_exist();
 
-        Review resultReview = testingService.getReview(reviewId);
+        // When
+        Review resultReview = testingService.getReview(REVIEW_ID);
 
-        Mockito.verify(reviewRepositoryMock).findById(reviewId);
-        Assertions.assertEquals(foundReview, resultReview);
+        // Then
+        Mockito.verify(reviewRepoMock).findById(REVIEW_ID);
+        Assertions.assertEquals(getReview(REVIEW_ID, PERFECT_RATING), resultReview);
     }
 
     @Test
     public void getReview_reviewIsNotExist_shouldThrowException() {
-        Mockito.when(reviewRepositoryMock.findById(reviewId))
-                .thenReturn(Optional.empty());
+        // Given
+        mockFindById_notExist();
 
-        Assertions.assertThrows(
-                NotFoundException.class,
-                () -> testingService.getReview(reviewId)
-        );
-        Mockito.verify(reviewRepositoryMock).findById(reviewId);
+        // When // Then
+        Assertions.assertThrows(NotFoundException.class, () -> testingService.getReview(REVIEW_ID));
     }
 
     @Test
-    public void getReviewsByItemId_sortByStarsIsNone() {
-        Mockito.when(reviewRepositoryMock.findByItemId(itemId))
-                .thenReturn(unsortedReviews);
+    public void getReviewsByItemId_sortByStarsIsNone_shouldReturnReviews() {
+        // Given
+        mockFindByItemId();
 
-        List<Review> resultReviews = testingService.getReviewsByItemId(itemId, SORT_BY_STARS_NONE);
+        // When
+        List<Review> resultReviews = testingService.getReviewsByItemId(ITEM_ID, SORT_BY_STARS_NONE);
 
-        Mockito.verify(reviewRepositoryMock).findByItemId(itemId);
-        Assertions.assertIterableEquals(unsortedReviews, resultReviews);
+        // Then
+        Mockito.verify(reviewRepoMock).findByItemId(ITEM_ID);
+        Assertions.assertIterableEquals(getUnsortedReviews(), resultReviews);
     }
 
     @Test
-    public void getReviewsByItemId_sortByStarsIsAsc() {
-        Mockito.when(reviewRepositoryMock.findByItemIdOrderByStarsAsc(itemId))
-                .thenReturn(sortedReviewsAsc);
+    public void getReviewsByItemId_sortByStarsIsAsc_shouldReturnReviewsAsc() {
+        // Given
+        mockFindByItemIdOrderByStarsAsc();
 
-        List<Review> resultReviews = testingService.getReviewsByItemId(itemId, SORT_BY_STARS_ASC);
+        // When
+        List<Review> resultReviews = testingService.getReviewsByItemId(ITEM_ID, SORT_BY_STARS_ASC);
 
-        Mockito.verify(reviewRepositoryMock).findByItemIdOrderByStarsAsc(itemId);
-        Assertions.assertIterableEquals(sortedReviewsAsc, resultReviews);
+        // Then
+        Mockito.verify(reviewRepoMock).findByItemIdOrderByStarsAsc(ITEM_ID);
+        Assertions.assertIterableEquals(getReviewsSortedByStarsAsc(), resultReviews);
     }
 
     @Test
-    public void getReviewsByItemId_sortByStarsIsDesc() {
-        Mockito.when(reviewRepositoryMock.findByItemIdOrderByStarsDesc(itemId))
-                .thenReturn(sortedReviewsDesc);
+    public void getReviewsByItemId_sortByStarsIsDesc_shouldReturnReviewsDesc() {
+        // Given
+        mockFindByItemIdOrderByStarsDesc();
 
-        List<Review> resultReviews = testingService.getReviewsByItemId(itemId, SORT_BY_STARS_DESC);
+        // When
+        List<Review> resultReviews = testingService.getReviewsByItemId(ITEM_ID, SORT_BY_STARS_DESC);
 
-        Mockito.verify(reviewRepositoryMock).findByItemIdOrderByStarsDesc(itemId);
-        Assertions.assertIterableEquals(sortedReviewsDesc, resultReviews);
+        // Then
+        Mockito.verify(reviewRepoMock).findByItemIdOrderByStarsDesc(ITEM_ID);
+        Assertions.assertIterableEquals(getReviewsSortedByStarsDesc(), resultReviews);
     }
 
     @Test
-    public void createNewReview_shouldAssignId() {
-        createNewReview_determineBehaviorOfMocks();
+    public void createNewReview_shouldAssignIdAndUserAndItemAndTimestamp() {
+        // Given
+        Review reviewToSave = getReview(0, PERFECT_RATING);
+        mockUpdateItemRating();
+        mockGetUser();
+        mockSaveNew();
 
-        Review resultReview = testingService.createNewReview(reviewToSave, itemId, authorId);
+        // When
+        Review resultReview = testingService.createNewReview(reviewToSave, ITEM_ID, USER_ID);
 
-        Mockito.verify(reviewRepositoryMock).save(reviewToSave);
+        // Then
+        Mockito.verify(itemServiceMock).updateItemRating(ITEM_ID, PERFECT_RATING);
+        Mockito.verify(userServiceMock).getUser(USER_ID);
+        Mockito.verify(reviewRepoMock).save(reviewToSave);
         Assertions.assertNotNull(resultReview.getId());
-    }
-
-    @Test
-    public void createNewReview_shouldAssignItem() {
-        createNewReview_determineBehaviorOfMocks();
-
-        Review resultReview = testingService.createNewReview(reviewToSave, itemId, authorId);
-
-        Mockito.verify(itemServiceMock).updateItemRating(itemId, reviewToSave.getStars());
-        Assertions.assertEquals(foundItem, resultReview.getItem());
-    }
-
-    @Test
-    public void createNewReview_shouldAssignUser() {
-        createNewReview_determineBehaviorOfMocks();
-
-        Review resultReview = testingService.createNewReview(reviewToSave, itemId, authorId);
-
-        Mockito.verify(userServiceMock).getUser(authorId);
-        Assertions.assertEquals(foundAuthor, resultReview.getUser());
-    }
-
-    @Test
-    public void createNewReview_shouldAssignTimestamp() {
-        createNewReview_determineBehaviorOfMocks();
-
-        Review resultReview = testingService.createNewReview(reviewToSave, itemId, authorId);
-
+        Assertions.assertEquals(getItem(ITEM_ID), resultReview.getItem());
+        Assertions.assertEquals(getUser(USER_ID), resultReview.getUser());
         Assertions.assertNotNull(resultReview.getTimestamp());
+
     }
 
     @Test
     public void deleteReview_shouldInvokeRepoMethod() {
-        testingService.deleteReview(reviewId);
+        // When
+        testingService.deleteReview(REVIEW_ID);
 
-        Mockito.verify(reviewRepositoryMock).deleteById(reviewId);
+        // Then
+        Mockito.verify(reviewRepoMock).deleteById(REVIEW_ID);
     }
 
-    public void createNewReview_determineBehaviorOfMocks() {
-        Mockito.when(itemServiceMock.updateItemRating(itemId, reviewToSave.getStars()))
-                .thenReturn(foundItem);
-        Mockito.when(userServiceMock.getUser(authorId))
-                .thenReturn(foundAuthor);
+
+    // Определение поведения mock-объектов.
+
+    private void mockFindById_exist() {
+        Mockito.doAnswer(invocationOnMock -> Optional.of(getReview(invocationOnMock.getArgument(0), PERFECT_RATING)))
+                .when(reviewRepoMock).findById(anyInt());
+    }
+
+    private void mockFindById_notExist() {
+        Mockito.when(reviewRepoMock.findById(anyInt()))
+                .thenReturn(Optional.empty());
+    }
+
+    private void mockFindByItemId() {
+        Mockito.when(reviewRepoMock.findByItemId(anyInt()))
+                .thenReturn(getUnsortedReviews());
+    }
+
+    private void mockFindByItemIdOrderByStarsAsc() {
+        Mockito.when(reviewRepoMock.findByItemIdOrderByStarsAsc(anyInt()))
+                .thenReturn(getReviewsSortedByStarsAsc());
+    }
+
+    private void mockFindByItemIdOrderByStarsDesc() {
+        Mockito.when(reviewRepoMock.findByItemIdOrderByStarsDesc(anyInt()))
+                .thenReturn(getReviewsSortedByStarsDesc());
+    }
+
+    private void mockSaveNew() {
         Mockito.doAnswer(
                 invocationOnMock -> {
                     Review review = invocationOnMock.getArgument(0);
-                    review.setId(savedReviewId);
+                    review.setId(SAVED_REVIEW_ID);
                     return review;
-                }).when(reviewRepositoryMock).save(any(Review.class));
+                }).when(reviewRepoMock).save(any(Review.class));
+    }
+
+    private void mockGetUser() {
+        Mockito.doAnswer(invocationOnMock -> getUser(invocationOnMock.getArgument(0)))
+                .when(userServiceMock).getUser(anyInt());
+    }
+
+    private void mockUpdateItemRating() {
+        Mockito.doAnswer(invocationOnMock -> getItem(invocationOnMock.getArgument(0)))
+                .when(itemServiceMock).updateItemRating(anyInt(), anyInt());
+    }
+
+
+    // Вспомогательные методы.
+
+    private Review getReview(int reviewId, int stars) {
+        return new Review()
+                .setId(reviewId)
+                .setStars(stars);
+    }
+
+    private Review getReview(int stars, int userId, int itemId) {
+        return new Review()
+                .setId(REVIEW_ID)
+                .setStars(stars)
+                .setUser(getUser(userId))
+                .setItem(getItem(itemId));
+    }
+
+    private User getUser(int userId) {
+        return new User()
+                .setId(userId);
+    }
+
+    private Item getItem(int itemId) {
+        return new Item()
+                .setId(itemId);
+    }
+
+    private List<Review> getUnsortedReviews() {
+        return List.of(
+                new Review().setStars(GOOD_RATING),
+                new Review().setStars(SOSO_RATING),
+                new Review().setStars(PERFECT_RATING)
+        );
+    }
+
+    private List<Review> getReviewsSortedByStarsAsc() {
+        return List.of(
+                new Review().setStars(SOSO_RATING),
+                new Review().setStars(GOOD_RATING),
+                new Review().setStars(PERFECT_RATING)
+        );
+    }
+
+    private List<Review> getReviewsSortedByStarsDesc() {
+        return List.of(
+                new Review().setStars(PERFECT_RATING),
+                new Review().setStars(GOOD_RATING),
+                new Review().setStars(SOSO_RATING)
+        );
     }
 }

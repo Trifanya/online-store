@@ -3,6 +3,7 @@ databaseChangeLog:
       id: linkTableCategoryRelationEnrichment
       author: Nikita Trifonov
       changes:
+# Отношения с корнем дерева категорий
         - insert:
             tableName: category_relation
             columns:
@@ -12,6 +13,17 @@ databaseChangeLog:
               - column:
                   name: parent_id
                   value: 1
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 13
+              - column:
+                  name: parent_id
+                  value: 1
+
+# Отношения категории "Смартфоны и аксессуары"
         - insert:
             tableName: category_relation
             columns:
@@ -30,6 +42,8 @@ databaseChangeLog:
               - column:
                   name: parent_id
                   value: 2
+
+# Отношения категории "Аксессуары для смартфонов"
         - insert:
             tableName: category_relation
             columns:
@@ -65,7 +79,9 @@ databaseChangeLog:
                   value: 8
               - column:
                   name: parent_id
-                  value: 5
+                  value: 4
+
+# Отношения категории "Зарядные устройства"
         - insert:
             tableName: category_relation
             columns:
@@ -75,3 +91,52 @@ databaseChangeLog:
               - column:
                   name: parent_id
                   value: 5
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 10
+              - column:
+                  name: parent_id
+                  value: 5
+
+# Отношения категории "Наушники"
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 11
+              - column:
+                  name: parent_id
+                  value: 8
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 12
+              - column:
+                  name: parent_id
+                  value: 8
+
+# Отношения категории "Аудиотехника"
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 8
+              - column:
+                  name: parent_id
+                  value: 13
+        - insert:
+            tableName: category_relation
+            columns:
+              - column:
+                  name: child_id
+                  value: 14
+              - column:
+                  name: parent_id
+                  value: 13

@@ -3,19 +3,20 @@ databaseChangeLog:
       id: itemTableEnrichment
       author: Nikita Trifonov
       changes:
-        # id = 1
+# Товары категории "Все смартфоны"
+        # iPhone 15 Pro Max Black Titanium (id = 1)
         - insert:
             tableName: item
             columns:
               - column:
                   name: name
-                  value: "Смартфон Apple iPhone 14 Pro 128GB Space Black"
+                  value: "Смартфон Apple iPhone 15 Pro Max 512GB Black Titanium (Dual Sim)"
               - column:
                   name: manufacturer
                   value: Apple
               - column:
                   name: price
-                  value: 117000
+                  value: 225000
               - column:
                   name: quantity
                   value: 3
@@ -28,23 +29,142 @@ databaseChangeLog:
               - column:
                   name: rating
                   value: 0
-        # id = 2
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 1
+              - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: string_value
+                  value: "6.7 inches"
+              - column:
+                  name: numeric_value
+                  value: 6.7
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 1
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: string_value
+                  value: "IOS"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 1
+              - column:
+                  name: feature_id
+                  value: 4
+              - column:
+                  name: string_value
+                  value: "512 ГБ"
+              - column:
+                  name: numeric_value
+                  value: 512
+
+        # iPhone 15 Pro Black (id = 2)
         - insert:
             tableName: item
             columns:
               - column:
                   name: name
-                  value: "Смартфон Apple iPhone 14 Pro 128GB Silver"
+                  value: "Смартфон Apple iPhone 15 Pro 256GB Black Titanium"
               - column:
                   name: manufacturer
                   value: Apple
               - column:
                   name: price
-                  value: 109000
+                  value: 180000
               - column:
                   name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 3
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
                   value: 2
               - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: string_value
+                  value: "6.1 inches"
+              - column:
+                  name: numeric_value
+                  value: 6.1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 2
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: string_value
+                  value: "IOS"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 2
+              - column:
+                  name: feature_id
+                  value: 4
+              - column:
+                  name: string_value
+                  value: "256 ГБ"
+              - column:
+                  name: numeric_value
+                  value: 256
+
+        # iPhone 15 Plus Black (id = 3)
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфон Apple iPhone 15 Plus 256GB Black"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 155000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
                   name: description
                   value: У данного товара пока нет описания
               - column:
@@ -53,48 +173,214 @@ databaseChangeLog:
               - column:
                   name: rating
                   value: 0
-        # id = 3
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 3
+              - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: string_value
+                  value: "6.7 inches"
+              - column:
+                  name: numeric_value
+                  value: 6.7
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 3
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: string_value
+                  value: "IOS"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 3
+              - column:
+                  name: feature_id
+                  value: 4
+              - column:
+                  name: string_value
+                  value: "256 ГБ"
+              - column:
+                  name: numeric_value
+                  value: 256
+
+        # iPhone 15 Black (id = 4)
         - insert:
             tableName: item
             columns:
               - column:
                   name: name
-                  value: "Смартфон Samsung Galaxy S22 256GB"
+                  value: "Смартфон Apple iPhone 15 128GB Black"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 130000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 3
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 4
+              - column:
+                  name: feature_id
+                  value: 1
+              - column:
+                  name: string_value
+                  value: "6.1 inches"
+              - column:
+                  name: numeric_value
+                  value: 6.1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 4
+              - column:
+                  name: feature_id
+                  value: 3
+              - column:
+                  name: string_value
+                  value: "IOS"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 4
+              - column:
+                  name: feature_id
+                  value: 4
+              - column:
+                  name: string_value
+                  value: "128 ГБ"
+              - column:
+                  name: numeric_value
+                  value: 128
+
+        # Samsung Galaxy S23 (id = 5)
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфон Samsung Galaxy S22 Ultra 256GB Phant.Black"
               - column:
                   name: manufacturer
                   value: Samsung
               - column:
                   name: price
-                  value: 87000
+                  value: 110000
               - column:
                   name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 3
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 5
+              - column:
+                  name: feature_id
                   value: 1
               - column:
-                  name: description
-                  value: У данного товара пока нет описания
+                  name: string_value
+                  value: "6.8 inches"
               - column:
-                  name: category_id
-                  value: 3
-              - column:
-                  name: rating
-                  value: 0
-        # id = 4
+                  name: numeric_value
+                  value: 6.8
         - insert:
-            tableName: item
+            tableName: item_feature
             columns:
               - column:
-                  name: name
-                  value: "Смартфон Xiomi 13 128GB"
+                  name: item_id
+                  value: 5
               - column:
-                  name: manufacturer
-                  value: Xiomi
+                  name: feature_id
+                  value: 3
               - column:
-                  name: price
-                  value: 63000
+                  name: string_value
+                  value: "Android"
               - column:
-                  name: quantity
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 5
+              - column:
+                  name: feature_id
                   value: 4
               - column:
+                  name: string_value
+                  value: "256 ГБ"
+              - column:
+                  name: numeric_value
+                  value: 256
+
+        # Xiomi 13T Pro 16 (id = 6)
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Смартфон Xiomi 13T Pro 16/1024GB Black"
+              - column:
+                  name: manufacturer
+                  value: "Xiomi"
+              - column:
+                  name: price
+                  value: 93000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
                   name: description
                   value: У данного товара пока нет описания
               - column:
@@ -103,122 +389,71 @@ databaseChangeLog:
               - column:
                   name: rating
                   value: 0
-        # id = 5
+        # Характеристики товара
         - insert:
-            tableName: item
+            tableName: item_feature
             columns:
               - column:
-                  name: name
-                  value: "Кабель Apple Type-C"
+                  name: item_id
+                  value: 6
               - column:
-                  name: manufacturer
-                  value: Apple
+                  name: feature_id
+                  value: 1
               - column:
-                  name: price
-                  value: 500
+                  name: string_value
+                  value: "6.67 inches"
               - column:
-                  name: quantity
-                  value: 8
-              - column:
-                  name: description
-                  value: У данного товара пока нет описания
-              - column:
-                  name: category_id
-                  value: 8
-              - column:
-                  name: rating
-                  value: 0
-        # id = 6
+                  name: numeric_value
+                  value: 6.67
         - insert:
-            tableName: item
+            tableName: item_feature
             columns:
               - column:
-                  name: name
-                  value: "Кабель Apple Lightning"
+                  name: item_id
+                  value: 6
               - column:
-                  name: manufacturer
-                  value: Apple
+                  name: feature_id
+                  value: 3
               - column:
-                  name: price
-                  value: 800
+                  name: string_value
+                  value: "Android"
               - column:
-                  name: quantity
-                  value: 7
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
               - column:
-                  name: description
-                  value: У данного товара пока нет описания
+                  name: item_id
+                  value: 6
               - column:
-                  name: category_id
-                  value: 8
+                  name: feature_id
+                  value: 4
               - column:
-                  name: rating
-                  value: 0
+                  name: string_value
+                  value: "1024 ГБ"
+              - column:
+                  name: numeric_value
+                  value: 1024
+
+
+# Товары категории "Защита и поддержка"
         # id = 7
         - insert:
             tableName: item
             columns:
               - column:
                   name: name
-                  value: "Сетевое зарядное устройство Apple USB"
+                  value: "Защитное стекло Deppa 2.5D Full Glue iPhone 15 Pro Max"
               - column:
                   name: manufacturer
-                  value: Apple
+                  value: Deppa
               - column:
                   name: price
-                  value: 500
+                  value: 1000
               - column:
                   name: quantity
-                  value: 9
-              - column:
-                  name: description
-                  value: У данного товара пока нет описания
-              - column:
-                  name: category_id
-                  value: 9
-              - column:
-                  name: rating
-                  value: 0
-        # id = 8
-        - insert:
-            tableName: item
-            columns:
-              - column:
-                  name: name
-                  value: "Сетевое зарядное устройство Samsung USB-C"
-              - column:
-                  name: manufacturer
-                  value: Samsung
-              - column:
-                  name: price
-                  value: 480
-              - column:
-                  name: quantity
-                  value: 7
-              - column:
-                  name: description
-                  value: У данного товара пока нет описания
-              - column:
-                  name: category_id
-                  value: 9
-              - column:
-                  name: rating
-                  value: 0
-        # id = 9
-        - insert:
-            tableName: item
-            columns:
-              - column:
-                  name: name
-                  value: "Стекло защитное Apple для iPhone 14 Pro Max"
-              - column:
-                  name: manufacturer
-                  value: Apple
-              - column:
-                  name: price
-                  value: 6500
-              - column:
-                  name: quantity
-                  value: 3
+                  value: 5
               - column:
                   name: description
                   value: У данного товара пока нет описания
@@ -228,6 +463,59 @@ databaseChangeLog:
               - column:
                   name: rating
                   value: 0
+        # id = 8
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Защитное стекло для смартфона Pero Full Glue Privacy iPhone 15 Pro"
+              - column:
+                  name: manufacturer
+                  value: Deppa
+              - column:
+                  name: price
+                  value: 990
+              - column:
+                  name: quantity
+                  value: 5
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 6
+              - column:
+                  name: rating
+                  value: 0
+        # id = 9
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Защитное стекло vlp для Samsung Galaxy S23 Ultra"
+              - column:
+                  name: manufacturer
+                  value: vlp
+              - column:
+                  name: price
+                  value: 800
+              - column:
+                  name: quantity
+                  value: 5
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 6
+              - column:
+                  name: rating
+                  value: 0
+
+
+# Товары категории "Внешние аккумуляторы"
         # id = 10
         - insert:
             tableName: item
@@ -240,7 +528,7 @@ databaseChangeLog:
                   value: Xiomi
               - column:
                   name: price
-                  value: 400
+                  value: 7540
               - column:
                   name: quantity
                   value: 6
@@ -253,3 +541,534 @@ databaseChangeLog:
               - column:
                   name: rating
                   value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 2
+              - column:
+                  name: string_value
+                  value: "20000 мАч"
+              - column:
+                  name: numeric_value
+                  value: 20000
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 5
+              - column:
+                  name: string_value
+                  value: "Да"
+              - column:
+                  name: numeric_value
+                  value: -1
+        # id = 11
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Внешний аккумулятор TFN Power Box 60000 mAh Black (TFN-PB-304-BK)"
+              - column:
+                  name: manufacturer
+                  value: TFN
+              - column:
+                  name: price
+                  value: 8000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 7
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 2
+              - column:
+                  name: string_value
+                  value: "60000 мАч"
+              - column:
+                  name: numeric_value
+                  value: 60000
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 10
+              - column:
+                  name: feature_id
+                  value: 5
+              - column:
+                  name: string_value
+                  value: "Да"
+              - column:
+                  name: numeric_value
+                  value: -1
+
+# Товары категории "Проводные наушники"
+        # id = 12
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Наушники внутриканальные Apple EarPods with Lightning Connector"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 2700
+              - column:
+                  name: quantity
+                  value: 8
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 11
+              - column:
+                  name: rating
+                  value: 0
+        # id = 13
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Наушники внутриканальные JBL T110 Black"
+              - column:
+                  name: manufacturer
+                  value: JBL
+              - column:
+                  name: price
+                  value: 1300
+              - column:
+                  name: quantity
+                  value: 8
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 11
+              - column:
+                  name: rating
+                  value: 0
+        # id = 14
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Наушники внутриканальные Sony MDR-EX15AP Black"
+              - column:
+                  name: manufacturer
+                  value: Sony
+              - column:
+                  name: price
+                  value: 1300
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 11
+              - column:
+                  name: rating
+                  value: 0
+
+# Товары категории "Беспроводные наушники"
+        # id = 15
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Наушники Apple AirPods 3rd generation"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 19500
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 12
+              - column:
+                  name: rating
+                  value: 0
+        # id = 16
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Наушники True Wireless realme Buds Air 3 Starry Blue"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 5000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 12
+              - column:
+                  name: rating
+                  value: 0
+        # id = 17
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Наушники Apple AirPods Pro 2nd generation"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 25000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 12
+              - column:
+                  name: rating
+                  value: 0
+
+# Товары категории "Кабели"
+        # id = 18
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Кабель Lightning Apple USB-C to Lightning Cable 1m"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 3000
+              - column:
+                  name: quantity
+                  value: 8
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 9
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 18
+              - column:
+                  name: feature_id
+                  value: 6
+              - column:
+                  name: string_value
+                  value: "100 см"
+              - column:
+                  name: numeric_value
+                  value: 100
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 18
+              - column:
+                  name: feature_id
+                  value: 7
+              - column:
+                  name: string_value
+                  value: "Lightning"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 18
+              - column:
+                  name: feature_id
+                  value: 8
+              - column:
+                  name: string_value
+                  value: "USB-C"
+              - column:
+                  name: numeric_value
+                  value: -1
+        # id = 19
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Кабель Apple Lightning to USB 1m"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 2400
+              - column:
+                  name: quantity
+                  value: 7
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 9
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 19
+              - column:
+                  name: feature_id
+                  value: 6
+              - column:
+                  name: string_value
+                  value: "100 см"
+              - column:
+                  name: numeric_value
+                  value: 100
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 19
+              - column:
+                  name: feature_id
+                  value: 7
+              - column:
+                  name: string_value
+                  value: "Lightning"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 19
+              - column:
+                  name: feature_id
+                  value: 8
+              - column:
+                  name: string_value
+                  value: "USB"
+              - column:
+                  name: numeric_value
+                  value: -1
+
+# Товары категории "Сетевые зарядные устройства"
+        # id = 20
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Сетевое зарядное устройство Apple 20W USB-C Power Adapter"
+              - column:
+                  name: manufacturer
+                  value: Apple
+              - column:
+                  name: price
+                  value: 3000
+              - column:
+                  name: quantity
+                  value: 3
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 10
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 20
+              - column:
+                  name: feature_id
+                  value: 5
+              - column:
+                  name: string_value
+                  value: "Да"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 20
+              - column:
+                  name: feature_id
+                  value: 9
+              - column:
+                  name: string_value
+                  value: "USB-C"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 20
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: string_value
+                  value: "20 Вт"
+              - column:
+                  name: numeric_value
+                  value: 18
+        # id = 21 ...
+        - insert:
+            tableName: item
+            columns:
+              - column:
+                  name: name
+                  value: "Сетевое зарядное устройство TFN Type-C PD 33W White"
+              - column:
+                  name: manufacturer
+                  value: TFN
+              - column:
+                  name: price
+                  value: 1400
+              - column:
+                  name: quantity
+                  value: 7
+              - column:
+                  name: description
+                  value: У данного товара пока нет описания
+              - column:
+                  name: category_id
+                  value: 10
+              - column:
+                  name: rating
+                  value: 0
+        # Характеристики товара
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 21
+              - column:
+                  name: feature_id
+                  value: 5
+              - column:
+                  name: string_value
+                  value: "Да"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 20
+              - column:
+                  name: feature_id
+                  value: 9
+              - column:
+                  name: string_value
+                  value: "USB-C"
+              - column:
+                  name: numeric_value
+                  value: -1
+        - insert:
+            tableName: item_feature
+            columns:
+              - column:
+                  name: item_id
+                  value: 20
+              - column:
+                  name: feature_id
+                  value: 10
+              - column:
+                  name: string_value
+                  value: "33 Вт"
+              - column:
+                  name: numeric_value
+                  value: 33
+
+

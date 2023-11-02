@@ -4,18 +4,17 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Category;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
+import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.repositories.FeatureRepository;
 import ru.devtrifanya.online_store.repositories.CategoryRepository;
-import ru.devtrifanya.online_store.exceptions.NotFoundException;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
+import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.exceptions.UnavailableActionException;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteItemRequest;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
 
 import java.util.Map;
 

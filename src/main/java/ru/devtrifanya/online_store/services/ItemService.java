@@ -90,7 +90,7 @@ public class ItemService {
     /**
      * Обновление информации о товаре.
      */
-    public Item updateItemInfo(Item updatedItem, int categoryId) {
+    public Item updateItem(Item updatedItem, int categoryId) {
         Item oldItem = getItem(updatedItem.getId());
         Category category = categoryService.getCategory(categoryId);
 

@@ -4,11 +4,10 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
-import ru.devtrifanya.online_store.repositories.ReviewRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
+import ru.devtrifanya.online_store.repositories.ReviewRepository;
 import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.rest.dto.requests.AddReviewRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteReviewRequest;
 
 @Component
 @RequiredArgsConstructor
@@ -20,13 +19,6 @@ public class ReviewValidator {
      */
     public void performNewReviewValidation(AddReviewRequest request, int userId) {
         validateReviewIsNotExist(request.getItemId(), userId);
-    }
-
-    /**
-     * Валидация запроса на удаление отзыва.
-     */
-    public void performDeleteReviewValidation(DeleteReviewRequest request) {
-        validateReviewIsExist(request.getReviewToDeleteId());
     }
 
     /**

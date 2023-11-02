@@ -3,6 +3,7 @@ package ru.devtrifanya.online_store.services;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.models.CartElement;
@@ -65,7 +66,7 @@ public class CartElementService {
      */
     public CartElement updateCartElement(CartElement updatedElement) {
         CartElement elementToUpdate = getCartElement(updatedElement.getId());
-        elementToUpdate.setItemQuantity(updatedElement.getItemQuantity());
+        elementToUpdate.setQuantity(updatedElement.getQuantity());
 
         return cartElementRepository.save(elementToUpdate);
     }

@@ -4,15 +4,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteFeatureRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.AddFeatureRequest;
+
+import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.FeatureValidator;
-import ru.devtrifanya.online_store.services.FeatureService;
+import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateFeatureRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/catalog/allFeatures")
+@RequestMapping("/features")
 public class FeatureController {
     private final FeatureService featureService;
 
@@ -20,31 +20,38 @@ public class FeatureController {
 
     private final MainClassConverter converter;
 
+    /**
+     * Адрес: .../features/newFeature
+     * Добавление новой характеристики, только для администратора.
+     */
     @PostMapping("/newFeature")
-    public ResponseEntity<?> createNewFeature(@RequestBody @Valid AddFeatureRequest request) {
+    public ResponseEntity<?> createNewFeature(@RequestBody @Valid AddOrUpdateFeatureRequest request) {
         validator.performNewFeatureValidation(request.getFeature());
 
-        featureService.createNewFeature(
-                converter.convertToFeature(request.getFeature())
-        );
+        featureService.createNewFeature(converter.convertToFeature(request.getFeature()));
 
         return ResponseEntity.ok("Характеристика успешно добавлена.");
     }
-
+    /**
+     * Адрес: .../features/updateFeature
+     * Обновление характеристики, только для администратора.
+     */
     @PatchMapping("/updateFeature")
-    public ResponseEntity<?> updateFeatureInfo(@RequestBody @Valid AddFeatureRequest request) {
+    public ResponseEntity<?> updateFeatureInfo(@RequestBody @Valid AddOrUpdateFeatureRequest request) {
         validator.performUpdatedFeatureValidation(request.getFeature());
 
-        featureService.updateFeature(
-                converter.convertToFeature(request.getFeature())
-        );
+        featureService.updateFeature(converter.convertToFeature(request.getFeature()));
 
         return ResponseEntity.ok("Характеристика успешно обновлена.");
     }
 
-    @DeleteMapping("/deleteFeature")
-    public ResponseEntity<?> deleteFeature(@RequestBody @Valid DeleteFeatureRequest request) {
-        featureService.deleteFeature(request.getFeatureToDeleteId());
+    /**
+     * Адрес: .../features/{featureId}/deleteFeature
+     * Удаление характеристики, только для администратора.
+     */
+    @DeleteMapping("/{featureId}/deleteFeature")
+    public ResponseEntity<?> deleteFeature(@PathVariable("featureId") int featureToDeleteId) {
+        featureService.deleteFeature(featureToDeleteId);
         return ResponseEntity.ok("Характеристика успешно удалена.");
     }
 }

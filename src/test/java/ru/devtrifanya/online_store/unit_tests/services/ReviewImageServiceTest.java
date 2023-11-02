@@ -16,9 +16,14 @@ import ru.devtrifanya.online_store.services.ReviewImageService;
 import ru.devtrifanya.online_store.repositories.ReviewImageRepository;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewImageServiceTest {
+
+    private static final int IMAGE_ID = 1;
+    private static final int REVIEW_ID = 1;
+
     @Mock
     private ReviewService reviewServiceMock;
     @Mock
@@ -27,48 +32,51 @@ public class ReviewImageServiceTest {
     @InjectMocks
     private ReviewImageService testingService;
 
-    private int reviewId = 1;
-    private int savedImageId = 1;
-
-    private Review foundReview = new Review(reviewId, 5, "c1");
-
-    private ReviewImage imageToSave = new ReviewImage(0, "url1");
 
     @Test
-    public void createNewReviewImage_shouldAssignId() {
-        System.out.println(++reviewId);
-        // Определение поведения mock-объектов
-        createNewReviewImage_determineBehaviorOfMocks();
+    public void createNewReviewImage_shouldAssignIdAndReview() {
+        // Given
+        ReviewImage imageToSave = getImage(IMAGE_ID);
+        mockGetReview();
+        mockSave();
 
-        // Выполнение тестируемого метода
-        ReviewImage resultImage = testingService.createNewReviewImage(imageToSave, reviewId);
-        // Проверка совпадения ожидаемого результата с реальным
+        // When
+        ReviewImage resultImage = testingService.createNewReviewImage(imageToSave, REVIEW_ID);
+
+        // Then
+        Mockito.verify(reviewServiceMock).getReview(REVIEW_ID);
         Mockito.verify(reviewImageRepoMock).save(imageToSave);
         Assertions.assertNotNull(resultImage.getId());
-    }
-
-    @Test
-    public void createNewReviewImage_shouldAssignReview() {
-        System.out.println(reviewId);
-        // Определение поведения mock-объектов
-        createNewReviewImage_determineBehaviorOfMocks();
-
-        // Выполнение тестируемого метода
-        ReviewImage resultImage = testingService.createNewReviewImage(imageToSave, reviewId);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(reviewServiceMock).getReview(reviewId);
-        Assertions.assertEquals(foundReview, resultImage.getReview());
+        Assertions.assertEquals(getReview(REVIEW_ID), resultImage.getReview());
     }
 
 
-    public void createNewReviewImage_determineBehaviorOfMocks() {
-        Mockito.when(reviewServiceMock.getReview(reviewId))
-                .thenReturn(foundReview);
-        Mockito.doAnswer(invocationOnMock -> {
+    // Определение поведения mock-объектов.
+
+    private void mockGetReview() {
+        Mockito.doAnswer(invocationOnMock -> getReview(invocationOnMock.getArgument(0)))
+                        .when(reviewServiceMock).getReview(anyInt());
+    }
+
+    private void mockSave() {
+        Mockito.doAnswer(
+                invocationOnMock -> {
                     ReviewImage image = invocationOnMock.getArgument(0);
-                    image.setId(savedImageId);
+                    image.setId(IMAGE_ID);
                     return image;
                 }).when(reviewImageRepoMock).save(any(ReviewImage.class));
     }
 
+
+    // Вспомогательные методы.
+
+    private ReviewImage getImage(int imageId) {
+        return new ReviewImage()
+                .setId(imageId);
+    }
+
+    private Review getReview(int reviewId) {
+        return new Review()
+                .setId(reviewId);
+    }
 }

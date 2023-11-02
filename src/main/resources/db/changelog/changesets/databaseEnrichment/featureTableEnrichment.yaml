@@ -3,6 +3,7 @@ databaseChangeLog:
       id: featureTableEnrichment
       author: Nikita Trifonov
       changes:
+        # 1
         - insert:
             tableName: feature
             columns:
@@ -14,7 +15,8 @@ databaseChangeLog:
                   value: "diagonal"
               - column:
                   name: unit
-                  value: "см"
+                  value: "inches"
+        # 2
         - insert:
             tableName: feature
             columns:
@@ -27,6 +29,7 @@ databaseChangeLog:
               - column:
                   name: unit
                   value: "мАч"
+        # 3
         - insert:
             tableName: feature
             columns:
@@ -39,78 +42,7 @@ databaseChangeLog:
               - column:
                   name: unit
                   value: null
-        - insert:
-            tableName: feature
-            columns:
-              - column:
-                  name: name
-                  value: "Быстрая зарядка"
-              - column:
-                  name: request_name
-                  value: "quickCharge"
-              - column:
-                  name: unit
-                  value: null
-        - insert:
-            tableName: feature
-            columns:
-              - column:
-                  name: name
-                  value: "Длина кабеля"
-              - column:
-                  name: request_name
-                  value: "cableLength"
-              - column:
-                  name: unit
-                  value: "см"
-        - insert:
-            tableName: feature
-            columns:
-              - column:
-                  name: name
-                  value: "Разъем 1 (разъем заряжаемого устройства)"
-              - column:
-                  name: request_name
-                  value: "socket1"
-              - column:
-                  name: unit
-                  value: null
-        - insert:
-            tableName: feature
-            columns:
-              - column:
-                  name: name
-                  value: "Разъем 2 (разъем источника заряда)"
-              - column:
-                  name: request_name
-                  value: "socket2"
-              - column:
-                  name: unit
-                  value: null
-        - insert:
-            tableName: feature
-            columns:
-              - column:
-                  name: name
-                  value: "Разъем"
-              - column:
-                  name: request_name
-                  value: "socket"
-              - column:
-                  name: unit
-                  value: null
-        - insert:
-            tableName: feature
-            columns:
-              - column:
-                  name: name
-                  value: "Выходная мощность"
-              - column:
-                  name: request_name
-                  value: "outputPower"
-              - column:
-                  name: unit
-                  value: "Вт"
+        # 4
         - insert:
             tableName: feature
             columns:
@@ -123,5 +55,86 @@ databaseChangeLog:
               - column:
                   name: unit
                   value: "ГБ"
+        # 5
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Быстрая зарядка"
+              - column:
+                  name: request_name
+                  value: "quickCharge"
+              - column:
+                  name: unit
+                  value: null
+        # 6
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Длина кабеля"
+              - column:
+                  name: request_name
+                  value: "cableLength"
+              - column:
+                  name: unit
+                  value: "см"
+        # 7
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Разъем 1 (разъем заряжаемого устройства)"
+              - column:
+                  name: request_name
+                  value: "socket1"
+              - column:
+                  name: unit
+                  value: null
+        # 8
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Разъем 2 (разъем источника заряда)"
+              - column:
+                  name: request_name
+                  value: "socket2"
+              - column:
+                  name: unit
+                  value: null
+        # 9
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Разъем"
+              - column:
+                  name: request_name
+                  value: "socket"
+              - column:
+                  name: unit
+                  value: null
+        # 10
+        - insert:
+            tableName: feature
+            columns:
+              - column:
+                  name: name
+                  value: "Выходная мощность"
+              - column:
+                  name: request_name
+                  value: "outputPower"
+              - column:
+                  name: unit
+                  value: "Вт"
+
+
+
 
 

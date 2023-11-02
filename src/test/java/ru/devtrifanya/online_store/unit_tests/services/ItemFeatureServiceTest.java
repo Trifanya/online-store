@@ -24,153 +24,176 @@ import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemFeatureServiceTest {
+
+    private static final int ITEM_ID = 1;
+    private static final int FEATURE_ID = 1;
+    private static final int ITEM_FEATURE_ID = 1;
+
+    private static final double NUMERIC_VALUE = 15.0;
+    private static final double EMPTY_NUMERIC_VALUE = -1.0;
+
+    private static final String UNITS = "inches";
+    private static final String STRING_VALUE_WITH_STRING = "Android";
+    private static final String STRING_VALUE_WITH_NUMBER = "15.0";
+    private static final String FULL_STRING_VALUE_WITH_UNITS = STRING_VALUE_WITH_NUMBER + " " + UNITS;
+
     @Mock
-    private ItemService itemService;
+    private ItemService itemServiceMock;
     @Mock
-    private FeatureService featureService;
+    private FeatureService featureServiceMock;
     @Mock
-    private ItemFeatureRepository itemFeatureRepository;
+    private ItemFeatureRepository itemFeatureRepoMock;
 
     @InjectMocks
-    private ItemFeatureService itemFeatureService;
+    private ItemFeatureService testingService;
 
-    private int itemFeatureId = 1;
-    private int savedItemFeatureId = 2;
-
-    private int itemId = 1;
-
-    private int featureWithNotNullUnitId = 1;
-    private int featureWithNullUnitId = 2;
-
-    private ItemFeature itemFeatureToSaveWithNumericValue = new ItemFeature(0, "1.0");
-    private ItemFeature itemFeatureToSaveWithStringValue = new ItemFeature(0, "sv1");
-    private ItemFeature updatedItemFeature = new ItemFeature(itemFeatureId, "sv2");
-
-    private Item foundItem = new Item(itemId, "found", "m1", 1000, 1, "d1", 1);
-
-    private Feature featureWithNotNullUnit = new Feature(featureWithNotNullUnitId, "found", "found", "units");
-    private Feature featureWithNullUnit = new Feature(featureWithNullUnitId, "found", "found", null);
-
-    private List<ItemFeature> itemFeatures = List.of(
-            new ItemFeature(10, "sv10"),
-            new ItemFeature(11, "sv11"),
-            new ItemFeature(12, "sv12")
-    );
 
     @Test
     public void getItemFeaturesByItemId_shouldInvokeRepoAndReturnFeatures() {
-        // Определение поведения mock-объектов
-        Mockito.when(itemFeatureRepository.findAllByItemId(itemId))
-                .thenReturn(itemFeatures);
+        // Given
+        List<ItemFeature> expectedItemFeatures = getItemFeatures();
+        mockFindAllByItemId();
 
-        // Выполнение тестируемого метода
-        List<ItemFeature> resultFeatures = itemFeatureService.getItemFeaturesByItemId(itemId);
+        // When
+        List<ItemFeature> resultFeatures = testingService.getItemFeaturesByItemId(ITEM_ID);
 
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(itemFeatureRepository).findAllByItemId(itemId);
-        Assertions.assertIterableEquals(itemFeatures, resultFeatures);
+        // Then
+        Mockito.verify(itemFeatureRepoMock).findAllByItemId(ITEM_ID);
+        Assertions.assertIterableEquals(expectedItemFeatures, resultFeatures);
     }
 
     @Test
     public void createOrUpdateItemFeature_create_shouldAssignId() {
-        // Определение поведения mock-объектов
-        createOrUpdateItemFeature_determineBehaviorOfMocks();
-        createOrUpdateItemFeature_determineBehaviorOfSaveMethodWhenSaveNew();
+        // Given
+        ItemFeature itemFeatureToSave = getItemFeatureWithoutId(STRING_VALUE_WITH_STRING);
+        mockGetItem();
+        mockGetFeature(null);
+        mockSaveNew();
 
-        // Проверка совпадения ожидаемых результатов с реальными
-        ItemFeature resultFeature = itemFeatureService.createOrUpdateItemFeature(
-                itemFeatureToSaveWithNumericValue, itemId, itemFeatureId
-        );
-        Mockito.verify(itemFeatureRepository).save(itemFeatureToSaveWithNumericValue);
+        // When
+        ItemFeature resultFeature = testingService.createOrUpdateItemFeature(itemFeatureToSave, ITEM_ID, FEATURE_ID);
+
+        // Then
+        Mockito.verify(itemFeatureRepoMock).save(itemFeatureToSave);
         Assertions.assertNotNull(resultFeature.getId());
     }
 
     @Test
-    public void createOrUpdateItemFeature_update_shouldSaveUpdatedItemFeature() {
-        // Определение поведения mock-объектов
-        createOrUpdateItemFeature_determineBehaviorOfMocks();
-        createOrUpdateItemFeature_determineBehaviorOfSaveMethodWhenSaveUpdated();
+    public void createOrUpdateItemFeature_update_shouldAssignFields() {
+        // Given
+        ItemFeature updatedItemFeature = getItemFeatureWithId(ITEM_FEATURE_ID, STRING_VALUE_WITH_STRING);
+        mockGetItem();
+        mockGetFeature(null);
+        mockSaveUpdated();
 
-        // Проверка совпадения ожидаемых результатов с реальными
-        ItemFeature resultFeature = itemFeatureService.createOrUpdateItemFeature(
-                updatedItemFeature, itemId, featureWithNullUnitId
-        );
-        Mockito.verify(itemFeatureRepository).save(updatedItemFeature);
-    }
+        // When
+        ItemFeature resultFeature = testingService.createOrUpdateItemFeature(updatedItemFeature, ITEM_ID, FEATURE_ID);
 
-    @Test
-    public void createOrUpdateItemFeature_shouldAssignItemAndFeature() {
-        // Определение поведения mock-объектов
-        createOrUpdateItemFeature_determineBehaviorOfMocks();
-        createOrUpdateItemFeature_determineBehaviorOfSaveMethodWhenSaveNew();
-
-        // Проверка совпадения ожидаемых результатов с реальными
-        ItemFeature resultFeature = itemFeatureService.createOrUpdateItemFeature(
-                itemFeatureToSaveWithNumericValue, itemId, featureWithNullUnitId
-        );
-        Mockito.verify(itemService).getItem(itemId);
-        Mockito.verify(featureService).getFeature(featureWithNullUnitId);
-        Assertions.assertEquals(foundItem, resultFeature.getItem());
-        Assertions.assertEquals(featureWithNullUnit, resultFeature.getFeature());
+        // Then
+        Mockito.verify(itemServiceMock).getItem(ITEM_ID);
+        Mockito.verify(featureServiceMock).getFeature(FEATURE_ID);
+        Mockito.verify(itemFeatureRepoMock).save(updatedItemFeature);
+        Assertions.assertEquals(getItem(), resultFeature.getItem());
+        Assertions.assertEquals(getFeature(null), resultFeature.getFeature());
     }
 
     @Test
     public void createOrUpdateItemFeature_unitIsNotNull_shouldCorrectlyAssignStringAndNumericValue() {
-        double expectedNumericValue = Double.parseDouble(itemFeatureToSaveWithNumericValue.getStringValue());
-        String expectedStringValue = expectedNumericValue + " " + featureWithNotNullUnit.getUnit();
+        // Given
+        ItemFeature iFeatureWithNumValue = getItemFeatureWithId(ITEM_FEATURE_ID, STRING_VALUE_WITH_NUMBER);
+        mockGetItem();
+        mockGetFeature(UNITS);
+        mockSaveNew();
 
-        // Определение поведения mock-объектов
-        createOrUpdateItemFeature_determineBehaviorOfMocks();
-        createOrUpdateItemFeature_determineBehaviorOfSaveMethodWhenSaveNew();
+        // When
+        ItemFeature resultItemFeature = testingService.createOrUpdateItemFeature(iFeatureWithNumValue, ITEM_ID, FEATURE_ID);
 
-        ItemFeature resultItemFeature = itemFeatureService.createOrUpdateItemFeature(
-                itemFeatureToSaveWithNumericValue, itemId, featureWithNotNullUnitId
-        );
-        Assertions.assertEquals(expectedStringValue, resultItemFeature.getStringValue());
-        Assertions.assertEquals(expectedNumericValue, resultItemFeature.getNumericValue());
+        // Then
+        Assertions.assertEquals(FULL_STRING_VALUE_WITH_UNITS, resultItemFeature.getStringValue());
+        Assertions.assertEquals(NUMERIC_VALUE, resultItemFeature.getNumericValue());
     }
 
     @Test
     public void createOrUpdateItemFeature_unitIsNull_shouldCorrectlyAssignStringAndNumericValue() {
-        double expectedNumericValue = -1.0;
-        String expectedStringValue = itemFeatureToSaveWithStringValue.getStringValue();
+        // Given
+        ItemFeature itemFeatureToSave = getItemFeatureWithoutId(STRING_VALUE_WITH_STRING);
+        mockGetItem();
+        mockGetFeature(null);
+        mockSaveNew();
 
-        // Определение поведения mock-объектов
-        createOrUpdateItemFeature_determineBehaviorOfMocks();
-        createOrUpdateItemFeature_determineBehaviorOfSaveMethodWhenSaveNew();
-
-        ItemFeature resultItemFeature = itemFeatureService.createOrUpdateItemFeature(
-                itemFeatureToSaveWithStringValue, itemId, featureWithNullUnitId
+        // When
+        ItemFeature resultItemFeature = testingService.createOrUpdateItemFeature(
+                itemFeatureToSave, ITEM_ID, FEATURE_ID
         );
-        Assertions.assertEquals(expectedStringValue, resultItemFeature.getStringValue());
-        Assertions.assertEquals(expectedNumericValue, resultItemFeature.getNumericValue());
+
+        // Then
+        Assertions.assertEquals(STRING_VALUE_WITH_STRING, resultItemFeature.getStringValue());
+        Assertions.assertEquals(EMPTY_NUMERIC_VALUE, resultItemFeature.getNumericValue());
     }
 
 
-    public void createOrUpdateItemFeature_determineBehaviorOfMocks() {
-        Mockito.when(itemService.getItem(itemId))
-                .thenReturn(foundItem);
-        Mockito.doAnswer(
-                invocationOnMock -> {
-                    int id = invocationOnMock.getArgument(0);
-                    return List.of(featureWithNotNullUnit, featureWithNullUnit)
-                            .stream()
-                            .filter(feature -> feature.getId() == id)
-                            .findFirst().orElse(null);
-                }).when(featureService).getFeature(anyInt());
+    // Определение поведения mock-объектов.
+
+    private void mockFindAllByItemId() {
+        Mockito.when(itemFeatureRepoMock.findAllByItemId(anyInt()))
+                .thenReturn(getItemFeatures());
     }
 
-    public void createOrUpdateItemFeature_determineBehaviorOfSaveMethodWhenSaveNew() {
+    private void mockSaveNew() {
         Mockito.doAnswer(
                 invocationOnMock -> {
                     ItemFeature itemFeature = invocationOnMock.getArgument(0);
-                    itemFeature.setId(savedItemFeatureId);
+                    itemFeature.setId(ITEM_FEATURE_ID);
                     return itemFeature;
-                }).when(itemFeatureRepository).save(any(ItemFeature.class));
+                }).when(itemFeatureRepoMock).save(any(ItemFeature.class));
     }
 
-    public void createOrUpdateItemFeature_determineBehaviorOfSaveMethodWhenSaveUpdated() {
+    public void mockSaveUpdated() {
         Mockito.doAnswer(invocationOnMock -> invocationOnMock.getArgument(0))
-                .when(itemFeatureRepository).save(any(ItemFeature.class));
+                .when(itemFeatureRepoMock).save(any(ItemFeature.class));
+    }
+
+    private void mockGetItem() {
+        Mockito.when(itemServiceMock.getItem(ITEM_ID))
+                .thenReturn(getItem());
+    }
+
+    private void mockGetFeature(String units) {
+        Mockito.when(featureServiceMock.getFeature(FEATURE_ID))
+                .thenReturn(getFeature(units));
+    }
+
+
+    // Вспомогательные методы.
+
+    private ItemFeature getItemFeatureWithId(int id, String stringValue) {
+        return new ItemFeature()
+                .setId(id)
+                .setStringValue(stringValue);
+    }
+
+    private ItemFeature getItemFeatureWithoutId(String stringValue) {
+        return new ItemFeature()
+                .setStringValue(stringValue);
+    }
+
+    private Item getItem() {
+        return new Item()
+                .setId(ITEM_ID);
+    }
+
+    private Feature getFeature(String unit) {
+        return unit == null ?
+                new Feature().setId(FEATURE_ID).setUnit(null)
+                :
+                new Feature().setId(FEATURE_ID).setUnit(unit);
+    }
+
+    private List<ItemFeature> getItemFeatures() {
+        return List.of(
+                new ItemFeature().setId(1),
+                new ItemFeature().setId(2),
+                new ItemFeature().setId(3)
+        );
     }
 }

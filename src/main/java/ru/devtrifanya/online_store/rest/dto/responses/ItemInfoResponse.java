@@ -12,17 +12,13 @@ import java.util.List;
 @Data
 public class ItemInfoResponse {
 
-    private int cartSize;
-
     private ItemDTO item;
+
+    private List<ItemFeatureDTO> itemFeatures;
 
     private List<ReviewDTO> itemReviews;
 
     private List<CategoryDTO> topCategories;
 
-    private List<ItemFeatureDTO> itemFeatures;
-
-
-
-
+    private int cartSize;
 }

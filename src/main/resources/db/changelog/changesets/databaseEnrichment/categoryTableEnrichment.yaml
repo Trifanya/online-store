@@ -9,7 +9,7 @@ databaseChangeLog:
               - column:
                   name: name
                   value: "root"
-# Телефоны и аксессуары
+# Смартфоны и аксессуары
         # Уровень 1
         - insert:
             tableName: category
@@ -81,94 +81,6 @@ databaseChangeLog:
                   name: name
                   value: "Беспроводные наушники"
 
-# Ноутбуки и аксессуары
-        # Уровень 1
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Ноутбуки и аксессуары"
-        # Уровень 2
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Ноутбуки"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Игровые ноутбуки"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Ноутбуки Apple"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Аксессуары для ноутбуков"
-        # Уровень 3
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Зарядные устройства для ноутбуков"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Комплектующие запчасти для ноутбуков"
-
-# Игровая техника
-        # 1 уровень
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Игровая техника"
-        # 2 уровень
-        #- insert:
-        #    tableName: category
-        #    columns:
-        #      - column:
-        #          name: name
-        #          value: "Игровые ноутбуки"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Игровые ПК"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Игровые консоли"
-        # 3 уровень
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Sony PlayStation"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
-                  value: "Xbox"
-
 # Аудиотехника
         # 1 уровень
         - insert:
@@ -183,26 +95,8 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-                  value: "Наушники"
-        - insert:
-            tableName: category
-            columns:
-              - column:
-                  name: name
                   value: "Портативные колонки"
-        # 3 уровень
-        #- insert:
-        #    tableName: category
-        #    columns:
-        #      - column:
-        #          name: name
-        #          value: "Проводные наушники"
-        #- insert:
-        #    tableName: category
-        #    columns:
-        #      - column:
-        #          name: name
-        #          value: "Беспроводные наушники"
+
 
 
 

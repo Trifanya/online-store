@@ -1,14 +1,12 @@
 package ru.devtrifanya.online_store.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@Accessors(chain = true)
 @Table(name = "cart_element")
 public class CartElement {
     @Id
@@ -17,7 +15,7 @@ public class CartElement {
     private int id;
 
     @Column(name = "quantity")
-    private int itemQuantity;
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -26,11 +24,6 @@ public class CartElement {
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
-
-    public CartElement(int id, int itemQuantity) {
-        this.id = id;
-        this.itemQuantity = itemQuantity;
-    }
 }
 
 

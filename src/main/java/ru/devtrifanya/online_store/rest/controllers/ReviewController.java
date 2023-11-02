@@ -5,18 +5,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import ru.devtrifanya.online_store.models.User;
 import ru.devtrifanya.online_store.models.Review;
+import ru.devtrifanya.online_store.services.ReviewService;
+import ru.devtrifanya.online_store.services.ReviewImageService;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.validators.ReviewValidator;
 import ru.devtrifanya.online_store.rest.dto.requests.AddReviewRequest;
-import ru.devtrifanya.online_store.rest.dto.requests.DeleteReviewRequest;
-import ru.devtrifanya.online_store.services.ReviewService;
-import ru.devtrifanya.online_store.services.ReviewImageService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/catalog/{categoryId}/{itemId}")
+@RequestMapping("/reviews")
 public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewImageService reviewImageService;
@@ -26,7 +26,7 @@ public class ReviewController {
     private final MainClassConverter converter;
 
     /**
-     * Адрес: .../catalog/{categoryId}/{itemId}/newReview
+     * Адрес: .../reviews/newReview
      * Добавление нового отзыва о товаре, только для пользователя.
      */
     @PostMapping("/newReview")
@@ -51,13 +51,12 @@ public class ReviewController {
     }
 
     /**
-     * Адрес: .../catalog/{categoryId}/{itemId}/deleteReview
+     * Адрес: .../reviews/{reviewId}/deleteReview
      * Удаление отзыва, только для администратора.
      */
-    @DeleteMapping("/deleteReview")
-    public ResponseEntity<String> deleteReview(@RequestBody @Valid DeleteReviewRequest request) {
-        reviewValidator.performDeleteReviewValidation(request);
-        reviewService.deleteReview(request.getReviewToDeleteId());
+    @DeleteMapping("/{reviewId}/deleteReview")
+    public ResponseEntity<String> deleteReview(@PathVariable("reviewId") int reviewToDeleteId) {
+        reviewService.deleteReview(reviewToDeleteId);
         return ResponseEntity.ok("Отзыв успешно удален.");
     }
 }

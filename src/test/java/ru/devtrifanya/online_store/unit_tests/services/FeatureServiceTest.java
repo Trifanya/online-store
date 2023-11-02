@@ -9,8 +9,8 @@ import org.mockito.Mockito;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.models.Category;
+import ru.devtrifanya.online_store.models.Feature;
 import ru.devtrifanya.online_store.services.FeatureService;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
@@ -18,12 +18,17 @@ import ru.devtrifanya.online_store.repositories.FeatureRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
 public class FeatureServiceTest {
+
+    private static final int FEATURE_ID = 1;
+    private static final int UPDATED_FEATURE_ID = 2;
+    private static final int CATEGORY_ID = 1;
+
     @Mock
     private CategoryService categoryServiceMock;
     @Mock
@@ -32,147 +37,154 @@ public class FeatureServiceTest {
     @InjectMocks
     private FeatureService testingService;
 
-    private int featureId = 1;
-    private int savedFeatureId = 2;
-    private int updatedFeatureId = 2;
-
-    private int categoryId = 1;
-
-    private Feature foundFeature = new Feature(featureId, "found", "found", "unit1");
-    private Feature featureToSave = new Feature(0, "new", "new", "unit2");
-    private Feature updatedFeature = new Feature(updatedFeatureId, "updated", "updated", "unit3");
-
-    private Category foundCategory = new Category(1, "found");
-
-    private List<Feature> features = List.of(
-        new Feature(10, "f10", "f10", "u10"),
-        new Feature(11, "f11", "f11", "u11"),
-        new Feature(12, "f12", "f12", "u12")
-    );
-
-    private List<Category> categories = List.of(
-            new Category(10, "category10"),
-            new Category(11, "category11"),
-            new Category(12, "category12")
-    );
-
     @Test
     public void getFeature_featureIsExist_shouldReturnFeature() {
-        // Определение поведения mock-объектов
-        Mockito.when(featureRepoMock.findById(featureId))
-                .thenReturn(Optional.of(foundFeature));
+        // Given
+        mockFindById_exist();
 
-        // Вызов тестируемого метода
-        Feature resultFeature = testingService.getFeature(featureId);
+        // When
+        Feature resultFeature = testingService.getFeature(FEATURE_ID);
 
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(featureRepoMock).findById(featureId);
-        Assertions.assertEquals(foundFeature, resultFeature);
+        // Then
+        Mockito.verify(featureRepoMock).findById(FEATURE_ID);
+        Assertions.assertEquals(getFeature(FEATURE_ID), resultFeature);
     }
 
     @Test
     public void getFeature_featureIsNotExist_shouldThrowException() {
-        // Определение поведения mock-объектов
-        Mockito.when(featureRepoMock.findById(featureId))
-                .thenReturn(Optional.empty());
+        // Given
+        mockFindById_notExist();
 
-        // Вызов тестируемого метода и проверка совпадения ожидаемого результата с реальным
-        Assertions.assertThrows(
-                NotFoundException.class,
-                () -> testingService.getFeature(featureId)
-        );
-        Mockito.verify(featureRepoMock).findById(featureId);
+        // When // Then
+        Assertions.assertThrows(NotFoundException.class, () -> testingService.getFeature(FEATURE_ID));
     }
 
     @Test
     public void getAllFeatures_shouldReturnFeaturesList() {
-        // Определение поведения mock-объектов
-        Mockito.when(featureRepoMock.findAll())
-                .thenReturn(features);
+        // Given
+        mockFindAll();
 
-        // Выполнение тестируемого метода
+        // When
         List<Feature> resultFeatures = testingService.getAllFeatures();
 
-        // Проверка совпадения ожидаемого результата с реальным
+        // Then
         Mockito.verify(featureRepoMock).findAll();
-        Assertions.assertIterableEquals(features, resultFeatures);
+        Assertions.assertIterableEquals(getFeatures(), resultFeatures);
     }
 
     @Test
     public void createNewFeature_oneParameter_shouldAssignId() {
-        // Определение поведения mock-объектов
-        createNewFeature_determineBehaviorOfSaveMethod();
+        // Given
+        Feature featureToSave = getFeature(0);
+        mockSaveNew();
 
-        // Выполнение тестируемого метода
+        // When
         Feature resultFeature = testingService.createNewFeature(featureToSave);
 
-        // Проверка совпадения ожидаемого результата с реальным
+        // Then
         Mockito.verify(featureRepoMock).save(featureToSave);
         Assertions.assertNotNull(resultFeature.getId());
     }
 
     @Test
-    public void createNewFeature_twoParameters_shouldAssignCategories() {
-        // Определение поведения mock-объектов
-        Mockito.when(categoryServiceMock.getCategory(categoryId))
-                        .thenReturn(foundCategory);
-        createNewFeature_determineBehaviorOfSaveMethod();
+    public void createNewFeature_twoParameters_shouldAssignCategoriesAndId() {
+        // Given
+        Feature featureToSave = getFeature(0);
+        mockGetCategory();
+        mockSaveNew();
 
-        // Выполнение тестируемого метода
-        Feature resultFeature = testingService.createNewFeature(featureToSave, categoryId);
+        // When
+        Feature resultFeature = testingService.createNewFeature(featureToSave, CATEGORY_ID);
 
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(categoryServiceMock).getCategory(categoryId);
-        Assertions.assertIterableEquals(List.of(foundCategory), resultFeature.getCategories());
-    }
-
-    @Test
-    public void createNewFeature_twoParameters_shouldAssignId() {
-        // Определение поведения mock-объектов
-        Mockito.when(categoryServiceMock.getCategory(categoryId))
-                .thenReturn(foundCategory);
-        createNewFeature_determineBehaviorOfSaveMethod();
-
-        // Выполнение тестируемого метода
-        Feature resultFeature = testingService.createNewFeature(featureToSave, categoryId);
-
-        // Проверка совпадения ожидаемого результата с реальным
+        // Then
+        Mockito.verify(categoryServiceMock).getCategory(CATEGORY_ID);
         Mockito.verify(featureRepoMock).save(featureToSave);
+        Assertions.assertIterableEquals(List.of(getCategory(CATEGORY_ID)), resultFeature.getCategories());
         Assertions.assertNotNull(resultFeature.getId());
     }
 
     @Test
-    public void updateFeatureInfo_shouldNotChangeCategories() {
-        Feature updatedFeatureWithCategories = new Feature(updatedFeatureId, updatedFeature.getName(),
-                updatedFeature.getRequestParamName(), updatedFeature.getUnit());
-        updatedFeature.setCategories(new ArrayList<>(categories));
+    public void updateFeature_shouldNotChangeCategories() {
+        // Given
+        Feature updatedFeature = getFeature(UPDATED_FEATURE_ID);
+        mockFindById_exist();
+        mockSaveUpdated();
 
-        // Определение поведения mock-объектов
-        Mockito.when(featureRepoMock.findById(updatedFeatureId))
-                .thenReturn(Optional.of(updatedFeature));
-        Mockito.doAnswer(invocationOnMock -> invocationOnMock.getArgument(0))
-                .when(featureRepoMock).save(any(Feature.class));
+        // When
+        Feature resultFeature = testingService.updateFeature(updatedFeature);
 
-        // Выполнение тестируемого метода
-        Feature resultFeature = testingService.updateFeature(this.updatedFeature);
-        // Проверка совпадения ожидаемого результата с реальным
-        Mockito.verify(featureRepoMock).findById(updatedFeatureId);
+        // Then
+        Mockito.verify(featureRepoMock).findById(UPDATED_FEATURE_ID);
         Mockito.verify(featureRepoMock).save(updatedFeature);
-        Assertions.assertIterableEquals(categories, resultFeature.getCategories());
+        Assertions.assertIterableEquals(List.of(getCategory(CATEGORY_ID)), resultFeature.getCategories());
     }
 
     @Test
     public void deleteFeature() {
-        testingService.deleteFeature(featureId);
+        // When
+        testingService.deleteFeature(FEATURE_ID);
 
-        Mockito.verify(featureRepoMock).deleteById(featureId);
+        // Then
+        Mockito.verify(featureRepoMock).deleteById(FEATURE_ID);
     }
 
-    public void createNewFeature_determineBehaviorOfSaveMethod() {
-        Mockito.doAnswer(invocationOnMock -> {
+
+    // Определение поведения mock-объектов.
+
+    private void mockFindById_exist() {
+        Mockito.doAnswer(invocationOnMock -> Optional.of(getFeature(invocationOnMock.getArgument(0))))
+                .when(featureRepoMock).findById(anyInt());
+    }
+
+    private void mockFindById_notExist() {
+        Mockito.when(featureRepoMock.findById(anyInt()))
+                .thenReturn(Optional.empty());
+    }
+
+    private void mockFindAll() {
+        Mockito.when(featureRepoMock.findAll())
+                .thenReturn(getFeatures());
+    }
+
+    private void mockSaveNew() {
+        Mockito.doAnswer(
+                invocationOnMock -> {
                     Feature feature = invocationOnMock.getArgument(0);
-                    feature.setId(savedFeatureId);
+                    feature.setId(FEATURE_ID);
                     return feature;
                 }).when(featureRepoMock).save(any(Feature.class));
     }
+
+    private void mockSaveUpdated() {
+        Mockito.doAnswer(invocationOnMock -> invocationOnMock.getArgument(0))
+                .when(featureRepoMock).save(any(Feature.class));
+    }
+
+    private void mockGetCategory() {
+        Mockito.doAnswer(invocationOnMock -> getCategory(invocationOnMock.getArgument(0))).
+                when(categoryServiceMock).getCategory(CATEGORY_ID);
+    }
+
+
+    // Вспомогательные методы.
+
+    private Feature getFeature(int featureId) {
+        return new Feature()
+                .setId(featureId)
+                .setCategories(List.of(getCategory(CATEGORY_ID)));
+    }
+
+    private Category getCategory(int categoryId) {
+        return new Category()
+                .setId(categoryId);
+    }
+
+    private List<Feature> getFeatures() {
+        return List.of(
+                new Feature().setId(11),
+                new Feature().setId(12),
+                new Feature().setId(13)
+        );
+    }
+
 }

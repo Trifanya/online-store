@@ -1,18 +1,16 @@
 package ru.devtrifanya.online_store.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "review")
+@Accessors(chain = true)
 public class Review {
     @Id
     @Column(name = "id")
@@ -38,10 +36,4 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
-
-    public Review(int id, int stars, String comment) {
-        this.id = id;
-        this.stars = stars;
-        this.comment = comment;
-    }
 }

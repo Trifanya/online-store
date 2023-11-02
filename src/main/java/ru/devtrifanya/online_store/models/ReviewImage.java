@@ -3,10 +3,11 @@ package ru.devtrifanya.online_store.models;
 import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
 @Entity
-@NoArgsConstructor
+@Accessors(chain = true)
 @Table(name = "image_for_review")
 public class ReviewImage {
     @Id
@@ -20,9 +21,4 @@ public class ReviewImage {
     @ManyToOne
     @JoinColumn(name = "review_id", referencedColumnName = "id")
     private Review review;
-
-    public ReviewImage(int id, String url) {
-        this.id = id;
-        this.url = url;
-    }
 }

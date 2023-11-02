@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.devtrifanya.online_store.exceptions.*;
 import ru.devtrifanya.online_store.rest.dto.responses.ErrorResponse;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class MainExceptionHandler {
 
     @ExceptionHandler({InvalidDataException.class, UnavailableActionException.class, OutOfStockException.class})
+    @ResponseStatus
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
         String errorMessage = exception.getMessage();
         HttpStatus status = HttpStatus.BAD_REQUEST;
