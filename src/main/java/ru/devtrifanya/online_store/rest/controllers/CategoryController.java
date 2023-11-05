@@ -53,7 +53,7 @@ public class CategoryController {
      * Обновление категории товаров, только для администратора.
      */
     @PatchMapping("/updateCategory")
-    public ResponseEntity<?> updateCategoryInfo(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
+    public ResponseEntity<?> updateCategory(@RequestBody @Valid AddOrUpdateCategoryRequest request) {
         categoryValidator.performUpdatedCategoryValidation(request);
 
         // Апдейт информации о категории

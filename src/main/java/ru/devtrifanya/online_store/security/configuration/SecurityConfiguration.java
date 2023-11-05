@@ -66,7 +66,11 @@ public class SecurityConfiguration {
                                         "/profile/**"
                                 ).hasAnyRole("USER", "ADMIN")
                                 .requestMatchers(
-                                        "/registration","/authentication", "/main", "/categories/{categoryId}", "/items/{itemId}"
+                                        "/registration","/authentication",
+                                        "/main",
+                                        "/categories/{categoryId}",
+                                        "/items/{itemId}",
+                                        "/swagger-ui/**", "/v3/api-docs/**" // для Swagger
                                 ).permitAll())
                 .sessionManagement(
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

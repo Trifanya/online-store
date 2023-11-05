@@ -1,9 +1,28 @@
+version: '3.9'
+
 services:
-  db_pg_16:
-    image: postgres:16rc1
+
+  app:
+    container_name: online-store
+    build:
+      context: .
+    depends_on:
+      - postgres_db
     environment:
-      POSTGRES_DB: online_shop_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Goalie_climber62
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Goalie_climber62
     ports:
-      - 5432
+      - '8080:8080'
+
+  postgres_db:
+    container_name: online-store-db
+    image: postgres:16rc1-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Goalie_climber62
+      #- POSTGRES_DATABASE=online_store_db
+    ports:
+      - 5432:5432
+
+

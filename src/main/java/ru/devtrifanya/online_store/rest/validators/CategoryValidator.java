@@ -10,6 +10,7 @@ import ru.devtrifanya.online_store.exceptions.AlreadyExistException;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.CategoryDTO;
 import ru.devtrifanya.online_store.exceptions.UnavailableActionException;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCategoryRequest;
+import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 
 @Component
 @RequiredArgsConstructor
@@ -17,6 +18,8 @@ public class CategoryValidator {
     private final FeatureValidator featureValidator;
 
     private final CategoryRepository categoryRepository;
+
+    private final MainClassConverter converter;
 
     /**
      * Валидация запроса на добавление новой категории.
@@ -38,6 +41,10 @@ public class CategoryValidator {
         // если категория была перемещена
         if (request.getPrevParentId() != request.getNewParentId()) {
             validateParentIsNotFinal(request.getNewParentId());
+            validateParentIsNotChild(
+                    converter.convertToCategory(request.getCategory()),
+                    categoryRepository.findById(request.getNewParentId()).orElse(null)
+            );
         }
         // если в конечную категорию добавляются новые характеристики, то нужно провалидировать каждую из них
         // если новые характеристики добавляются в неконечную категорию, то выбрасывается исключение
@@ -71,6 +78,22 @@ public class CategoryValidator {
         Category newParent = categoryRepository.findById(newParentId).orElse(null);
         if (newParent != null && !newParent.getItems().isEmpty()) {
             throw new UnavailableActionException("Конечная категория не может содержать другие категории.");
+        }
+    }
+
+    /**
+     * Валидация родительской категории.
+     * Если категория, в которую была перемещена обновленная категория, является дочерней
+     * категорией обновленной категории непосредственно или посредством других ее дочерних
+     * категорий, то выбрасывается исключение.
+     */
+    public void validateParentIsNotChild(Category updatedCategory, Category parent) {
+        for (Category parentOfParent : parent.getParents()) {
+            if (parentOfParent.equals(updatedCategory)) {
+                throw new UnavailableActionException("Нельзя переместить категорию в дочернюю категорию.");
+            } else {
+                validateParentIsNotChild(updatedCategory, parentOfParent);
+            }
         }
     }
 
