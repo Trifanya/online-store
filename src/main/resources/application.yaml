@@ -17,6 +17,23 @@ spring:
   main:
     allow-circular-references: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: trifanya.onlinestore@gmail.com
+    password: puxhjgrhvwhypkjl
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+        debug: true
+
+
 jwt:
   secret: 1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik9ol0pldhgdlfjgoailsrgjxlk34wtrdgh
   lifetime: 30d

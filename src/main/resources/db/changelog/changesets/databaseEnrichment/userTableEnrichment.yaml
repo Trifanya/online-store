@@ -93,3 +93,23 @@ databaseChangeLog:
               - column:
                   name: role
                   value: "ROLE_USER"
+        - insert:
+            tableName: os_user
+            columns:
+              - column:
+                  name: name
+                  value: "Nikita"
+              - column:
+                  name: surname
+                  value: "Trifonov"
+              - column:
+                  name: email
+                  value: "trifanya.dev@gmail.com"
+              - column:
+                  name: password # "My_passw0rd"
+                  value: "$2a$12$U.tr0FiUf9NjgpygQHcXMOrChZAQMlgiH4tgKsDa2s4PS8..QSEgq"
+              - column:
+                  name: role
+                  value: "ROLE_USER"
+
+

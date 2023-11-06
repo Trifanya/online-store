@@ -118,14 +118,12 @@ public class ItemServiceTest {
     @Test
     public void reduceItemQuantity() {
         // Given
-        mockFindById_exist();
         mockSaveUpdated();
 
         // When
-        Item resultItem = testingService.reduceItemQuantity(ITEM_ID, ITEM_TO_BUY_QUANTITY);
+        Item resultItem = testingService.reduceItemQuantity(getItem(ITEM_ID), ITEM_TO_BUY_QUANTITY);
 
         // Then
-        Mockito.verify(itemRepoMock).findById(ITEM_ID);
         Mockito.verify(itemRepoMock).save(any(Item.class));
         Assertions.assertEquals(ITEM_QUANTITY - ITEM_TO_BUY_QUANTITY, resultItem.getQuantity());
     }

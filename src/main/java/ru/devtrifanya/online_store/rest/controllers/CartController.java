@@ -7,19 +7,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import ru.devtrifanya.online_store.models.User;
-import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.services.CartElementService;
 import ru.devtrifanya.online_store.rest.validators.CartValidator;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.CartElementDTO;
-import ru.devtrifanya.online_store.rest.dto.requests.PlaceAnOrderRequest;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateCartElementRequest;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cart")
 public class CartController {
-    private final ItemService itemService;
     private final CartElementService cartElementService;
 
     private final CartValidator cartValidator;
@@ -30,7 +26,7 @@ public class CartController {
      * Адрес: .../cart/placeAnOrder
      * Оформление заказа, только для пользователя.
      */
-    @PostMapping("/placeAnOrder")
+    /*@PostMapping("/placeAnOrder")
     public ResponseEntity<?> placeAnOrder(@RequestBody @Valid PlaceAnOrderRequest request) {
         cartValidator.performOrderValidation(request);
 
@@ -39,6 +35,17 @@ public class CartController {
                     itemService.reduceItemQuantity(cartElementDTO.getItemId(), cartElementDTO.getQuantity());
                     cartElementService.deleteCartElement(cartElementDTO.getId());
                 });
+
+        return ResponseEntity.ok("Заказ успешно оформлен.");
+    }*/
+
+    /**
+     * Адрес: .../cart/placeAnOrder
+     * Оформление заказа, только для пользователя.
+     */
+    @PostMapping("/placeAnOrder")
+    public ResponseEntity<?> placeAnOrder(@AuthenticationPrincipal User user) {
+        cartElementService.placeAnOrder(user);
 
         return ResponseEntity.ok("Заказ успешно оформлен.");
     }

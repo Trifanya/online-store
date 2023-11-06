@@ -67,9 +67,7 @@ public class ItemService {
     /**
      * Уменьшение количества товара при его покупке.
      */
-    public Item reduceItemQuantity(int itemId, int itemToBuyQuantity) {
-        Item item = getItem(itemId);
-
+    public Item reduceItemQuantity(Item item, int itemToBuyQuantity) {
         item.setQuantity(item.getQuantity() - itemToBuyQuantity);
 
         return itemRepository.save(item);

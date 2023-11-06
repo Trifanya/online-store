@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import ru.devtrifanya.online_store.models.CartElement;
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
@@ -39,8 +40,8 @@ public class CartValidator {
     /**
      * Валидация запроса на оформление заказа.
      */
-    public void performOrderValidation(PlaceAnOrderRequest request) {
-        validateEnoughQuantity(request.getCartContent());
+    public void performOrderValidation(List<CartElement> cartElements) {
+        validateEnoughQuantity(cartElements);
     }
 
     /**
@@ -74,13 +75,11 @@ public class CartValidator {
     /**
      * Проверка наличия и количества товара при оформлении заказа.
      */
-    private void validateEnoughQuantity(List<CartElementDTO> cartContent) {
-        for (CartElementDTO cartElement : cartContent) {
-            Item item = itemRepository.findById(cartElement.getItemId())
-                    .orElseThrow(() -> new NotFoundException("Товар с указанным id не найден."));
-            if (item.getQuantity() == 0) {
+    private void validateEnoughQuantity(List<CartElement> cartContent) {
+        for (CartElement cartElement : cartContent) {
+            if (cartElement.getItem().getQuantity() == 0) {
                 throw new OutOfStockException("Товара нет в наличии.");
-            } else if (item.getQuantity() < cartElement.getQuantity()) {
+            } else if (cartElement.getItem().getQuantity() < cartElement.getQuantity()) {
                 throw new OutOfStockException("Недостаточно товара в наличии.");
             }
         }
