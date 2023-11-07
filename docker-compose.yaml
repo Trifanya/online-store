@@ -6,22 +6,22 @@ services:
     container_name: online-store
     build:
       context: .
+      dockerfile: Dockerfile
     depends_on:
       - postgres_db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=Goalie_climber62
+      - SPRING_DATASOURCE_PASSWORD=postgres
     ports:
-      - '8080:8080'
+      - 8081:8080
 
   postgres_db:
     container_name: online-store-db
     image: postgres:16rc1-alpine
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Goalie_climber62
-      #- POSTGRES_DATABASE=online_store_db
+      - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
 
