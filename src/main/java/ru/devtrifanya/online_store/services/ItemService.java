@@ -15,7 +15,6 @@ import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.models.ItemImage;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
 import ru.devtrifanya.online_store.exceptions.NotFoundException;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.services.specifications.ItemSpecificationConstructor;
 
 import java.util.*;
@@ -76,20 +75,25 @@ public class ItemService {
     }
 
     /**
-     * Добавление нового товара.
+     * Добавление нового товара или обновление информации о существующем.
      */
     @Transactional
-    public Item createNewItem(Item itemToSave, int categoryId,
-                              Map<Integer, ItemFeature> itemFeatures,
-                              List<ItemImage> itemImages) {
-        Category itemCategory = categoryService.getCategory(categoryId);
+    public Item createOrUpdateItem(Item item, int categoryId,
+                                   Map<Integer, ItemFeature> itemFeatures,
+                                   List<ItemImage> itemImages) {
+        try {
+            Item oldItem = getItem(item.getId());
+            item.setRating(oldItem.getRating());
+        } catch (NotFoundException exception) {
+            item.setRating(0);
+        }
 
-        itemToSave.setRating(0);
-        itemToSave.setCategory(itemCategory);
+        Category category = categoryService.getCategory(categoryId);
+        item.setCategory(category);
 
-        Item savedItem = itemRepository.save(itemToSave);
+        Item savedItem = itemRepository.save(item);
 
-        // Сохранение характеристик товара
+        // Обновление характеристик товара
         for (Map.Entry<Integer, ItemFeature> itemFeature : itemFeatures.entrySet()) {
             itemFeatureService.createOrUpdateItemFeature(
                     itemFeature.getValue(),
@@ -97,42 +101,12 @@ public class ItemService {
                     itemFeature.getKey()
             );
         }
-        // Сохранение изображений товара
+        // Обновление изображений товара
         itemImages.forEach(
-                image -> imageService.createNewImageIfNotExist(image, savedItem.getId())
+                image -> imageService.createNewImageIfNotExist(image, item.getId())
         );
 
         return savedItem;
-    }
-
-    /**
-     * Обновление информации о товаре.
-     */
-    public Item updateItem(Item updatedItem, int categoryId,
-                           Map<Integer, ItemFeature> itemFeatures,
-                           List<ItemImage> itemImages) {
-        Item oldItem = getItem(updatedItem.getId());
-        Category category = categoryService.getCategory(categoryId);
-
-        updatedItem.setRating(oldItem.getRating());
-        updatedItem.setCategory(category);
-
-        Item savedUpdatedItem = itemRepository.save(updatedItem);
-
-        // Обновление характеристик товара
-        for (Map.Entry<Integer, ItemFeature> itemFeature : itemFeatures.entrySet()) {
-            itemFeatureService.createOrUpdateItemFeature(
-                    itemFeature.getValue(),
-                    savedUpdatedItem.getId(),
-                    itemFeature.getKey()
-            );
-        }
-        // Обновление изображений товара
-        itemImages.forEach(
-                image -> imageService.createNewImageIfNotExist(image, updatedItem.getId())
-        );
-
-        return savedUpdatedItem;
     }
 
     /**

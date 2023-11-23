@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import ru.devtrifanya.online_store.models.*;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -92,5 +94,16 @@ public class MainClassConverter {
 
     public ReviewImageDTO convertToImageDTO(ReviewImage image) {
         return modelMapper.map(image, ReviewImageDTO.class);
+    }
+
+    public Map<Integer, ItemFeature> convertToItemFeatureMap(Map<Integer, ItemFeatureDTO> dtoMap) {
+        Map<Integer, ItemFeature> itemFeatures = new HashMap<>();
+        for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : dtoMap.entrySet()) {
+            itemFeatures.put(
+                    itemFeature.getKey(),
+                    convertToItemFeature(itemFeature.getValue())
+            );
+        }
+        return itemFeatures;
     }
 }

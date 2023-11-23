@@ -5,18 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ru.devtrifanya.online_store.models.Item;
-import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.services.ItemService;
-import ru.devtrifanya.online_store.services.ImageService;
-import ru.devtrifanya.online_store.services.ItemFeatureService;
 import ru.devtrifanya.online_store.rest.validators.ItemValidator;
 import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
-import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,8 +17,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
-    private final ImageService imageService;
-    private final ItemFeatureService itemFeatureService;
 
     private final ItemValidator itemValidator;
 
@@ -39,19 +30,11 @@ public class ItemController {
     public ResponseEntity<?> createNewItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
         itemValidator.performNewItemValidation(request);
 
-        // Преобразование из Map<Integer, ItemFeatureDTO> в Map<Integer, ItemFeature>
-        Map<Integer, ItemFeature> itemFeatures = new HashMap<>();
-        for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
-            itemFeatures.put(
-                    itemFeature.getKey(),
-                    converter.convertToItemFeature(itemFeature.getValue())
-            );
-        }
         // Сохранение товара
-        itemService.createNewItem(
+        itemService.createOrUpdateItem(
                 converter.convertToItem(request.getItem()),
                 request.getCategoryId(),
-                itemFeatures,
+                converter.convertToItemFeatureMap(request.getItemFeatures()),
                 request.getItemImages().stream()
                         .map(converter::convertToImage)
                         .collect(Collectors.toList())
@@ -68,24 +51,15 @@ public class ItemController {
     public ResponseEntity<?> updateItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
         itemValidator.performUpdatedItemValidation(request);
 
-        // Преобразование из Map<Integer, ItemFeatureDTO> в Map<Integer, ItemFeature>
-        Map<Integer, ItemFeature> itemFeatures = new HashMap<>();
-        for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
-            itemFeatures.put(
-                    itemFeature.getKey(),
-                    converter.convertToItemFeature(itemFeature.getValue())
-            );
-        }
         // Обновление товара
-        itemService.updateItem(
+        itemService.createOrUpdateItem(
                 converter.convertToItem(request.getItem()),
                 request.getCategoryId(),
-                itemFeatures,
+                converter.convertToItemFeatureMap(request.getItemFeatures()),
                 request.getItemImages().stream()
                         .map(converter::convertToImage)
                         .collect(Collectors.toList())
         );
-
 
         return ResponseEntity.ok("Информация о товаре успешно обновлена.");
     }

@@ -113,6 +113,7 @@ databaseChangeLog:
               - column:
                   name: version
                   type: integer
+                  defaultValue: 0
         # Создание таблицы feature
         - createTable:
             tableName: feature

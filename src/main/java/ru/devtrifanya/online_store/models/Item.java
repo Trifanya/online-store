@@ -37,7 +37,7 @@ public class Item {
 
     @Version
     @Column(name = "version")
-    private long version;
+    private long version = 0;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
@@ -59,4 +59,5 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
     private List<ItemImage> itemImages;
+
 }

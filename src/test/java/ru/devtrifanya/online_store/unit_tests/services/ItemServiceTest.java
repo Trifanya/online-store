@@ -14,6 +14,10 @@ import org.springframework.data.jpa.domain.Specification;
 
 import ru.devtrifanya.online_store.models.Item;
 import ru.devtrifanya.online_store.models.Category;
+import ru.devtrifanya.online_store.models.ItemFeature;
+import ru.devtrifanya.online_store.models.ItemImage;
+import ru.devtrifanya.online_store.services.ImageService;
+import ru.devtrifanya.online_store.services.ItemFeatureService;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.services.CategoryService;
 import ru.devtrifanya.online_store.repositories.ItemRepository;
@@ -44,8 +48,13 @@ public class ItemServiceTest {
     private static final String SORT_DIR_DESC = "DESC";
     private static final String SORT_DIR_NONE = "NONE";
 
+
     @Mock
     private CategoryService categoryServiceMock;
+    @Mock
+    private ItemFeatureService itemFeatureServiceMock;
+    @Mock
+    private ImageService imageServiceMock;
     @Mock
     private ItemSpecificationConstructor sConstructorMock;
     @Mock
@@ -129,38 +138,63 @@ public class ItemServiceTest {
     }
 
     @Test
-    public void createNewItem_shouldAssignIdAndZeroRatingAndCategory() {
+    public void createOrUpdateItem_itemIsNotExist_shouldAssignIdAndZeroRatingAndCategory() {
         // Given
         Item itemToSave = getItem(ITEM_ID);
+        List<ItemImage> itemImages = getItemImages();
+        Map<Integer, ItemFeature> itemFeatures = getItemFeatures();
+
+        mockFindById_notExist();
         mockGetCategory();
         mockSaveNew();
 
         // When
-        Item resultItem = testingService.createNewItem(itemToSave, CATEGORY_ID);
+        Item resultItem = testingService.createOrUpdateItem(itemToSave, CATEGORY_ID, itemFeatures, itemImages);
 
         // Then
         Mockito.verify(categoryServiceMock).getCategory(CATEGORY_ID);
         Mockito.verify(itemRepoMock).save(itemToSave);
+        Mockito.verify(itemFeatureServiceMock, Mockito.times(itemFeatures.size())).createOrUpdateItemFeature(
+                any(ItemFeature.class),
+                eq(ITEM_ID),
+                anyInt()
+        );
+        Mockito.verify(imageServiceMock, Mockito.times(itemImages.size())).createNewImageIfNotExist(
+                any(ItemImage.class),
+                eq(ITEM_ID)
+        );
         Assertions.assertNotNull(resultItem.getId());
         Assertions.assertEquals(DEFAULT_RATING, resultItem.getRating());
         Assertions.assertEquals(getCategory(CATEGORY_ID), resultItem.getCategory());
     }
 
     @Test
-    public void updateItem_shouldAssignCategoryAndNotChangeRating() {
+    public void createOrUpdateItem_itemIsExist_shouldAssignCategoryAndNotChangeRating() {
         // Given
         Item updatedItem = getItem(UPDATED_ITEM_ID);
+        List<ItemImage> itemImages = getItemImages();
+        Map<Integer, ItemFeature> itemFeatures = getItemFeatures();
+
         mockFindById_exist();
         mockGetCategory();
         mockSaveUpdated();
 
         // When
-        Item resultItem = testingService.updateItem(updatedItem, CATEGORY_ID);
+        Item resultItem = testingService.createOrUpdateItem(updatedItem, CATEGORY_ID, itemFeatures, itemImages);
 
         // Then
         Mockito.verify(itemRepoMock).findById(UPDATED_ITEM_ID);
         Mockito.verify(categoryServiceMock).getCategory(CATEGORY_ID);
         Mockito.verify(itemRepoMock).save(updatedItem);
+        Mockito.verify(itemFeatureServiceMock, Mockito.times(itemFeatures.size())).createOrUpdateItemFeature(
+                any(ItemFeature.class),
+                eq(UPDATED_ITEM_ID),
+                anyInt()
+        );
+        Mockito.verify(imageServiceMock, Mockito.times(itemImages.size())).createNewImageIfNotExist(
+                any(ItemImage.class),
+                eq(UPDATED_ITEM_ID)
+        );
         Assertions.assertEquals(DEFAULT_RATING, resultItem.getRating());
         Assertions.assertEquals(getCategory(CATEGORY_ID), resultItem.getCategory());
     }
@@ -264,6 +298,14 @@ public class ItemServiceTest {
         );
     }
 
+    private List<ItemImage> getItemImages() {
+        return List.of(
+                new ItemImage().setId(11),
+                new ItemImage().setId(12),
+                new ItemImage().setId(13)
+        );
+    }
+
     private Map<String, String> getFilters() {
         return new HashMap<>(Map.of(
                 "pageNumber", "pageNumberValue",
@@ -271,6 +313,14 @@ public class ItemServiceTest {
                 "sortBy", "sortByValue",
                 "sortDir", "sortDirValue",
                 "someKey", "someValue"
+        ));
+    }
+
+    private Map<Integer, ItemFeature> getItemFeatures() {
+        return new HashMap<>(Map.of(
+                1, new ItemFeature(),
+                2, new ItemFeature(),
+                3, new ItemFeature()
         ));
     }
 }

@@ -12,7 +12,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_PASSWORD=My_passw0rd
     ports:
       - 8081:8080
 
@@ -21,7 +21,7 @@ services:
     image: postgres:16rc1-alpine
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=My_passw0rd
     ports:
       - 5432:5432
 
