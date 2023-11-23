@@ -35,6 +35,10 @@ public class Item {
     @Column(name = "rating")
     private double rating;
 
+    @Version
+    @Column(name = "version")
+    private long version;
+
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;

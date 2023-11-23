@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.devtrifanya.online_store.models.Item;
+import ru.devtrifanya.online_store.models.ItemFeature;
 import ru.devtrifanya.online_store.services.ItemService;
 import ru.devtrifanya.online_store.services.ImageService;
 import ru.devtrifanya.online_store.services.ItemFeatureService;
@@ -14,7 +15,9 @@ import ru.devtrifanya.online_store.rest.utils.MainClassConverter;
 import ru.devtrifanya.online_store.rest.dto.entities_dto.ItemFeatureDTO;
 import ru.devtrifanya.online_store.rest.dto.requests.AddOrUpdateItemRequest;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,25 +39,23 @@ public class ItemController {
     public ResponseEntity<?> createNewItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
         itemValidator.performNewItemValidation(request);
 
-        // Сохранение товара
-        Item createdItem = itemService.createNewItem(
-                converter.convertToItem(request.getItem()),
-                request.getCategoryId()
-        );
-        // Сохранение характеристик товара
+        // Преобразование из Map<Integer, ItemFeatureDTO> в Map<Integer, ItemFeature>
+        Map<Integer, ItemFeature> itemFeatures = new HashMap<>();
         for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
-            itemFeatureService.createOrUpdateItemFeature(
-                    converter.convertToItemFeature(itemFeature.getValue()),
-                    createdItem.getId(),
-                    itemFeature.getKey()
+            itemFeatures.put(
+                    itemFeature.getKey(),
+                    converter.convertToItemFeature(itemFeature.getValue())
             );
         }
-        // Сохранение изображений товара
-        request.getItemImages().forEach(
-                image -> imageService.createNewImageIfNotExist(
-                        converter.convertToImage(image),
-                        createdItem.getId()
-                ));
+        // Сохранение товара
+        itemService.createNewItem(
+                converter.convertToItem(request.getItem()),
+                request.getCategoryId(),
+                itemFeatures,
+                request.getItemImages().stream()
+                        .map(converter::convertToImage)
+                        .collect(Collectors.toList())
+        );
 
         return ResponseEntity.ok("Товар успешно добавлен.");
     }
@@ -67,25 +68,24 @@ public class ItemController {
     public ResponseEntity<?> updateItem(@RequestBody @Valid AddOrUpdateItemRequest request) {
         itemValidator.performUpdatedItemValidation(request);
 
-        // Обновление товара
-        Item updatedItem = itemService.updateItem(
-                converter.convertToItem(request.getItem()),
-                request.getCategoryId()
-        );
-        // Обновление характеристик товара
+        // Преобразование из Map<Integer, ItemFeatureDTO> в Map<Integer, ItemFeature>
+        Map<Integer, ItemFeature> itemFeatures = new HashMap<>();
         for (Map.Entry<Integer, ItemFeatureDTO> itemFeature : request.getItemFeatures().entrySet()) {
-            itemFeatureService.createOrUpdateItemFeature(
-                    converter.convertToItemFeature(itemFeature.getValue()),
-                    updatedItem.getId(),
-                    itemFeature.getKey()
+            itemFeatures.put(
+                    itemFeature.getKey(),
+                    converter.convertToItemFeature(itemFeature.getValue())
             );
         }
-        // Обновление изображений товара
-        request.getItemImages().forEach(
-                image -> imageService.createNewImageIfNotExist(
-                        converter.convertToImage(image),
-                        updatedItem.getId()
-                ));
+        // Обновление товара
+        itemService.updateItem(
+                converter.convertToItem(request.getItem()),
+                request.getCategoryId(),
+                itemFeatures,
+                request.getItemImages().stream()
+                        .map(converter::convertToImage)
+                        .collect(Collectors.toList())
+        );
+
 
         return ResponseEntity.ok("Информация о товаре успешно обновлена.");
     }
